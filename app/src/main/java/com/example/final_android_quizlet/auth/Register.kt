@@ -11,6 +11,7 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.example.final_android_quizlet.R
+import com.example.final_android_quizlet.dao.ResponseObject
 import com.example.final_android_quizlet.service.user.AuthService
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.launch
@@ -38,12 +39,14 @@ class Register : AppCompatActivity() {
                 if(email.isEmpty() || password.isEmpty()){
                     Toast.makeText(this@Register, "Username or password can not be none", Toast.LENGTH_SHORT).show()
                 }else{
-                    val result: Map<String, Any> = authService.register(email, password)
-                    if(result["status"] == true){
-                        Toast.makeText(this@Register, result["data"].toString(), Toast.LENGTH_LONG).show()
-                        startActivity(Intent(this@Register, Login::class.java))
+                    val result: ResponseObject = authService.register(email, password)
+                    if(result.status){
+                        Toast.makeText(this@Register, "User Registered successfully, please verify your email to login", Toast.LENGTH_LONG).show()
+                        val intent = Intent(this@Register, Login::class.java)
+                        intent.putExtra("email", result.data.toString())
+                        startActivity(intent)
                     }else{
-                        Toast.makeText(this@Register, result["data"].toString(), Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@Register, result.data.toString(), Toast.LENGTH_LONG).show()
                     }
                 }
                 progressBar!!.visibility = View.GONE

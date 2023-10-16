@@ -5,6 +5,7 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import com.example.final_android_quizlet.R
 import com.example.final_android_quizlet.auth.Login
+import com.example.final_android_quizlet.dao.ResponseObject
 import com.example.final_android_quizlet.models.User
 import com.github.ybq.android.spinkit.style.DoubleBounce
 import com.google.firebase.auth.FirebaseAuth
@@ -18,44 +19,43 @@ import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 class AuthService(){
     val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
     val userService: UserService = UserService()
-    suspend fun register(email: String, password: String): Map<String, Any>{
+    suspend fun register(email: String, password: String): ResponseObject{
         return withContext(Dispatchers.IO){
-            val result: MutableMap<String, Any> = mutableMapOf()
+            val res = ResponseObject()
             try {
                 val authResult = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
                 val user = authResult.user!!
 
                 firebaseAuth.currentUser!!.sendEmailVerification().await()
-                result["status"] = true
-                result["data"] = "User Registered successfully, please verify your email to login"
+                res.status = true
+                res.data = email
 
                 userService.addUser(User(null, email, password, null))
                 Log.i("AUTH", authResult.additionalUserInfo!!.username.toString())
             }catch (e: Exception){
-                result["status"] = false
-                result["data"] = e.message.toString()
+                res.status = false
+                res.data = e.message.toString()
             }
-            result
+            res
         }
     }
 
-    suspend fun login(email: String, password: String): Map<String, Any>{
+    suspend fun login(email: String, password: String): ResponseObject{
         return withContext(Dispatchers.IO){
-            val result: MutableMap<String, Any> = mutableMapOf()
+            val res = ResponseObject()
             try {
                 val authResult = firebaseAuth.signInWithEmailAndPassword(email, password).await()
                 if(firebaseAuth.currentUser!!.isEmailVerified){
-                    result["status"] = true
-                    result["data"] = authResult.user!!.email.toString()
+                    res.status = true
+                    res.data = authResult.user!!.email.toString()
                 }else{
-                    result["status"] = false
-                    result["data"] = "Please verify your email to login !!!"
+                    throw Exception("Please verify your email to login !!!")
                 }
             }catch (e: Exception){
-                result["status"] = false
-                result["data"] = e.message.toString()
+                res.status = false
+                res.data = e.message.toString()
             }
-            result
+            res
         }
     }
 }

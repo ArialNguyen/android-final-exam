@@ -22,8 +22,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val tvHello = findViewById<TextView>(R.id.textView)
-        tvHello.text = "Hello ${intent.getStringExtra("email").toString()}"
+
     }
 
     override fun onDestroy() {

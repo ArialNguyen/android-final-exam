@@ -3,6 +3,7 @@ package com.example.final_android_quizlet.auth
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -30,7 +31,9 @@ class Login : AppCompatActivity() {
         btnLogin = findViewById<Button>(R.id.btn_login)
         btnRegister = findViewById<Button>(R.id.btn_move_register)
         progressBar = findViewById(R.id.spin_kit)
-
+        if(intent.getStringExtra("email") != null){
+            tvUsername!!.setText(intent.getStringExtra("email"))
+        }
         btnLogin!!.setOnClickListener {
             lifecycleScope.launch {
                 progressBar!!.visibility = View.VISIBLE
@@ -40,14 +43,14 @@ class Login : AppCompatActivity() {
                     Toast.makeText(this@Login, "Username or password can not be none", Toast.LENGTH_SHORT).show()
                 }else{
                     val res = authService.login(email, password)
-                    if(res["status"] == true){
-                        val emailResponse = res["data"]
+                    if(res.status){
+                        val emailResponse = res.data
                         val intent = Intent(this@Login, MainActivity::class.java)
-                        Log.i("EMAIL", "${emailResponse}")
+                        Log.i("EMAIL", "$emailResponse")
                         intent.putExtra("email", emailResponse.toString())
                         startActivity(intent)
                     }else{
-                        Toast.makeText(this@Login, res["data"].toString(), Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@Login, res.data.toString(), Toast.LENGTH_LONG).show()
                     }
                 }
                 progressBar!!.visibility = View.GONE
