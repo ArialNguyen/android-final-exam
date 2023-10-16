@@ -1,18 +1,21 @@
-package com.example.final_android_quizlet.db
+package com.example.final_android_quizlet.service.user
 
 import android.util.Log
 import com.example.final_android_quizlet.models.User
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
 import org.modelmapper.ModelMapper
 
 
 class UserService {
-    val db = FirebaseFirestore.getInstance()
+    val db = Firebase.firestore
     val modelMapper = ModelMapper()
     suspend fun getUsers(): MutableList<User> {
         val users = mutableListOf<User>()
+
         db.collection("users")
             .get()
             .addOnCompleteListener {
