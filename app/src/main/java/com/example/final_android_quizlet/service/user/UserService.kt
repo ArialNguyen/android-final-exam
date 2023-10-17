@@ -1,18 +1,23 @@
-package com.example.final_android_quizlet.db
+package com.example.final_android_quizlet.service.user
 
 import android.util.Log
+import com.example.final_android_quizlet.dao.ResponseObject
 import com.example.final_android_quizlet.models.User
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import org.modelmapper.ModelMapper
 
 
 class UserService {
-    val db = FirebaseFirestore.getInstance()
+    val db = Firebase.firestore
     val modelMapper = ModelMapper()
     suspend fun getUsers(): MutableList<User> {
         val users = mutableListOf<User>()
+
         db.collection("users")
             .get()
             .addOnCompleteListener {
@@ -66,5 +71,27 @@ class UserService {
             }
             .await()
         return user
+    }
+
+    suspend fun getUserByEmail(email: String): ResponseObject{
+        return withContext(Dispatchers.IO){
+            var user: User
+            val res = ResponseObject()
+            try {
+                val query = db.collection("users").whereEqualTo("email", email).limit(1).get().await()
+                Log.i("getUserByEmail", "${query.documents.size}")
+                if(query.documents.size != 0){
+                    user = query.documents[0].toObject(User::class.java)!!
+                    res.data = user
+                    res.status = true
+                }else{
+                    throw Exception("Not Found user with email = $email")
+                }
+            }catch (e: Exception){
+                res.data = e.message
+                res.status = false
+            }
+            res
+        }
     }
 }

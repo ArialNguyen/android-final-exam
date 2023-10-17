@@ -1,10 +1,10 @@
 package com.example.final_android_quizlet.models
 
-class User (
-    val name: String,
+class User(
+    val name: String?,
     val email: String,
     val password: String,
-    val className: String
+    val className: String?
 ){
     constructor() : this(
         "", "", "", ""
