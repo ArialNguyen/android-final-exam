@@ -59,7 +59,8 @@
                                                     app:layout_constraintEnd_toEndOf="parent"
                                                     app:layout_constraintTop_toTopOf="parent"
                                                     app:layout_constraintStart_toStartOf="parent"
-                                                    android:padding="10dp"/>
+                                                    android:padding="10dp"
+            tools:ignore="MissingClass" />
     </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
