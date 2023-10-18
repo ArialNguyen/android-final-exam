@@ -243,5 +243,44 @@
         </com.google.android.material.bottomappbar.BottomAppBar>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
+    <Button
+            android:text="Logout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:id="@+id/btn_logout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintHorizontal_bias="0.503" app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+            android:layout_marginTop="28dp"/>
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
+            android:foregroundGravity="center" android:id="@+id/constraintLayout"
+            app:layout_constraintBottom_toBottomOf="parent">
+        <com.github.ybq.android.spinkit.SpinKitView android:layout_width="74dp"
+                                                    android:layout_height="48dp"
+                                                    android:id="@+id/loadTextWelcome"
+                                                    app:SpinKit_Style="Wave"
+                                                    android:visibility="gone"
+                                                    app:SpinKit_Color="@color/teal_200"
+                                                    android:scrollbarSize="@dimen/material_emphasis_medium"
+                                                    android:padding="10dp" android:layout_centerHorizontal="true"
+                                                    android:layout_centerVertical="true"
+                                                    app:layout_constraintEnd_toEndOf="parent"
+                                                    app:layout_constraintBottom_toBottomOf="parent"
+                                                    app:layout_constraintStart_toStartOf="parent"
+                                                    app:layout_constraintTop_toTopOf="parent"/>
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textHello"
+                android:gravity="center" app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

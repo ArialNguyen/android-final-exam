@@ -3,7 +3,6 @@ package com.example.final_android_quizlet.auth
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.Editable
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -13,8 +12,10 @@ import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.example.final_android_quizlet.MainActivity
 import com.example.final_android_quizlet.R
+import com.example.final_android_quizlet.common.ManageScopeApi
+import com.example.final_android_quizlet.dao.ResponseObject
+import com.example.final_android_quizlet.db.CallbackInterface
 import com.example.final_android_quizlet.service.user.AuthService
-import kotlinx.coroutines.launch
 
 class Login : AppCompatActivity() {
     private val authService: AuthService = AuthService()
@@ -23,6 +24,7 @@ class Login : AppCompatActivity() {
     private var btnLogin: Button? = null
     private var btnRegister: Button? = null
     private var progressBar: ProgressBar? = null
+    private var manageScopeApi: ManageScopeApi = ManageScopeApi()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -34,27 +36,35 @@ class Login : AppCompatActivity() {
         if(intent.getStringExtra("email") != null){
             tvUsername!!.setText(intent.getStringExtra("email"))
         }
+
         btnLogin!!.setOnClickListener {
-            lifecycleScope.launch {
-                progressBar!!.visibility = View.VISIBLE
-                val email = tvUsername!!.text.toString()
-                val password = tvPwd!!.text.toString()
-                if(email.isEmpty() || password.isEmpty()){
-                    Toast.makeText(this@Login, "Username or password can not be none", Toast.LENGTH_SHORT).show()
-                }else{
-                    val res = authService.login(email, password)
+            val email = tvUsername!!.text.toString()
+            val password = tvPwd!!.text.toString()
+            manageScopeApi.getResponseWithCallback(lifecycleScope, { (authService::login)(email, password) }, object : CallbackInterface{
+                override fun onBegin() {
+                    progressBar!!.visibility = View.VISIBLE
+                }
+                override fun onValidate(): Boolean {
+                    if(email.isEmpty() || password.isEmpty()){
+                        Toast.makeText(this@Login, "Username or password can not be none", Toast.LENGTH_SHORT).show()
+                        return false
+                    }
+                    return true
+                }
+                override fun onCallback(res: ResponseObject) {
                     if(res.status){
-                        val emailResponse = res.data
+                        Log.i("FINISH", "onCallback: ")
                         val intent = Intent(this@Login, MainActivity::class.java)
-                        Log.i("EMAIL", "$emailResponse")
-                        intent.putExtra("email", emailResponse.toString())
                         startActivity(intent)
+                        finish()
                     }else{
                         Toast.makeText(this@Login, res.data.toString(), Toast.LENGTH_LONG).show()
                     }
                 }
-                progressBar!!.visibility = View.GONE
-            }
+                override fun onFinally() {
+                    progressBar!!.visibility = View.GONE
+                }
+            })
         }
 
         btnRegister!!.setOnClickListener {

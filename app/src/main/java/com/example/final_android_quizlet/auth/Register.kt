@@ -41,7 +41,7 @@ class Register : AppCompatActivity() {
                 }else{
                     val result: ResponseObject = authService.register(email, password)
                     if(result.status){
-                        Toast.makeText(this@Register, "User Registered successfully, please verify your email to login", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@Register, "MoshiUser Registered successfully, please verify your email to login", Toast.LENGTH_LONG).show()
                         val intent = Intent(this@Register, Login::class.java)
                         intent.putExtra("email", result.data.toString())
                         startActivity(intent)

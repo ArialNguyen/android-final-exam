@@ -2,19 +2,17 @@ package com.example.final_android_quizlet.service.user
 
 import android.util.Log
 import com.example.final_android_quizlet.dao.ResponseObject
+import com.example.final_android_quizlet.mapper.UserMapper
 import com.example.final_android_quizlet.models.User
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
-import org.modelmapper.ModelMapper
 
 
 class UserService {
     val db = Firebase.firestore
-    val modelMapper = ModelMapper()
+    val userMapper: UserMapper = UserMapper()
     suspend fun getUsers(): MutableList<User> {
         val users = mutableListOf<User>()
 
@@ -53,7 +51,7 @@ class UserService {
                             if (documentSnapshot.exists()) {
                                 // Access the data
                                 // Process the data as needed
-                                userReturn = modelMapper.map(documentSnapshot.data, User::class.java)
+                                userReturn = userMapper.convertToUser(documentSnapshot.data!!)
                             } else {
                                 // Document does not exist
                             }
@@ -73,25 +71,25 @@ class UserService {
         return user
     }
 
-    suspend fun getUserByEmail(email: String): ResponseObject{
-        return withContext(Dispatchers.IO){
-            var user: User
-            val res = ResponseObject()
-            try {
-                val query = db.collection("users").whereEqualTo("email", email).limit(1).get().await()
-                Log.i("getUserByEmail", "${query.documents.size}")
-                if(query.documents.size != 0){
-                    user = query.documents[0].toObject(User::class.java)!!
-                    res.data = user
-                    res.status = true
-                }else{
-                    throw Exception("Not Found user with email = $email")
-                }
-            }catch (e: Exception){
-                res.data = e.message
-                res.status = false
+    suspend fun getUserByEmail(email: String): ResponseObject {
+        val res: ResponseObject = ResponseObject()
+        Log.i("EMAIL", "$email")
+        try {
+            val data = db.collection("users")
+                .whereEqualTo("email", email)
+                .get().await()
+            Log.i("DOCUEMNTS", "${data.documents.size}")
+            if (data.documents.size == 0) {
+                throw Exception("Not Found element with email = ${email}")
+            } else {
+                res.user = data.documents[0].toObject(User::class.java)!!
+                res.status = true
             }
-            res
+        } catch (e: Exception) {
+            res.data = e.message.toString()
+            res.status = false
         }
+        return res
     }
+
 }

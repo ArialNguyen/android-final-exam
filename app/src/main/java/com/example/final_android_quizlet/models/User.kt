@@ -10,6 +10,6 @@ class User(
         "", "", "", ""
     )
     override fun toString(): String {
-        return "User(name='$name', email='$email', password='$password', className='$className')"
+        return "MoshiUser(name='$name', email='$email', password='$password', className='$className')"
     }
 }

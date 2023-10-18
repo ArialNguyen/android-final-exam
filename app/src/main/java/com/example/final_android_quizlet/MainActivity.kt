@@ -2,29 +2,45 @@ package com.example.final_android_quizlet
 
 
 import android.app.Dialog
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.Gravity
 import android.view.ViewGroup
 import android.view.Window
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
+import androidx.lifecycle.lifecycleScope
+import com.example.final_android_quizlet.common.ManageScopeApi
+import com.example.final_android_quizlet.dao.ResponseObject
+import com.example.final_android_quizlet.db.CallbackInterface
+import com.example.final_android_quizlet.service.user.AuthService
+import com.example.final_android_quizlet.service.user.UserService
 
 
 class MainActivity : AppCompatActivity() {
-    private val myScope = CoroutineScope(Dispatchers.Main)
+    private val userService: UserService = UserService()
+    private val authService: AuthService = AuthService()
+    private val manageScopeApi: ManageScopeApi = ManageScopeApi()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        val tvHello = findViewById<TextView>(R.id.textHello)
+        val btnLogout = findViewById<Button>(R.id.btn_logout)
+        val progrressBar: ProgressBar = findViewById(R.id.loadTextWelcome)
         val plusIcon: ImageView = findViewById(R.id.imageView5)
 
+//        manageScopeApi.getResponseWithCallback(lifecycleScope, authService::getUserLogin, object : CallbackInterface{
+//            override fun onBegin() {
+//                //hien thi cai loader
+//            }
+//            override fun onCallback(res: ResponseObject) {
+//                // lay data
+//                // tat cai loader
+//            }
+//        })
         plusIcon.setOnClickListener {
             showBottomDialog()
         }
@@ -65,6 +81,5 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        myScope.cancel() // Avoid memory Leaks
     }
 }
