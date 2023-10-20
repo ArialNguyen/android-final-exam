@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/edit_foldername"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Tên thư mục"/>
+
+    <EditText
+        android:id="@+id/edit_decription"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Mô tả (tùy chọn)"
+        android:inputType="text"
+        android:layout_below="@+id/edit_foldername"
+        android:layout_alignParentStart="true"/>
+
+</RelativeLayout>

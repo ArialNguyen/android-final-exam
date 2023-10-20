@@ -2,4 +2,9 @@
     <string name="app_name">final-android-quizlet</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="required">required</string>
+    <string name="email">Thuật ngữ</string>
+    <string name="password">Định nghĩa</string>
+    <string name="definition">Định nghĩa</string>
+    <string name="algorithm">Thành ngữ</string>
 </resources>
