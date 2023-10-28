@@ -14,6 +14,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.final_android_quizlet.activity.CreateTermActivity
+import com.example.final_android_quizlet.activity.ProfileActivity
 import com.example.final_android_quizlet.common.ManageScopeApi
 import com.example.final_android_quizlet.dao.ResponseObject
 import com.example.final_android_quizlet.db.CallbackInterface
@@ -47,6 +48,12 @@ class MainActivity : AppCompatActivity() {
         plusIcon.setOnClickListener {
             showBottomDialog()
         }
+
+        val profileButton: ImageView = findViewById(R.id.imageView7) // Thay thế R.id.imageView7 bằng ID thực tế của nút hồ sơ
+        profileButton.setOnClickListener {
+            val intent = Intent(this, ProfileActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun showBottomDialog() {
@@ -58,6 +65,8 @@ class MainActivity : AppCompatActivity() {
         val createFolder: LinearLayout = dialog.findViewById(R.id.create_folder)
         val createClass: LinearLayout = dialog.findViewById(R.id.create_class)
         val cancelButton: ImageView = dialog.findViewById(R.id.cancelButton)
+
+
 
         createHocPhan.setOnClickListener {
             dialog.dismiss()

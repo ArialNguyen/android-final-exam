@@ -1,70 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="8dp"
-    android:background="#FFFFFF"
-    android:layout_marginTop="12dp">
+    android:layout_marginTop="5dp">
 
     <!-- Dấu "X" để xóa mục -->
-
-    <ImageView
-        android:id="@+id/removeItemButton"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_gravity="end"
-        android:contentDescription="Xóa"
-        android:src="@drawable/ic_baseline_clear_24" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textAlgorithm"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-        android:layout_marginHorizontal="20dp"
-        app:helperTextTextColor="@android:color/holo_red_dark"
+    <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:background="@drawable/white_background_algorithm"
+        android:elevation="3dp"
+        android:orientation="vertical"
+        android:paddingBottom="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        tools:ignore="MissingConstraints">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextAlgorithm"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textAlgorithm"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:lines="1"
-            android:inputType="text"
-            android:hint="@string/algorithm"/>
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="10dp"
+            app:helperTextTextColor="@android:color/holo_red_dark"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextAlgorithm"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/algorithm"
+                android:inputType="text"
+                android:lines="1" />
 
 
-    </com.google.android.material.textfield.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textDefinition"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-        android:layout_marginHorizontal="20dp"
-        app:helperTextTextColor="@android:color/holo_red_dark"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textAlgorithm">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextDefinition"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textDefinition"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:lines="1"
-            android:inputType="text"
-            android:hint="@string/definition"/>
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            app:helperTextTextColor="@android:color/holo_red_dark"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textAlgorithm">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextDefinition"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/definition"
+                android:inputType="text"
+                android:lines="1" />
 
 
-    </com.google.android.material.textfield.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
 
 
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

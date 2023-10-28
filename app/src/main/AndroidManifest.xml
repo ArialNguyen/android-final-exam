@@ -23,8 +23,11 @@
                 android:name=".MainActivity"
                 android:exported="false"
         />
+        <activity
+            android:name=".activity.ProfileActivity"
+            android:exported="false"
+            />
         <activity android:name=".activity.CreateTermActivity" android:exported="false">
-            <!-- Điều này sẽ khớp với intent filter của CreateTermActivity nếu có -->
         </activity>
         <activity
                 android:name=".auth.Login"

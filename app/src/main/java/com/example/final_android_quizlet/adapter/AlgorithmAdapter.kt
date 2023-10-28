@@ -15,20 +15,11 @@ class AlgorithmAdapter(private val algorithmList: ArrayList<AlgorithmItem>) : Re
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val algorithmEditText: EditText = itemView.findViewById(R.id.editTextAlgorithm)
         private val definitionEditText: EditText = itemView.findViewById(R.id.editTextDefinition)
-        private val removeItemButton: ImageView = itemView.findViewById(R.id.removeItemButton)
+
 
         fun bind(item: AlgorithmItem) {
             algorithmEditText.setText(item.algorithm)
             definitionEditText.setText(item.definition)
-
-            // Xử lý sự kiện khi nút "Xóa" được nhấn
-            removeItemButton.setOnClickListener {
-                val position = adapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    algorithmList.removeAt(position) // Xóa mục khỏi danh sách
-                    notifyItemRemoved(position) // Cập nhật RecyclerView
-                }
-            }
         }
     }
 
