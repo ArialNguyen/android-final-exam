@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity() {
             showBottomDialog()
         }
 
-        val profileButton: ImageView = findViewById(R.id.imageView7) // Thay thế R.id.imageView7 bằng ID thực tế của nút hồ sơ
+        val profileButton: ImageView = findViewById(R.id.imageView7)
         profileButton.setOnClickListener {
             val intent = Intent(this, ProfileActivity::class.java)
             startActivity(intent)

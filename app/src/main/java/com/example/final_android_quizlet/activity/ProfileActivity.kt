@@ -2,34 +2,36 @@ package com.example.final_android_quizlet.activity
 
 
 import android.os.Bundle
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.final_android_quizlet.R
-import com.example.final_android_quizlet.models.UserProfile
+import com.google.firebase.auth.FirebaseAuth
 
 class ProfileActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_info) // Thay thế bằng tên layout của bạn
+        setContentView(R.layout.activity_info)
 
-        val userProfile = getSampleUserProfile()
+        val backButton = findViewById<ImageView>(R.id.backButton)
 
-        // Điền dữ liệu vào các TextView tương ứng
-        findViewById<TextView>(R.id.textView6).text = userProfile.name
-        findViewById<TextView>(R.id.textView9).text = userProfile.email
-        findViewById<TextView>(R.id.textView15).text = userProfile.mobile
-        findViewById<TextView>(R.id.textView17).text = userProfile.tell
-        findViewById<TextView>(R.id.textView19).text = userProfile.address
+        val user = FirebaseAuth.getInstance().currentUser
+
+        backButton.setOnClickListener {
+            finish()
+        }
+
+        if (user != null) {
+            val userEmail = user.email
+            val userName = user.displayName
+
+            findViewById<TextView>(R.id.text_userName).text = userName
+            findViewById<TextView>(R.id.text_userEmail).text = userEmail
+        }
     }
 
-    private fun getSampleUserProfile(): UserProfile {
-        return UserProfile(
-            name = "Ali Son",
-            email = "alison@gmail.com",
-            mobile = "123-456-789",
-            tell = "123-456-789",
-            address = "123-456-789, XYZ Street"
-        )
+    override fun onBackPressed() {
+        finish()
     }
 }
