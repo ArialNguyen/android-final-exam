@@ -16,6 +16,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.final_android_quizlet.activity.CreateTermActivity
 import com.example.final_android_quizlet.activity.ProfileActivity
+import com.example.final_android_quizlet.auth.ForgotPwd
+import com.example.final_android_quizlet.auth.Login
 import com.example.final_android_quizlet.common.ManageScopeApi
 import com.example.final_android_quizlet.dao.ResponseObject
 import com.example.final_android_quizlet.db.CallbackInterface
@@ -23,21 +25,29 @@ import com.example.final_android_quizlet.fragments.dialog_folder
 import com.example.final_android_quizlet.service.user.AuthService
 import com.example.final_android_quizlet.service.user.UserService
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
+import kotlinx.coroutines.launch
 
 
 class MainActivity : AppCompatActivity() {
-    private val userService: UserService = UserService()
     private val authService: AuthService = AuthService()
     private val manageScopeApi: ManageScopeApi = ManageScopeApi()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val tvHello = findViewById<TextView>(R.id.textHello)
         val btn_change_password = findViewById<Button>(R.id.btn_change_password)
-        val progrressBar: ProgressBar = findViewById(R.id.loadTextWelcome)
         val plusIcon: ImageView = findViewById(R.id.imageView5)
+        val btn_logout = findViewById<Button>(R.id.btn_logout)
 
+        if(!authService.isLogin()){
+            startActivity(Intent(this, Login::class.java).putExtra("checkLogin", this@MainActivity::class.java.name))
+        }
+
+        btn_logout!!.setOnClickListener {
+            lifecycleScope.launch {
+                authService.logout()
+            }
+        }
         btn_change_password.setOnClickListener {
             val myEmail = "hungnguyen100802@gmail.com"
             manageScopeApi.getResponseWithCallback(lifecycleScope, {(authService::sendMailForgotPassword)(myEmail)}, object :
@@ -106,7 +116,11 @@ class MainActivity : AppCompatActivity() {
         exampleDialog.show(supportFragmentManager, "example dialog")
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+
+    override fun onResume() {
+        super.onResume()
+        if(!authService.isLogin()){
+            startActivity(Intent(this, Login::class.java).putExtra("checkLogin", this@MainActivity::class.java.name))
+        }
     }
 }
