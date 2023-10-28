@@ -193,7 +193,6 @@
             android:background="@drawable/ic_side_bg" />
 
     <ImageView
-            android:id="@+id/img_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -201,6 +200,5 @@
             android:layout_marginRight="11dp"
             android:layout_marginBottom="30dp"
             android:adjustViewBounds="false"
-            android:onClick="onLoginClick"
             android:src="@drawable/ic_back_img" />
 </RelativeLayout>

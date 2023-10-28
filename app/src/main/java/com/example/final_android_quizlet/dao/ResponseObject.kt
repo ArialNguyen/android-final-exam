@@ -7,3 +7,11 @@ class ResponseObject(
     public var data: Any? = null,
     public var user: User? = null
 ){}
+
+fun ResponseObject.clone(): ResponseObject {
+    val res = ResponseObject()
+    res.data = this.data
+    res.status = this.status
+    res.user = this.user
+    return res
+}

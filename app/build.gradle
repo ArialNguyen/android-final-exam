@@ -48,6 +48,11 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     // SharedPreferences
     implementation "androidx.preference:preference-ktx:1.1.1"
+    // Button Loading
+    implementation 'com.github.leandroborgesferreira:loading-button-android:2.3.0'
+//    implementation 'br.com.simplepass:loading-button-android:2.2.0'
+    // card View
+    implementation "androidx.cardview:cardview:1.0.0"
     // Progress bar
     implementation 'com.github.ybq:Android-SpinKit:1.4.0'
     // LifeCycle

@@ -6,7 +6,7 @@ class User(
     val email: String,
     val password: String,
     val className: String?,
-    val passcodeFGP: String? = null
+    val passcodeFGP: Int? = null
 ) {
     constructor() : this(
         "", "", "", "", ""

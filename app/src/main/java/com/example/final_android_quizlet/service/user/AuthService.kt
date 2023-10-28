@@ -7,6 +7,7 @@ import com.example.final_android_quizlet.mapper.UserMapper
 import com.example.final_android_quizlet.models.User
 import com.google.firebase.auth.ActionCodeSettings
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.dynamiclinks.DynamicLink
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import kotlinx.coroutines.Dispatchers
@@ -18,18 +19,18 @@ class AuthService() {
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
     private val userService: UserService = UserService()
     private val userMapper: UserMapper = UserMapper()
-    suspend fun register(email: String, password: String): ResponseObject {
+    suspend fun register(name: String, email: String, password: String): ResponseObject {
         return withContext(Dispatchers.IO) {
             val res = ResponseObject()
             try {
                 val authResult = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
                 val user = authResult.user!!
-
+//                firebaseAuth.currentUser.isEmailVerified
                 firebaseAuth.currentUser!!.sendEmailVerification().await()
                 res.status = true
                 res.data = email
                 Log.i("CURRENT USER ID IN REGISTER ", firebaseAuth.currentUser!!.uid)
-                val data = userService.addUser(User(firebaseAuth.currentUser!!.uid, null, email, password, null))
+                val data = userService.addUser(User(firebaseAuth.currentUser!!.uid, name, email, password, null))
                 Log.i(data.user.toString(), "register: ")
                 Log.i("AUTH", authResult.additionalUserInfo!!.username.toString())
             } catch (e: Exception) {
@@ -97,7 +98,7 @@ class AuthService() {
             val shortenedLink = FirebaseDynamicLinks.getInstance().createDynamicLink()
                 .setLongLink(dynamicLink.uri)
                 .buildShortDynamicLink().await()
-
+            firebaseAuth.currentUser!!.email
             val deepLinkUrl = shortenedLink.shortLink.toString()
             Log.i("deepLinkUrl", deepLinkUrl)
             val actionCodeSettings = ActionCodeSettings.newBuilder()
@@ -118,7 +119,7 @@ class AuthService() {
     }
 
     fun isLogin(): Boolean {
-        return firebaseAuth.currentUser != null
+        return firebaseAuth.currentUser != null && firebaseAuth.currentUser!!.isEmailVerified
     }
 
     suspend fun getUserLogin(): ResponseObject {

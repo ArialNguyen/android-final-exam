@@ -29,7 +29,6 @@ class UserService {
                 } else if (it.isCanceled) {
                     Log.i("Cancel GET Users: ", "")
                 }
-//                callback.onCallback(users)
             }
             .addOnFailureListener { exception ->
                 Log.w("GET Users: ", "Error getting documents $exception")
@@ -41,15 +40,12 @@ class UserService {
     suspend fun addUser(user: User): ResponseObject {
         val res = ResponseObject()
         try {
-            Log.i("111", "addUser: ")
             val fetch1 =  db.collection("users")
                 .add(user).await()
-            Log.i("222", "addUser: ")
             val fetch2 = fetch1.get().await()
             if (!fetch2.exists()){
                 throw Exception("Some thing wrong when add User --Unknown_Reason")
             }
-            Log.i("USER RESPONSE IN ADD USER", fetch2.data.toString())
             res.user = userMapper.convertToUser(fetch2.data!!)
             res.status = true
         }catch (e: Exception){
@@ -67,7 +63,6 @@ class UserService {
             val data = db.collection("users")
                 .whereEqualTo("email", email)
                 .get().await()
-            Log.i("DOCUEMNTS", "${data.documents.size}")
             if (data.documents.size == 0) {
                 throw Exception("Not Found element with email = $email")
             } else {
@@ -107,7 +102,6 @@ class UserService {
                 .whereEqualTo("email", email)
                 .whereEqualTo("passcodeFGP", passcode.toInt())
                 .get().await()
-            Log.i("DOCUEMNTS", "${data.documents.size}")
             if (data.documents.size == 0) {
                 throw Exception("Not Found element with email = $email")
             } else {

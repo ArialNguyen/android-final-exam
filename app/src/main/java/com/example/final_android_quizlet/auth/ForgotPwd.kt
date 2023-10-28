@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.example.final_android_quizlet.MainActivity
 import com.example.final_android_quizlet.R
+import com.example.final_android_quizlet.common.ActionTransition
 import com.example.final_android_quizlet.common.ManageScopeApi
 import com.example.final_android_quizlet.dao.ResponseObject
 import com.example.final_android_quizlet.db.CallbackInterface
@@ -24,39 +25,20 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 class ForgotPwd : AppCompatActivity() {
-    var btnForgotPwd: Button? = null
-    var etPwd: EditText? = null
-    var etPwd2: EditText? = null
+
     private val authService: AuthService = AuthService()
     private val manageScopeApi: ManageScopeApi = ManageScopeApi()
     private val userService: UserService = UserService()
+    private val actionTransition: ActionTransition = ActionTransition(this)
+
+
+    var btnForgotPwd: Button? = null
+    var etPwd: EditText? = null
+    var etPwd2: EditText? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_forgot_pwd)
-        // Always check user logged in or not
-        if(!authService.isLogin()){
-            startActivity(Intent(this, Login::class.java).putExtra("checkLogin", ForgotPwd::class.java.name))
-        }
 
-        lifecycleScope.launch{
-            Log.i("DEEPLINk", "${intent.data}")
-            val continueUrlShortLink = Uri.parse(intent.data!!.toString()).getQueryParameter("continueUrl")!!
-            val continueUrlLongLink = FirebaseDynamicLinks.getInstance().getDynamicLink(Uri.parse(continueUrlShortLink)).await()
-            Log.i("LONG LINK", "${continueUrlLongLink.link}")
-            val finalLink = Uri.parse(continueUrlLongLink.link.toString())
-            Log.i("DEEP LINK IN FORGOT PASS", "$finalLink")
-
-            val email = finalLink.getQueryParameter("email")!!
-            val passcode = finalLink.getQueryParameter("passcode")!!
-            if(email.isEmpty() || passcode.isEmpty()){
-                Toast.makeText(this@ForgotPwd, "Sorry but seem the param of link to UI forgot password wrong here", Toast.LENGTH_SHORT).show()
-            }else{
-                Log.i("PASSCODE_GET", "$email and $passcode")
-                if(!userService.checkPasscodeFGP(email, passcode).status){
-                    Toast.makeText(this@ForgotPwd, "Sorry but seem the passcode to UI forgot password wrong here", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
         btnForgotPwd = findViewById(R.id.btn_forgot_password)
         etPwd = findViewById(R.id.et_newPWD)
         etPwd2 = findViewById(R.id.et_password2)
@@ -65,7 +47,8 @@ class ForgotPwd : AppCompatActivity() {
                 override fun onCallback(res: ResponseObject) {
                     if(res.status){
                         Toast.makeText(this@ForgotPwd, "Update password successfully", Toast.LENGTH_SHORT).show()
-                        startActivity(Intent(this@ForgotPwd, Login::class.java))
+//                        startActivity(Intent(this@ForgotPwd, Login::class.java))
+                        actionTransition.rollBackTransition()
                         finish()
                     }else{
                         Toast.makeText(this@ForgotPwd, res.data.toString(), Toast.LENGTH_SHORT).show()
