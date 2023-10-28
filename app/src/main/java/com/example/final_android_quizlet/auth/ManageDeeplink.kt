@@ -1,5 +1,6 @@
 package com.example.final_android_quizlet.auth
 
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -24,13 +25,16 @@ class ManageDeeplink : AppCompatActivity() {
 
         lifecycleScope.launch{
             val checkMode = Uri.parse(intent.data!!.toString())
+            Log.i(TAG, "${checkMode.toString()}")
             if(checkMode.getQueryParameter("mode") == "verifyEmail"){
+              Log.i(TAG, "onCreate: ")
                 val intentBrowser = Intent(Intent.ACTION_VIEW)
                 val oobCode = checkMode.getQueryParameter("oobCode")
                 val apiKey = checkMode.getQueryParameter("apiKey")
                 intentBrowser.setData(Uri.parse("https://android-finalpj.firebaseapp.com/__/auth/action?mode=verifyEmail&oobCode=$oobCode&apiKey=$apiKey&lang=en"))
                 startActivity(intentBrowser)
-                finish()
+
+//                finish()
             }else{
                 val continueUrlShortLink = checkMode.getQueryParameter("continueUrl")!!
                 val continueUrlLongLink = FirebaseDynamicLinks.getInstance().getDynamicLink(Uri.parse(continueUrlShortLink)).await()

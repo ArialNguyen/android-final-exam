@@ -50,6 +50,10 @@
                 android:exported="false">
         </activity>
         <activity
+            android:name=".activity.ProfileActivity"
+            android:exported="false">
+        </activity>
+        <activity
                 android:name=".auth.ForgotPwd"
                 android:exported="false"
                 android:launchMode="singleTask"
@@ -60,6 +64,7 @@
                 android:exported="true"
                 android:theme="@style/Theme.Material3.Light.NoActionBar">
         </activity>
+        <activity android:name=".auth.ChangePassword" android:exported="false"/>
     </application>
 
 </manifest>
