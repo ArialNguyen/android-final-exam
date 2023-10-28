@@ -3,10 +3,11 @@ package com.example.final_android_quizlet
 
 import android.app.Dialog
 import android.content.Intent
-import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.ViewGroup
 import android.view.Window
@@ -21,6 +22,7 @@ import com.example.final_android_quizlet.db.CallbackInterface
 import com.example.final_android_quizlet.fragments.dialog_folder
 import com.example.final_android_quizlet.service.user.AuthService
 import com.example.final_android_quizlet.service.user.UserService
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 
 
 class MainActivity : AppCompatActivity() {
@@ -32,19 +34,24 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val tvHello = findViewById<TextView>(R.id.textHello)
-
+        val btn_change_password = findViewById<Button>(R.id.btn_change_password)
         val progrressBar: ProgressBar = findViewById(R.id.loadTextWelcome)
         val plusIcon: ImageView = findViewById(R.id.imageView5)
 
-//        manageScopeApi.getResponseWithCallback(lifecycleScope, authService::getUserLogin, object : CallbackInterface{
-//            override fun onBegin() {
-//                //hien thi cai loader
-//            }
-//            override fun onCallback(res: ResponseObject) {
-//                // lay data
-//                // tat cai loader
-//            }
-//        })
+        btn_change_password.setOnClickListener {
+            val myEmail = "hungnguyen100802@gmail.com"
+            manageScopeApi.getResponseWithCallback(lifecycleScope, {(authService::sendMailForgotPassword)(myEmail)}, object :
+                CallbackInterface {
+                override fun onCallback(res: ResponseObject) {
+                    if(res.status){
+                        Toast.makeText(this@MainActivity, "We had sent the new password to $myEmail", Toast.LENGTH_SHORT).show()
+                    }else{
+                        Toast.makeText(this@MainActivity, res.data.toString(), Toast.LENGTH_SHORT).show()
+                    }
+                }
+            })
+        }
+
         plusIcon.setOnClickListener {
             showBottomDialog()
         }

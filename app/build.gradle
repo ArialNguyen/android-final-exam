@@ -55,11 +55,12 @@ dependencies {
     // ModelMapper
     implementation 'org.modelmapper:modelmapper:2.4.4'
     // Import the Firebase BoM
-    implementation(platform("com.google.firebase:firebase-bom:32.3.1"))
+    implementation(platform("com.google.firebase:firebase-bom:32.4.0"))
     // Moshi
     implementation("com.squareup.moshi:moshi-kotlin:1.15.0")
     // When using the BoM, you don't specify versions in Firebase library dependencies
-
+    // Dynamic link
+    implementation 'com.google.firebase:firebase-dynamic-links-ktx'
     // Add the dependency for the Firebase SDK for Google Analytics
     implementation("com.google.firebase:firebase-analytics-ktx")
     // TODO: Add the dependencies for any other Firebase products you want to use
