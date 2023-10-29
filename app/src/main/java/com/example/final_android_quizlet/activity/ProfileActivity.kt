@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.final_android_quizlet.R
 import com.example.final_android_quizlet.auth.ChangePassword
+import com.example.final_android_quizlet.auth.Logout
 import com.google.firebase.auth.FirebaseAuth
 
 class ProfileActivity : AppCompatActivity() {
@@ -37,6 +38,13 @@ class ProfileActivity : AppCompatActivity() {
         changePasswordTextView.setOnClickListener {
             val intent = Intent(this, ChangePassword::class.java)
             startActivity(intent)
+        }
+
+        val logout = findViewById<ImageView>(R.id.image_logout)
+
+        logout.setOnClickListener {
+            val confirmationDialog = Logout(this)
+            confirmationDialog.show()
         }
     }
 

@@ -39,13 +39,12 @@ class ChangePassword : AppCompatActivity() {
             } else if (newPassword != confirmPassword) {
                 Toast.makeText(this, "New password and confirm password do not match.", Toast.LENGTH_SHORT).show()
             } else {
-                // Call the changePassword function
-                changePassword(oldPassword, newPassword)
+                changePassword(oldPassword, newPassword, confirmPassword)
             }
         }
     }
 
-    private fun changePassword(oldPassword: String, newPassword: String) {
+    private fun changePassword(oldPassword: String, newPassword: String, confirmPassword: String) {
         btnSave.startAnimation()
 
         manageScopeApi.getResponseWithCallback(
@@ -59,6 +58,11 @@ class ChangePassword : AppCompatActivity() {
                 override fun onValidate(): Boolean {
                     if (oldPassword.isEmpty() || newPassword.isEmpty()) {
                         Toast.makeText(this@ChangePassword, "Please fill in old and new password.", Toast.LENGTH_SHORT).show()
+                        return false
+                    }
+                    if(newPassword != confirmPassword){
+                        Toast.makeText(this@ChangePassword, "Two password must be same", Toast.LENGTH_SHORT)
+                            .show()
                         return false
                     }
                     return true
