@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">final-android-quizlet</string>
+    <string name="app_name">Quizlet</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="required">required</string>
@@ -7,4 +7,6 @@
     <string name="password">Định nghĩa</string>
     <string name="definition">Định nghĩa</string>
     <string name="algorithm">Thành ngữ</string>
+    <string name="open_nav">Open final-android-quizlet</string>
+    <string name="close_nav">Close final-android-quizlet</string>
 </resources>

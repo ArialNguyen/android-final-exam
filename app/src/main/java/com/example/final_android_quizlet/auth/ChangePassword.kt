@@ -20,6 +20,7 @@ class ChangePassword : AppCompatActivity() {
     private val authService = AuthService()
     private val manageScopeApi: ManageScopeApi = ManageScopeApi()
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_change_password)
@@ -34,12 +35,13 @@ class ChangePassword : AppCompatActivity() {
             val newPassword = etNewPassword.text.toString()
             val confirmPassword = etConfirmPassword.text.toString()
 
+
             if (oldPassword.isEmpty() || newPassword.isEmpty() || confirmPassword.isEmpty()) {
                 Toast.makeText(this, "Please fill in all fields.", Toast.LENGTH_SHORT).show()
             } else if (newPassword != confirmPassword) {
                 Toast.makeText(this, "New password and confirm password do not match.", Toast.LENGTH_SHORT).show()
             } else {
-                changePassword(oldPassword, newPassword, confirmPassword)
+                val user = authService.getUserLogin()
             }
         }
     }
