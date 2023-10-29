@@ -36,17 +36,17 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val plusIcon: ImageView = findViewById(R.id.imageView5)
-        val btn_logout = findViewById<Button>(R.id.btn_logout)
+//        val btn_logout = findViewById<Button>(R.id.btn_logout)
 
         if(!authService.isLogin()){
             startActivity(Intent(this, Login::class.java).putExtra("checkLogin", this@MainActivity::class.java.name))
         }
 
-        btn_logout!!.setOnClickListener {
-            lifecycleScope.launch {
-                authService.logout()
-            }
-        }
+//        btn_logout!!.setOnClickListener {
+//            lifecycleScope.launch {
+//                authService.logout()
+//            }
+//        }
 
 
         plusIcon.setOnClickListener {

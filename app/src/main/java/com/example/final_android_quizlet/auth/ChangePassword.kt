@@ -20,7 +20,6 @@ class ChangePassword : AppCompatActivity() {
     private val authService = AuthService()
     private val manageScopeApi: ManageScopeApi = ManageScopeApi()
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_change_password)
@@ -35,54 +34,53 @@ class ChangePassword : AppCompatActivity() {
             val newPassword = etNewPassword.text.toString()
             val confirmPassword = etConfirmPassword.text.toString()
 
-
             if (oldPassword.isEmpty() || newPassword.isEmpty() || confirmPassword.isEmpty()) {
                 Toast.makeText(this, "Please fill in all fields.", Toast.LENGTH_SHORT).show()
             } else if (newPassword != confirmPassword) {
                 Toast.makeText(this, "New password and confirm password do not match.", Toast.LENGTH_SHORT).show()
             } else {
-                val user = authService.getUserLogin()
+//                changePassword(oldPassword, newPassword, confirmPassword)
             }
         }
     }
 
-    private fun changePassword(oldPassword: String, newPassword: String, confirmPassword: String) {
-        btnSave.startAnimation()
-
-        manageScopeApi.getResponseWithCallback(
-            lifecycleScope,
-            { authService.changePassword(newPassword) },
-            object : CallbackInterface {
-                override fun onBegin() {
-                    btnSave!!.startAnimation()
-                }
-
-                override fun onValidate(): Boolean {
-                    if (oldPassword.isEmpty() || newPassword.isEmpty()) {
-                        Toast.makeText(this@ChangePassword, "Please fill in old and new password.", Toast.LENGTH_SHORT).show()
-                        return false
-                    }
-                    if(newPassword != confirmPassword){
-                        Toast.makeText(this@ChangePassword, "Two password must be same", Toast.LENGTH_SHORT)
-                            .show()
-                        return false
-                    }
-                    return true
-                }
-
-                override fun onCallback(res: ResponseObject) {
-                    if (res.status) {
-                        Toast.makeText(this@ChangePassword, "Password changed successfully.", Toast.LENGTH_SHORT).show()
-                        finish()
-                    } else {
-                        Toast.makeText(this@ChangePassword, "Failed to change password: ${res.data}", Toast.LENGTH_SHORT).show()
-                    }
-                }
-
-                override fun onFinally() {
-                    btnSave.revertAnimation()
-                }
-            }
-        )
-    }
+//    private fun changePassword(oldPassword: String, newPassword: String, confirmPassword: String) {
+//        btnSave.startAnimation()
+//
+//        manageScopeApi.getResponseWithCallback(
+//            lifecycleScope,
+//            { authService.changePassword(newPassword) },
+//            object : CallbackInterface {
+//                override fun onBegin() {
+//                    btnSave!!.startAnimation()
+//                }
+//
+//                override fun onValidate(): Boolean {
+//                    if (oldPassword.isEmpty() || newPassword.isEmpty()) {
+//                        Toast.makeText(this@ChangePassword, "Please fill in old and new password.", Toast.LENGTH_SHORT).show()
+//                        return false
+//                    }
+//                    if(newPassword != confirmPassword){
+//                        Toast.makeText(this@ChangePassword, "Two password must be same", Toast.LENGTH_SHORT)
+//                            .show()
+//                        return false
+//                    }
+//                    return true
+//                }
+//
+//                override fun onCallback(res: ResponseObject) {
+//                    if (res.status) {
+//                        Toast.makeText(this@ChangePassword, "Password changed successfully.", Toast.LENGTH_SHORT).show()
+//                        finish()
+//                    } else {
+//                        Toast.makeText(this@ChangePassword, "Failed to change password: ${res.data}", Toast.LENGTH_SHORT).show()
+//                    }
+//                }
+//
+//                override fun onFinally() {
+//                    btnSave.revertAnimation()
+//                }
+//            }
+//        )
+//    }
 }
