@@ -35,7 +35,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val btn_change_password = findViewById<Button>(R.id.btn_change_password)
         val plusIcon: ImageView = findViewById(R.id.imageView5)
         val btn_logout = findViewById<Button>(R.id.btn_logout)
 
@@ -48,19 +47,7 @@ class MainActivity : AppCompatActivity() {
                 authService.logout()
             }
         }
-        btn_change_password.setOnClickListener {
-            val myEmail = "hungnguyen100802@gmail.com"
-            manageScopeApi.getResponseWithCallback(lifecycleScope, {(authService::sendMailForgotPassword)(myEmail)}, object :
-                CallbackInterface {
-                override fun onCallback(res: ResponseObject) {
-                    if(res.status){
-                        Toast.makeText(this@MainActivity, "We had sent the new password to $myEmail", Toast.LENGTH_SHORT).show()
-                    }else{
-                        Toast.makeText(this@MainActivity, res.data.toString(), Toast.LENGTH_SHORT).show()
-                    }
-                }
-            })
-        }
+
 
         plusIcon.setOnClickListener {
             showBottomDialog()

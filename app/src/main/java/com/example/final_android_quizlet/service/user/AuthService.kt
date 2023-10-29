@@ -7,7 +7,6 @@ import com.example.final_android_quizlet.mapper.UserMapper
 import com.example.final_android_quizlet.models.User
 import com.google.firebase.auth.ActionCodeSettings
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.dynamiclinks.DynamicLink
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import kotlinx.coroutines.Dispatchers
@@ -24,13 +23,11 @@ class AuthService() {
             val res = ResponseObject()
             try {
                 val authResult = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
-                val user = authResult.user!!
-//                firebaseAuth.currentUser.isEmailVerified
                 firebaseAuth.currentUser!!.sendEmailVerification().await()
                 res.status = true
                 res.data = email
                 Log.i("CURRENT USER ID IN REGISTER ", firebaseAuth.currentUser!!.uid)
-                val data = userService.addUser(User(firebaseAuth.currentUser!!.uid, name, email, password, null))
+                val data = userService.addUser(User(firebaseAuth.currentUser!!.uid, name, email, password, password, null))
                 Log.i(data.user.toString(), "register: ")
                 Log.i("AUTH", authResult.additionalUserInfo!!.username.toString())
             } catch (e: Exception) {
@@ -44,7 +41,15 @@ class AuthService() {
     suspend fun login(email: String, password: String): ResponseObject {
         val res = ResponseObject()
         try {
-            val authResult = firebaseAuth.signInWithEmailAndPassword(email, password).await()
+            val fetch1 = userService.getUserByEmail(email)
+            if(!fetch1.status){
+                throw Exception(fetch1.data.toString())
+            }
+            if(password != fetch1.user!!.password){
+                throw Exception("INCORRECT INFORMATION")
+            }
+
+            val authResult = firebaseAuth.signInWithEmailAndPassword(email, fetch1.user!!.passwordAuth).await()
             if (firebaseAuth.currentUser!!.isEmailVerified) {
                 res.status = true
                 res.data = authResult.user!!.email.toString()
@@ -54,19 +59,16 @@ class AuthService() {
             }
         } catch (e: Exception) {
             res.status = false
-            res.data = if (e.message!!.contains("INVALID_LOGIN_CREDENTIALS"))
-                    "INCORRECT INFORMATION"
-                else
-                    e.message.toString()
+            res.data = e.message.toString()
         }
         return res
     }
 
-    suspend fun changePassword(password: String): ResponseObject{
+    suspend fun changePassword(email: String, password: String): ResponseObject{
         val res = ResponseObject()
         try {
-            firebaseAuth.currentUser!!.updatePassword(password)
-            userService.updateProfile(firebaseAuth.currentUser!!.uid, hashMapOf<String, Any>(
+            val fetch1 = userService.getUserByEmail(email)
+            userService.updateProfile(fetch1.user!!.uid, hashMapOf<String, Any>(
                 "password" to password
             ))
             res.status = true
@@ -80,8 +82,12 @@ class AuthService() {
     suspend fun sendMailForgotPassword(email: String): ResponseObject {
         val res = ResponseObject()
         try {
+            val user = userService.getUserByEmail(email)
+            if(!user.status){
+                throw Exception(user.data.toString())
+            }
             val passcode = Random.nextInt(100000, 999999)
-            val savePasscodeToDB = userService.updateProfile(firebaseAuth.currentUser!!.uid, hashMapOf(
+            val savePasscodeToDB = userService.updateProfile(user.user!!.uid, hashMapOf(
                 "passcodeFGP" to passcode
             ))
             if(!savePasscodeToDB.status){
@@ -94,20 +100,16 @@ class AuthService() {
                 .setDomainUriPrefix("https://androidfinalpj.page.link")
                 .setAndroidParameters(DynamicLink.AndroidParameters.Builder().build())
                 .buildDynamicLink()
-            // Tạo liên kết cắt gọn
+            // Create Short link
             val shortenedLink = FirebaseDynamicLinks.getInstance().createDynamicLink()
                 .setLongLink(dynamicLink.uri)
                 .buildShortDynamicLink().await()
-            firebaseAuth.currentUser!!.email
             val deepLinkUrl = shortenedLink.shortLink.toString()
             Log.i("deepLinkUrl", deepLinkUrl)
             val actionCodeSettings = ActionCodeSettings.newBuilder()
                 .setUrl(deepLinkUrl)
                 .setHandleCodeInApp(true)
                 .build()
-            if(email != firebaseAuth.currentUser!!.email){
-                throw Exception("Email doesn't match registered email!")
-            }
             firebaseAuth.sendPasswordResetEmail(email,actionCodeSettings).await()
             res.status = true
         }catch (e: Exception){

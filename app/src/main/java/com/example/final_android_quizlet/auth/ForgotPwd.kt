@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.example.final_android_quizlet.MainActivity
@@ -17,6 +19,7 @@ import com.example.final_android_quizlet.dao.ResponseObject
 import com.example.final_android_quizlet.db.CallbackInterface
 import com.example.final_android_quizlet.service.user.AuthService
 import com.example.final_android_quizlet.service.user.UserService
+import com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.dynamiclinks.ktx.dynamicLinks
 import com.google.firebase.firestore.auth.User
@@ -32,31 +35,54 @@ class ForgotPwd : AppCompatActivity() {
     private val actionTransition: ActionTransition = ActionTransition(this)
 
 
-    var btnForgotPwd: Button? = null
-    var etPwd: EditText? = null
-    var etPwd2: EditText? = null
+    private var btnForgotPwd: CircularProgressButton? = null
+    private var etPwd: EditText? = null
+    private var etPwd2: EditText? = null
+    private var imgBack: ImageView? = null
+    private var tvHelloEmail: TextView? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_forgot_pwd)
 
+
         btnForgotPwd = findViewById(R.id.btn_forgot_password)
         etPwd = findViewById(R.id.et_newPWD)
         etPwd2 = findViewById(R.id.et_password2)
+        imgBack = findViewById(R.id.img_back_forgotPWD)
+        tvHelloEmail = findViewById(R.id.tvHelloEmail)
+
+        val email = if (intent.getStringExtra("email") != null) intent.getStringExtra("email")!! else ""
+        val emailText = "Hi $email"
+        tvHelloEmail!!.text = emailText
+
         btnForgotPwd!!.setOnClickListener {
-            manageScopeApi.getResponseWithCallback(lifecycleScope, {(authService::changePassword)(etPwd!!.text.toString())}, object : CallbackInterface{
+            val pass1 = etPwd!!.text.toString()
+            val pass2 = etPwd2!!.text.toString()
+            manageScopeApi.getResponseWithCallback(lifecycleScope, {(authService::changePassword)(email, pass1)}, object : CallbackInterface{
+                override fun onBegin() {
+                    btnForgotPwd!!.startAnimation()
+                }
+
+                override fun onValidate(): Boolean {
+                    return pass1 == pass2
+                }
+
                 override fun onCallback(res: ResponseObject) {
                     if(res.status){
                         Toast.makeText(this@ForgotPwd, "Update password successfully", Toast.LENGTH_SHORT).show()
 //                        startActivity(Intent(this@ForgotPwd, Login::class.java))
-                        actionTransition.rollBackTransition()
                         finish()
+                        actionTransition.rollBackTransition()
                     }else{
                         Toast.makeText(this@ForgotPwd, res.data.toString(), Toast.LENGTH_SHORT).show()
                     }
                 }
             })
         }
-//
+        imgBack!!.setOnClickListener {
+            finish()
+            actionTransition.rollBackTransition()
+        }
 
     }
 

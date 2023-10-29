@@ -64,7 +64,7 @@ class UserService {
                 .whereEqualTo("email", email)
                 .get().await()
             if (data.documents.size == 0) {
-                throw Exception("Not Found element with email = $email")
+                throw Exception("Email not registered yet")
             } else {
                 res.user = data.documents[0].toObject(User::class.java)!!
                 res.status = true

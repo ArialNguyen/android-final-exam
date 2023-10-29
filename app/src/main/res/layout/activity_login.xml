@@ -70,6 +70,7 @@
 
             <TextView
                     style="@style/viewParent"
+                    android:id="@+id/tvForgotPwd"
                     android:layout_gravity="end"
                     android:layout_marginTop="10dp"
                     android:text="Forgot Password?"

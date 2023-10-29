@@ -8,7 +8,7 @@
                 android:background="@color/register_bk_color"
                 android:focusableInTouchMode="true"
                 android:gravity="center"
-                tools:context=".auth.Loginnew">
+                tools:context=".auth.ForgotPwd_sendMail">
 
     <ScrollView
             android:layout_width="match_parent"
@@ -44,7 +44,7 @@
             <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="100dp"
                     app:cardBackgroundColor="@color/whiteTextColor"
                     app:cardCornerRadius="10dp">
 
@@ -56,80 +56,30 @@
 
                     <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/textInputName"
-                            style="@style/parent"
-                            android:layout_marginTop="@dimen/loginViewsMargin">
+                            style="@style/parent">
 
                         <EditText
-                                android:id="@+id/et_name_register"
+                                android:id="@+id/et_email_forgot"
                                 style="@style/modifiedEditText"
-                                android:hint="Enter Name"
+                                android:hint="Enter your registered email"
                                 android:inputType="textPersonName"
                                 android:maxLines="1" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <com.google.android.material.textfield.TextInputLayout
-                            android:id="@+id/textInputEmail"
-                            style="@style/parent"
-                            android:layout_marginTop="@dimen/loginViewsMargin">
-
-                        <EditText
-                                android:id="@+id/et_email_register"
-                                style="@style/modifiedEditText"
-                                android:hint="Enter email"
-                                android:inputType="textEmailAddress"
-                                android:maxLines="1" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                            android:id="@+id/textInputPassword"
-                            style="@style/parent"
-                            android:layout_marginTop="@dimen/loginViewsMargin">
-
-                        <EditText
-                                android:id="@+id/et_password_register"
-                                style="@style/modifiedEditText"
-                                android:hint="Enter password"
-                                android:inputType="textPassword"
-                                android:maxLines="1" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                            android:id="@+id/textInputPasswordCheck"
-                            style="@style/parent"
-                            android:layout_marginTop="@dimen/loginViewsMargin">
-                        <EditText
-                                android:id="@+id/et_password2"
-                                style="@style/modifiedEditText"
-                                android:hint="Enter password again"
-                                android:inputType="textPassword"
-                                android:maxLines="1" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
-                            android:id="@+id/btn_register"
-                            style="@style/loginButton"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_marginTop="@dimen/loginViewsMargin"
-                            android:text="Register"
-                            app:initialCornerAngle="27dp"
-                            app:spinning_bar_color="#FFF"
-                            app:spinning_bar_padding="6dp"
-                            app:spinning_bar_width="4dp" />
-
-                    <TextView
-                            style="@style/parent"
-                            android:id="@+id/move_to_login"
-                            android:layout_marginTop="@dimen/loginViewsMargin"
-                            android:text="Already have an account?"
-                            android:textAlignment="center"
-                            android:textColor="@color/themeColor"
-                            android:textSize="17sp"
-                            android:textStyle="bold" />
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-
+            <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
+                    android:id="@+id/btn_forgotPWD_sendMail"
+                    style="@style/loginButton"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/loginViewsMargin"
+                    android:text="Send Mail"
+                    app:initialCornerAngle="27dp"
+                    app:spinning_bar_color="#FFF"
+                    app:spinning_bar_padding="6dp"
+                    app:spinning_bar_width="4dp" />
             <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -193,6 +143,7 @@
             android:background="@drawable/ic_side_bg" />
 
     <ImageView
+            android:id="@+id/img_back_forgot_sendMail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"

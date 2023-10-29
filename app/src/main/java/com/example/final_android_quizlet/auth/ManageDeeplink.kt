@@ -50,7 +50,9 @@ class ManageDeeplink : AppCompatActivity() {
                         Log.i("ERROR for check passcodeFGP", "${verifyCode.data}")
                         Toast.makeText(this@ManageDeeplink, "Sorry but seem the passcode to UI forgot password wrong here", Toast.LENGTH_SHORT).show()
                     }else{
-                        startActivity(Intent(this@ManageDeeplink, ForgotPwd::class.java))
+                        val intentForgot = Intent(this@ManageDeeplink, ForgotPwd::class.java)
+                        intentForgot.putExtra("email", email)
+                        startActivity(intentForgot)
                         actionTransition.moveNextTransition()
                         finish()
                     }

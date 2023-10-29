@@ -30,14 +30,18 @@ class Login : AppCompatActivity() {
     private var tvPwd: EditText? = null
     private var btnLogin: CircularProgressButton? = null
     private var btnRegister: TextView? = null
+    private var tvForgotPwd: TextView? = null
 
-    private final val REGISTER_CODE = 1
+    private val REGISTER_CODE = 1
+    private val FORGORPWD_CODE = 2
 
     private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == REGISTER_CODE) {
             // There are no request codes
             val data: Intent? = result.data
             tvUsername!!.setText(data!!.getStringExtra("email"))
+        }else if (result.resultCode == FORGORPWD_CODE){
+
         }
     }
 
@@ -49,6 +53,7 @@ class Login : AppCompatActivity() {
         tvPwd = findViewById<EditText>(R.id.et_password_login)
         btnLogin = findViewById<CircularProgressButton>(R.id.btn_login)
         btnRegister = findViewById<TextView>(R.id.btn_move_register)
+        tvForgotPwd = findViewById(R.id.tvForgotPwd)
 //        var classTarget = MainActivity::class.java.name
 
         if(authService.isLogin()){
@@ -102,6 +107,12 @@ class Login : AppCompatActivity() {
         btnRegister!!.setOnClickListener {
             val intent = Intent(this, Register::class.java)
             resultLauncher.launch(intent)
+            actionTransition.moveNextTransition()
+        }
+
+        tvForgotPwd!!.setOnClickListener {
+            val intent = Intent(this, ForgotPwd_sendMail::class.java)
+            startActivity(intent)
             actionTransition.moveNextTransition()
         }
 
