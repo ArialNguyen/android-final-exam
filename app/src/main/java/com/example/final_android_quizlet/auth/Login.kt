@@ -37,7 +37,6 @@ class Login : AppCompatActivity() {
 
     private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == REGISTER_CODE) {
-            // There are no request codes
             val data: Intent? = result.data
             tvUsername!!.setText(data!!.getStringExtra("email"))
         }else if (result.resultCode == FORGORPWD_CODE){
@@ -49,10 +48,10 @@ class Login : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        tvUsername = findViewById<EditText>(R.id.et_email_login)
-        tvPwd = findViewById<EditText>(R.id.et_password_login)
-        btnLogin = findViewById<CircularProgressButton>(R.id.btn_login)
-        btnRegister = findViewById<TextView>(R.id.btn_move_register)
+        tvUsername = findViewById(R.id.et_email_login)
+        tvPwd = findViewById(R.id.et_password_login)
+        btnLogin = findViewById(R.id.btn_login)
+        btnRegister = findViewById(R.id.btn_move_register)
         tvForgotPwd = findViewById(R.id.tvForgotPwd)
 //        var classTarget = MainActivity::class.java.name
 
@@ -60,9 +59,6 @@ class Login : AppCompatActivity() {
             startActivity(Intent(this, MainActivity::class.java))
         }
 
-//        if(intent.getStringExtra("checkLogin") != null){
-//            classTarget = intent.getStringExtra("checkLogin").toString()
-//        }
 
         btnLogin!!.setOnClickListener {
             val email = tvUsername!!.text.toString()
@@ -95,7 +91,6 @@ class Login : AppCompatActivity() {
                             Toast.makeText(this@Login, res.data.toString(), Toast.LENGTH_LONG).show()
                         }
                     }
-
 
                     override fun onFinally() {
                         btnLogin!!.revertAnimation();

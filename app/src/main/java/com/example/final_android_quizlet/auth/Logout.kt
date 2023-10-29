@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.Window
 import android.widget.Button
+import com.example.final_android_quizlet.MainActivity
 import com.example.final_android_quizlet.R
 import com.google.firebase.auth.FirebaseAuth
 
@@ -32,7 +33,7 @@ class Logout(private val activity: Activity) : Dialog(activity), View.OnClickLis
             R.id.btnDialogLogout -> {
                 FirebaseAuth.getInstance().signOut()
 
-                val intent = Intent(activity, Login::class.java)
+                val intent = Intent(activity, MainActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 activity.startActivity(intent)
                 activity.finish()

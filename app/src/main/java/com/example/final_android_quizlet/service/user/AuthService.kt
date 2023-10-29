@@ -78,6 +78,24 @@ class AuthService() {
         }
         return res
     }
+    suspend fun changePasswordForUserLogged(oldPass: String, newPass: String): ResponseObject{
+        val res = ResponseObject()
+        try {
+            val fetch1 = userService.getUserByEmail(firebaseAuth.currentUser!!.email!!)
+            if(oldPass != fetch1.user!!.password){
+                throw Exception("Incorrect old password")
+            }
+            userService.updateProfile(fetch1.user!!.uid, hashMapOf<String, Any>(
+                "password" to newPass
+            ))
+            res.status = true
+        }catch (e: Exception){
+            res.data = e.message.toString()
+            res.status = false
+        }
+        return res
+    }
+
 
     suspend fun sendMailForgotPassword(email: String): ResponseObject {
         val res = ResponseObject()
