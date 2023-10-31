@@ -169,5 +169,21 @@
             android:layout_marginBottom="30dp"
             android:onClick="onLoginClick"
             android:src="@drawable/ic_add_img" />
-
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <com.github.ybq.android.spinkit.SpinKitView android:layout_width="wrap_content"
+                                                    android:layout_height="wrap_content"
+                                                    android:id="@+id/spin_kit"
+                                                    app:SpinKit_Style="FadingCircle"
+                                                    android:visibility="gone"
+                                                    android:layout_centerInParent="true"
+                                                    app:SpinKit_Color="@color/teal_200"
+                                                    android:scrollbarSize="@dimen/material_emphasis_medium"
+                                                    app:layout_constraintBottom_toBottomOf="parent"
+                                                    app:layout_constraintEnd_toEndOf="parent"
+                                                    app:layout_constraintTop_toTopOf="parent"
+                                                    app:layout_constraintStart_toStartOf="parent"
+                                                    android:padding="10dp"/>
+    </RelativeLayout>
 </RelativeLayout>

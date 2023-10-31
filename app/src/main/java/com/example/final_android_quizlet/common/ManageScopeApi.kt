@@ -34,19 +34,15 @@ class ManageScopeApi {
         callback: CallbackInterface
     ): Job {
         return lifecycleScope.launch {
-//            var res = ResponseObject()
             try {
                 callback.onBegin()
                 if (!callback.onValidate()) {
                     throw Exception("Invalidate data")
                 }
                 val result: ResponseObject = func()
-//                res = result.clone()
                 Log.i("PASS VALIDATE", "getResponseWithCallback: ")
                 callback.onCallback(result)
             } catch (e: Exception) {
-//                res.status = false
-//                res.data = e.message.toString()
                 Log.i("ERROR VALIDATE", "getResponseWithCallback: ")
             } finally {
                 callback.onFinally()
