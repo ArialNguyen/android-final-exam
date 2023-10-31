@@ -21,6 +21,7 @@ import com.example.final_android_quizlet.models.Term
 import com.example.final_android_quizlet.models.Topic
 import com.example.final_android_quizlet.service.topic.TopicService
 import com.github.ybq.android.spinkit.SpinKitView
+import java.util.UUID
 
 class CreateTermActivity : AppCompatActivity() {
     private val termList = ArrayList<Term>()
@@ -77,9 +78,8 @@ class CreateTermActivity : AppCompatActivity() {
         imgFinish.setOnClickListener {
             val title = etTitle.text.toString()
             val description = etDescription.text.toString()
-            Log.i("TAG", "description: ${description == ""}")
             manageScopeApi.getResponseWithCallback(lifecycleScope,
-                {(topicService::createTopic)(Topic(title, description, getUsefulTerm()))},
+                {(topicService::createTopic)(Topic(UUID.randomUUID().toString(), title, description, getUsefulTerm()))},
                 object : CallbackInterface{
                     override fun onBegin() {
                         loaderFull.visibility = View.VISIBLE

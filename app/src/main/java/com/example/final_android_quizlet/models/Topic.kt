@@ -1,12 +1,16 @@
 package com.example.final_android_quizlet.models
 
- class Topic (
-     val title: String,
-     val description: String,
-     val terms: List<Term> ){
+import java.util.*
+
+class Topic (
+    val uid: String,
+    val title: String,
+    val description: String,
+    val terms: List<Term>
+){
 
      constructor() : this(
-         "", "", listOf()
+         "","", "", listOf()
      )
     override fun toString(): String {
         return "Topic(title='$title', description=$description, terms=$terms)"
