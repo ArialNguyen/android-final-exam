@@ -44,9 +44,6 @@ class CreateTermActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_hocphan)
 
-        val backButton = findViewById<ImageView>(R.id.backButton)
-
-        backButton.setOnClickListener {
         layoutDescription = findViewById(R.id.expandDescriptionLayout)
         etDescription = findViewById(R.id.etDescription_createTopic)
         etTitle = findViewById(R.id.etTitle_createTopic)
@@ -68,9 +65,9 @@ class CreateTermActivity : AppCompatActivity() {
         adapter.notifyDataSetChanged()
 
         addAlgorithmButton.setOnClickListener {
-            val newItem = AlgorithmItem("", "")
-            algorithmList.add(newItem)
-            adapter.notifyItemInserted(algorithmList.size - 1)
+            val newItem = Term("", "")
+            termList.add(newItem)
+            adapter.notifyItemInserted(termList.size - 1)
         }
 
 
