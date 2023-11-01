@@ -1,10 +1,8 @@
 package com.example.final_android_quizlet.auth
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -15,11 +13,8 @@ import com.example.final_android_quizlet.common.ActionTransition
 import com.example.final_android_quizlet.common.ManageScopeApi
 import com.example.final_android_quizlet.dao.ResponseObject
 import com.example.final_android_quizlet.db.CallbackInterface
-import com.example.final_android_quizlet.service.user.AuthService
+import com.example.final_android_quizlet.service.AuthService
 import com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.tasks.await
-import java.io.Serializable
 
 class Login : AppCompatActivity() {
     private val authService: AuthService = AuthService()

@@ -10,7 +10,7 @@ import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.example.final_android_quizlet.R
 import com.example.final_android_quizlet.common.ActionTransition
-import com.example.final_android_quizlet.service.user.UserService
+import com.example.final_android_quizlet.service.UserService
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await

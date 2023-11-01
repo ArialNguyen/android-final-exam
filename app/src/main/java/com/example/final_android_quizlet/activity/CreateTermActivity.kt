@@ -1,7 +1,6 @@
 package com.example.final_android_quizlet.activity
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
@@ -19,7 +18,7 @@ import com.example.final_android_quizlet.dao.ResponseObject
 import com.example.final_android_quizlet.db.CallbackInterface
 import com.example.final_android_quizlet.models.Term
 import com.example.final_android_quizlet.models.Topic
-import com.example.final_android_quizlet.service.topic.TopicService
+import com.example.final_android_quizlet.service.TopicService
 import com.github.ybq.android.spinkit.SpinKitView
 import java.util.UUID
 

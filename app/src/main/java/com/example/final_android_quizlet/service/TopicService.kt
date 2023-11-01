@@ -1,15 +1,11 @@
-package com.example.final_android_quizlet.service.topic
+package com.example.final_android_quizlet.service
 
-import android.util.Log
 import com.example.final_android_quizlet.dao.ResponseObject
 import com.example.final_android_quizlet.mapper.TopicMapper
-import com.example.final_android_quizlet.models.Term
 import com.example.final_android_quizlet.models.Topic
-import com.example.final_android_quizlet.models.User
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
-import java.util.ArrayList
 
 class TopicService {
     private val db = Firebase.firestore

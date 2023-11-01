@@ -10,38 +10,38 @@
                                                        app:layout_constraintTop_toTopOf="parent"
                                                        app:layout_constraintStart_toStartOf="parent"
                                                        app:layout_constraintEnd_toEndOf="parent"
-                                                       android:id="@+id/constraintLayout3" android:padding="15dp">
+                                                       android:id="@+id/constraintLayout4" android:padding="15dp">
 
         <EditText
-                android:id="@+id/etDescription"
+                android:id="@+id/etDescription_createClass"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:hint="Mô tả (tùy chọn)"
+                android:hint="Description (Optional)"
                 android:inputType="text"
-                android:layout_below="@+id/etFolderName"
+                android:layout_below="@+id/etClassName_createClass"
                 android:layout_alignParentStart="true"
-                app:layout_constraintTop_toBottomOf="@+id/etFolderName" app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/etClassName_createClass" app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
         <EditText
-                android:id="@+id/etFolderName"
+                android:id="@+id/etClassName_createClass"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
-                android:hint="Tên thư mục"
+                android:hint="Class Name"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
     <Button
             android:text="Cancel"
             android:layout_width="wrap_content"
-            android:layout_height="48dp" android:id="@+id/btnCancel"
+            android:layout_height="48dp" android:id="@+id/btnCancel_createClass"
             android:textColorHighlight="#E91E63"
-            app:layout_constraintTop_toBottomOf="@+id/constraintLayout3" app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayout4" app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginEnd="20dp"/>
     <Button
             android:text="OK"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" android:id="@+id/btnOkay"
-            app:layout_constraintTop_toBottomOf="@+id/constraintLayout3"
-            app:layout_constraintEnd_toStartOf="@+id/btnCancel" android:layout_marginEnd="4dp"/>
+            android:layout_height="wrap_content" android:id="@+id/btnOkay_createClass"
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayout4"
+            app:layout_constraintEnd_toStartOf="@+id/btnCancel_createClass" android:layout_marginEnd="4dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

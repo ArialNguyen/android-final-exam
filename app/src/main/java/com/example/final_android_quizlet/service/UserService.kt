@@ -1,4 +1,4 @@
-package com.example.final_android_quizlet.service.user
+package com.example.final_android_quizlet.service
 
 import android.util.Log
 import com.example.final_android_quizlet.dao.ResponseObject
@@ -21,6 +21,7 @@ class UserService {
             .addOnCompleteListener {
                 if (it.isSuccessful) {
                     for (document in it.result.documents) {
+                        Log.i("TAG", "NEED to Update: Document $document")
                         val user = document.toObject<User>()
                         if (user != null) {
                             users.add(user)

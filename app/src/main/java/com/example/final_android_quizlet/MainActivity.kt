@@ -5,7 +5,6 @@ import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -17,21 +16,23 @@ import androidx.lifecycle.lifecycleScope
 import com.example.final_android_quizlet.activity.CreateTermActivity
 import com.example.final_android_quizlet.activity.LibraryActivity
 import com.example.final_android_quizlet.activity.ProfileActivity
-import com.example.final_android_quizlet.auth.ForgotPwd
 import com.example.final_android_quizlet.auth.Login
+import com.example.final_android_quizlet.common.DialogClickedEvent
 import com.example.final_android_quizlet.common.ManageScopeApi
 import com.example.final_android_quizlet.dao.ResponseObject
 import com.example.final_android_quizlet.db.CallbackInterface
-import com.example.final_android_quizlet.fragments.dialog_folder
-import com.example.final_android_quizlet.service.user.AuthService
-import com.example.final_android_quizlet.service.user.UserService
-import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
+import com.example.final_android_quizlet.fragments.DialogCreateClass
+import com.example.final_android_quizlet.fragments.DialogFolder
+import com.example.final_android_quizlet.models.Folder
+import com.example.final_android_quizlet.service.AuthService
+import com.example.final_android_quizlet.service.FolderService
 import kotlinx.coroutines.launch
 
 
 class MainActivity : AppCompatActivity() {
     private val authService: AuthService = AuthService()
     private val manageScopeApi: ManageScopeApi = ManageScopeApi()
+    private val folderService: FolderService = FolderService()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -105,10 +106,29 @@ class MainActivity : AppCompatActivity() {
         dialog.window?.setGravity(Gravity.BOTTOM)
     }
 
-    fun openDialog() {
-        val exampleDialog = dialog_folder()
-        exampleDialog.show(supportFragmentManager, "example dialog")
+    private fun openDialog() {
+        val folder = DialogFolder(this, object : DialogClickedEvent{
+            override fun setSuccessButton(folderName: String, des: String) {
+                Log.i("TAG", "$folderName, $des")
+                manageScopeApi.getResponseWithCallback(
+                    lifecycleScope,
+                    {(folderService::createFolder)(Folder(folderName, des, listOf()))},
+                    object : CallbackInterface{
+                        override fun onCallback(res: ResponseObject) {
+                            if(res.status){
+                                Log.i("TAG", "Folder Created: ${res.folder}")
+                            }else{
+                                Toast.makeText(this@MainActivity, res.data.toString(), Toast.LENGTH_LONG).show()
+                            }
+                        }
+                    }
+                )
+            }
+        })
+        folder.show(supportFragmentManager, "Folder Dialog")
     }
+
+
 
 
     override fun onResume() {

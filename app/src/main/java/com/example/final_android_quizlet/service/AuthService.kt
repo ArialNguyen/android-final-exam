@@ -1,4 +1,4 @@
-package com.example.final_android_quizlet.service.user
+package com.example.final_android_quizlet.service
 
 import android.net.Uri
 import android.util.Log
