@@ -53,7 +53,6 @@ class ChangePassword : AppCompatActivity() {
         imgBack.setOnClickListener {
             actionTransition.rollBackTransition()
             finish()
-
         }
     }
 
