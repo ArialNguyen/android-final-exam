@@ -26,13 +26,10 @@ class CreateTermActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_hocphan)
 
-        // Khai báo nút quay lại
         val backButton = findViewById<ImageView>(R.id.backButton)
 
-        // Đặt sự kiện click cho nút quay lại
         backButton.setOnClickListener {
-            // Xử lý sự kiện khi nút quay lại được nhấn
-            onBackPressed() // Để thoát khỏi CreateTermActivity và quay lại màn hình trước đó
+            onBackPressed()
         }
 
         recyclerView = findViewById(R.id.algorithmRecyclerView)
@@ -42,9 +39,9 @@ class CreateTermActivity : AppCompatActivity() {
         val addAlgorithmButton = findViewById<ImageView>(R.id.addAlgorithmButton)
 
         addAlgorithmButton.setOnClickListener {
-            val newItem = AlgorithmItem("", "") // Tạo một mục mới với thuật toán và định nghĩa rỗng
-            algorithmList.add(newItem) // Thêm mục mới vào danh sách
-            adapter.notifyItemInserted(algorithmList.size - 1) // Cập nhật RecyclerView
+            val newItem = AlgorithmItem("", "")
+            algorithmList.add(newItem)
+            adapter.notifyItemInserted(algorithmList.size - 1)
         }
 
         expandDescriptionLayout = findViewById(R.id.expandDescriptionLayout)
@@ -54,7 +51,6 @@ class CreateTermActivity : AppCompatActivity() {
         expandDescriptionIcon.setOnClickListener {
             toggleDescriptionVisibility()
         }
-
 
     }
 

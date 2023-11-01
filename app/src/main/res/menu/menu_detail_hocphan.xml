@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:title="Thêm vào thư mục"
+        android:icon="@drawable/ic_baseline_folder_30"
+        android:id="@+id/add_inFolder"/>
+
+    <item
+        android:title="Sửa"
+        android:id="@+id/fix_hocphan"/>
+
+    <item
+        android:title="Xóa học phần"
+        android:id="@+id/remove_hocphan"/>
+</menu>

@@ -6,20 +6,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="8dp"
-    android:layout_marginTop="5dp">
+    android:background="@drawable/white_background_algorithm"
+    android:layout_marginTop="18dp"
+    android:elevation="3dp">
 
-    <!-- Dấu "X" để xóa mục -->
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/white_background_algorithm"
-        android:elevation="3dp"
-        android:orientation="vertical"
-        android:paddingBottom="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:ignore="MissingConstraints">
+
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textAlgorithm"
@@ -44,31 +35,30 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/textDefinition"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textDefinition"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        app:helperTextTextColor="@android:color/holo_red_dark"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textAlgorithm">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextDefinition"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
-            app:helperTextTextColor="@android:color/holo_red_dark"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textAlgorithm">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editTextDefinition"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:hint="@string/definition"
-                android:inputType="text"
-                android:lines="1" />
+            android:layout_height="match_parent"
+            android:hint="@string/definition"
+            android:inputType="text"
+            android:lines="1" />
 
 
-        </com.google.android.material.textfield.TextInputLayout>
-    </LinearLayout>
-
+    </com.google.android.material.textfield.TextInputLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

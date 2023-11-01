@@ -111,7 +111,6 @@
                     android:textColor="#000000" />
             </LinearLayout>
 
-            <!-- Thuật toán và Định nghĩa -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/algorithmRecyclerView"
                 android:layout_width="match_parent"
@@ -130,7 +129,6 @@
                 android:layout_marginTop="10dp"
                 app:cardBackgroundColor="@color/green">
 
-            <!-- Dấu cộng thêm thuật toán và định nghĩa -->
                 <ImageView
                     android:id="@+id/addAlgorithmButton"
                     android:layout_width="48dp"

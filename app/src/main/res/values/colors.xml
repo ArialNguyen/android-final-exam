@@ -32,4 +32,5 @@
     <color name="colorEditTextBgColor">#F2F5FA</color>
     <color name="colorEditTextBorderColor">#E9EBEF</color>
     <color name="colorPrimaryButtonBg">#18206F</color>
+    <color name="colorBackground">#E7E7EA</color>
 </resources>

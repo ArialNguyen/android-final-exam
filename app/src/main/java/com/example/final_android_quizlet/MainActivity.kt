@@ -15,6 +15,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.final_android_quizlet.activity.CreateTermActivity
+import com.example.final_android_quizlet.activity.LibraryActivity
 import com.example.final_android_quizlet.activity.ProfileActivity
 import com.example.final_android_quizlet.auth.ForgotPwd
 import com.example.final_android_quizlet.auth.Login
@@ -56,6 +57,12 @@ class MainActivity : AppCompatActivity() {
         val profileButton: ImageView = findViewById(R.id.imageView7)
         profileButton.setOnClickListener {
             val intent = Intent(this, ProfileActivity::class.java)
+            startActivity(intent)
+        }
+
+        val libraryButton: ImageView = findViewById(R.id.imageView6)
+        libraryButton.setOnClickListener {
+            val intent = Intent(this, LibraryActivity::class.java)
             startActivity(intent)
         }
     }
