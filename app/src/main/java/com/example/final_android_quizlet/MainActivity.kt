@@ -21,7 +21,6 @@ import com.example.final_android_quizlet.common.DialogClickedEvent
 import com.example.final_android_quizlet.common.ManageScopeApi
 import com.example.final_android_quizlet.dao.ResponseObject
 import com.example.final_android_quizlet.db.CallbackInterface
-import com.example.final_android_quizlet.fragments.DialogCreateClass
 import com.example.final_android_quizlet.fragments.DialogFolder
 import com.example.final_android_quizlet.models.Folder
 import com.example.final_android_quizlet.service.AuthService

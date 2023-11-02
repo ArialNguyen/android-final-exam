@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.animation.AnimatorInflater
 import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -13,6 +14,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.cardview.widget.CardView
 import com.example.final_android_quizlet.R
 import me.relex.circleindicator.CircleIndicator3
 
@@ -25,6 +27,7 @@ class Detail_HocPhan_Activity : AppCompatActivity() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar_detail_hocphan)
         val textVocabulary = findViewById<TextView>(R.id.text_vocabulary)
         val indicator = findViewById<CircleIndicator3>(R.id.indicator)
+        val cardview_flashcard = findViewById<CardView>(R.id.cardview_flashcard)
         setSupportActionBar(toolbar)
 
         textVocabulary.setOnClickListener{
@@ -48,7 +51,11 @@ class Detail_HocPhan_Activity : AppCompatActivity() {
             anime_1.start()
         }
 
-        indicator;
+        cardview_flashcard.setOnClickListener {
+            val intent = Intent(this, FlashcardActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

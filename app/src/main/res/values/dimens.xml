@@ -3,4 +3,8 @@
     <dimen name="headerTextSize">25sp</dimen>
     <dimen name="newsMoreTextSize">12sp</dimen>
     <dimen name="loginViewsMargin">20dp</dimen>
+    <dimen name="card_width">150dp</dimen>
+    <dimen name="card_height">200dp</dimen>
+    <dimen name="delete_area_x">100dp</dimen>
+    <dimen name="delete_area_y">200dp</dimen>
 </resources>
