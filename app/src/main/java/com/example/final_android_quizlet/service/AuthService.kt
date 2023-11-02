@@ -7,6 +7,7 @@ import com.example.final_android_quizlet.mapper.UserMapper
 import com.example.final_android_quizlet.models.User
 import com.google.firebase.auth.ActionCodeSettings
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.dynamiclinks.DynamicLink
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +28,7 @@ class AuthService() {
                 res.status = true
                 res.data = email
                 Log.i("CURRENT USER ID IN REGISTER ", firebaseAuth.currentUser!!.uid)
-                val data = userService.addUser(User(firebaseAuth.currentUser!!.uid, name, email, password, password, null))
+                val data = userService.addUser(User(firebaseAuth.currentUser!!.uid, name, email, "", password, password, null))
                 Log.i(data.user.toString(), "register: ")
                 Log.i("AUTH", authResult.additionalUserInfo!!.username.toString())
             } catch (e: Exception) {
@@ -145,6 +146,10 @@ class AuthService() {
     suspend fun getUserLogin(): ResponseObject {
         val email = firebaseAuth.currentUser!!.email!!
         return userService.getUserByEmail(email)
+    }
+
+    fun getCurrentUser(): FirebaseUser {
+        return firebaseAuth.currentUser!!
     }
 
     fun logout() {

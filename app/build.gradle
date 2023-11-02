@@ -47,11 +47,14 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    // Image
+    implementation 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
+    implementation 'com.squareup.picasso:picasso:2.8'
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
     // SharedPreferences
     implementation "androidx.preference:preference-ktx:1.1.1"
     // Button Loading
     implementation 'com.github.leandroborgesferreira:loading-button-android:2.3.0'
-//    implementation 'br.com.simplepass:loading-button-android:2.2.0'
     // card View
     implementation "androidx.cardview:cardview:1.0.0"
     // Progress bar
@@ -60,20 +63,17 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.4.0"
     // ModelMapper
     implementation 'org.modelmapper:modelmapper:2.4.4'
-    // Import the Firebase BoM
-    implementation(platform("com.google.firebase:firebase-bom:32.4.0"))
     // Moshi
     implementation("com.squareup.moshi:moshi-kotlin:1.15.0")
-    // When using the BoM, you don't specify versions in Firebase library dependencies
+    // FireBase
+    // Import the Firebase BoM
+    implementation(platform("com.google.firebase:firebase-bom:32.4.0"))
     // Dynamic link
     implementation 'com.google.firebase:firebase-dynamic-links-ktx'
     // Add the dependency for the Firebase SDK for Google Analytics
     implementation("com.google.firebase:firebase-analytics-ktx")
-    // TODO: Add the dependencies for any other Firebase products you want to use
-    // See https://firebase.google.com/docs/android/setup#available-libraries
-    // For example, add the dependencies for Firebase Authentication and Cloud Firestore
     implementation("com.google.firebase:firebase-auth-ktx")
-
+    implementation('com.google.firebase:firebase-storage')
     implementation("com.google.firebase:firebase-firestore-ktx")
     //
 
