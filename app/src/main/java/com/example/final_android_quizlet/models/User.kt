@@ -4,16 +4,16 @@ class User(
     val uid: String,
     val name: String?,
     val email: String,
+    val avatar: String?,
     val passwordAuth: String,
     val password: String,
-    val className: String?,
     val passcodeFGP: Int? = null
 ) {
     constructor() : this(
-        "", "", "", "", "", ""
+        "", "", "", "", "", "", null
     )
 
     override fun toString(): String {
-        return "MoshiUser(uid = '$uid', name='$name', email='$email', passwordAuth='$passwordAuth', password='$password', className='$className')"
+        return "MoshiUser(uid = '$uid', name='$name', email='$email', avatar='$avatar', passwordAuth='$passwordAuth', password='$password', passcodeFGP='$password')"
     }
 }

@@ -1,5 +1,6 @@
 package com.example.final_android_quizlet.service
 
+import android.net.Uri
 import android.util.Log
 import com.example.final_android_quizlet.dao.ResponseObject
 import com.example.final_android_quizlet.mapper.UserMapper
@@ -7,12 +8,17 @@ import com.example.final_android_quizlet.models.User
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.google.rpc.context.AttributeContext.Auth
 import kotlinx.coroutines.tasks.await
 
 
 class UserService {
     private val db = Firebase.firestore
+    private val userAvatarRef: StorageReference = FirebaseStorage.getInstance().reference.child("user")
     private val userMapper: UserMapper = UserMapper()
+
     suspend fun getUsers(): MutableList<User> {
         val users = mutableListOf<User>()
 
@@ -112,6 +118,27 @@ class UserService {
         } catch (e: Exception) {
             res.data = e.message.toString()
             res.status = false
+        }
+        return res
+    }
+
+    suspend fun uploadAvatar(uid: String, uri: Uri): ResponseObject {
+        val res = ResponseObject()
+        Log.i("TAG", "URI: $uri")
+        try {
+            val fetch1 = userAvatarRef.child("avatar/$uid.jpg").putFile(uri).await()
+            val path = fetch1.storage.downloadUrl.await()
+
+            val fetch2 = updateProfile(uid, hashMapOf(
+                "avatar" to path
+            ))
+            if(!fetch2.status){
+                throw Exception(fetch2.data.toString())
+            }
+            res.status = true
+        }catch (e: Exception){
+            res.status = false
+            res.data = e.message.toString()
         }
         return res
     }
