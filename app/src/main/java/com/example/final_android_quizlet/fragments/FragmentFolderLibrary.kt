@@ -1,5 +1,6 @@
 package com.example.final_android_quizlet.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,9 +10,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.final_android_quizlet.R
 import com.example.final_android_quizlet.adapter.RecyclerViewAdapter_library_folder
-import com.example.final_android_quizlet.models.Library_folder
+import com.example.final_android_quizlet.adapter.data.Library_folder
 
-class Fragment_ThuMuc : Fragment() {
+class FragmentFolderLibrary(ctx: Context) : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

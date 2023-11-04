@@ -1,5 +1,6 @@
 package com.example.final_android_quizlet.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
@@ -10,15 +11,19 @@ import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isGone
 import androidx.lifecycle.lifecycleScope
+import com.example.final_android_quizlet.MainActivity
 import com.example.final_android_quizlet.R
 import com.example.final_android_quizlet.adapter.TermAdapter
+import com.example.final_android_quizlet.auth.Login
 import com.example.final_android_quizlet.common.ActionTransition
 import com.example.final_android_quizlet.common.ManageScopeApi
 import com.example.final_android_quizlet.dao.ResponseObject
 import com.example.final_android_quizlet.db.CallbackInterface
 import com.example.final_android_quizlet.models.Term
 import com.example.final_android_quizlet.models.Topic
+import com.example.final_android_quizlet.service.AuthService
 import com.example.final_android_quizlet.service.TopicService
+import com.example.final_android_quizlet.service.UserService
 import com.github.ybq.android.spinkit.SpinKitView
 import java.util.UUID
 
@@ -37,11 +42,17 @@ class CreateTermActivity : AppCompatActivity() {
     private val topicService: TopicService = TopicService()
     private val manageScopeApi: ManageScopeApi = ManageScopeApi()
     private val actionTransition: ActionTransition = ActionTransition(this)
+    private val authService: AuthService = AuthService()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_hocphan)
+
+        if(!authService.isLogin()){
+            startActivity(Intent(this, Login::class.java))
+        }
+        val currentUser = authService.getCurrentUser()
 
         layoutDescription = findViewById(R.id.expandDescriptionLayout)
         etDescription = findViewById(R.id.etDescription_createTopic)
@@ -78,7 +89,7 @@ class CreateTermActivity : AppCompatActivity() {
             val title = etTitle.text.toString()
             val description = etDescription.text.toString()
             manageScopeApi.getResponseWithCallback(lifecycleScope,
-                {(topicService::createTopic)(Topic(UUID.randomUUID().toString(), title, description, getUsefulTerm()))},
+                {(topicService::createTopic)(Topic(UUID.randomUUID().toString(), title, description, getUsefulTerm(), currentUser.uid))},
                 object : CallbackInterface{
                     override fun onBegin() {
                         loaderFull.visibility = View.VISIBLE
