@@ -30,7 +30,7 @@ class LibraryTopicAdapter(private val items: List<LibraryTopicAdapterItem>) : Re
                 Picasso.get().load(item.avatarUser).into(imgAvatar)
             }
             itemView.setOnClickListener {
-                itemClickListener
+                itemClickListener?.invoke(item)
             }
             val position = adapterPosition
         }

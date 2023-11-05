@@ -1,14 +1,12 @@
 package com.example.final_android_quizlet.activity
 
 import android.animation.Animator
-import android.animation.AnimatorInflater
 import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.animation.Animation
 import android.view.animation.DecelerateInterpolator
 import android.widget.TextView
 import android.widget.Toast

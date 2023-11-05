@@ -45,12 +45,12 @@ class FragmentTopicLibrary(val ctx: Context) : Fragment() {
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView_library)
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = adapter
-        adapter.setOnItemClickListener { hocPhan ->
+        adapter.setOnItemClickListener { item ->
             val intent = Intent(context, DetailTopic::class.java)
-            intent.putExtra("topicName", hocPhan.topicTitle)
-            intent.putExtra("totalTerm", hocPhan.totalTerm)
-            intent.putExtra("userName", hocPhan.userName)
-            intent.putExtra("avatar", hocPhan.avatarUser)
+            intent.putExtra("topicName", item.topicTitle)
+            intent.putExtra("totalTerm", item.totalTerm)
+            intent.putExtra("userName", item.userName)
+            intent.putExtra("avatar", item.avatarUser)
             startActivity(intent)
         }
 
@@ -65,7 +65,7 @@ class FragmentTopicLibrary(val ctx: Context) : Fragment() {
             adapter.notifyDataSetChanged()
         }
 
-        etSearchTopic!!.doOnTextChanged { text, start, before, count ->
+        etSearchTopic?.doOnTextChanged { text, start, before, count ->
             items.clear()
             items.addAll(itemsTemp.filter { it.topicTitle.contains(text!!, ignoreCase = true) }.toMutableList())
             adapter.notifyDataSetChanged()
