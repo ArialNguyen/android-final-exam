@@ -24,6 +24,7 @@
     <color name="primaryTextColor">#11CFC5</color>
 
     <color name="red">#F84D4D</color>
+    <color name="bgcolor">#ecdaa3</color>
 
 
     <color name="colorPrimaryText">#18206F</color>
@@ -33,4 +34,6 @@
     <color name="colorEditTextBorderColor">#E9EBEF</color>
     <color name="colorPrimaryButtonBg">#18206F</color>
     <color name="colorBackground">#E7E7EA</color>
+    <color name="primary_quiz">#003366</color>
+    <color name="next_btn_color">#3297ca</color>
 </resources>

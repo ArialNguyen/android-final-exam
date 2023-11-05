@@ -8,9 +8,6 @@
         android:background="#F5F5F5"
         tools:context=".activity.CreateTermActivity">
 
-    <!-- Toolbar -->
-
-    <!-- Nội dung chính -->
     <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"

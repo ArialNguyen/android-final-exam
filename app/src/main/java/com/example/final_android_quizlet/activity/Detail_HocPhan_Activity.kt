@@ -28,6 +28,20 @@ class Detail_HocPhan_Activity : AppCompatActivity() {
         val textVocabulary = findViewById<TextView>(R.id.text_vocabulary)
         val indicator = findViewById<CircleIndicator3>(R.id.indicator)
         val cardview_flashcard = findViewById<CardView>(R.id.cardview_flashcard)
+        val cardview_choice = findViewById<CardView>(R.id.cardview_choice)
+        val cardview_writeText = findViewById<CardView>(R.id.cardview_writeText)
+
+        cardview_choice.setOnClickListener {
+            val intent = Intent(this, MainQuizActivity::class.java)
+            intent.putExtra("exercise_type", "quiz")
+            startActivity(intent)
+        }
+
+        cardview_writeText.setOnClickListener {
+            val intent = Intent(this, MainQuizActivity::class.java)
+            intent.putExtra("exercise_type", "write")
+            startActivity(intent)
+        }
         setSupportActionBar(toolbar)
 
         textVocabulary.setOnClickListener{
