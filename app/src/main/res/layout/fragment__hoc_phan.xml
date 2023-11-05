@@ -6,24 +6,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="16dp"
-    tools:context=".fragments.Fragment_HocPhan">
+    tools:context=".fragments.FragmentTopicLibrary">
 
-    <!-- TODO: Update blank fragment layout -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/text_bo_loc"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:ignore="MissingConstraints">
-        
-            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/textInputEmail"
+                style="@style/parent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Bộ lọc"
-                android:inputType="text"/>
+                android:layout_marginTop="@dimen/loginViewsMargin" tools:ignore="MissingConstraints">
+            <EditText
+                    android:id="@+id/etFilterTopic_library"
+                    style="@style/modifiedEditText"
+                    android:hint="Filtering Topic"
+                    android:inputType="textEmailAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1" />
         </com.google.android.material.textfield.TextInputLayout>
+
 
         <TextView
             android:id="@+id/text_tien_trinh"
@@ -33,11 +36,11 @@
             android:layout_weight="1"
             android:text="Tiến trình"
             android:textSize="18sp"
-            app:layout_constraintTop_toBottomOf="@+id/text_bo_loc"
+            app:layout_constraintTop_toBottomOf="@+id/textInputEmail"
             tools:ignore="MissingConstraints" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/hocPhanRecyclerView"
+            android:id="@+id/recyclerView_library"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardCornerRadius="8dp"

@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.final_android_quizlet.R
-import com.example.final_android_quizlet.models.Library_folder
+import com.example.final_android_quizlet.adapter.data.Library_folder
 
 class RecyclerViewAdapter_library_folder(private val items: List<Library_folder>) : RecyclerView.Adapter<RecyclerViewAdapter_library_folder.ViewHolder>() {
 

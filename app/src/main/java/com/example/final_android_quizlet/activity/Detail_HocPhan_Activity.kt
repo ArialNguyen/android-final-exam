@@ -18,7 +18,7 @@ import androidx.cardview.widget.CardView
 import com.example.final_android_quizlet.R
 import me.relex.circleindicator.CircleIndicator3
 
-class Detail_HocPhan_Activity : AppCompatActivity() {
+class DetailTopic : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

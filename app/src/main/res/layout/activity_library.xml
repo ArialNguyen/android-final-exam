@@ -8,12 +8,16 @@
     <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
         android:id="@+id/toolbar_library"
         android:background="@color/colorBackground"
         app:title="Library"
         app:titleMarginStart="30dp"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toRightOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+    />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLibrary"
