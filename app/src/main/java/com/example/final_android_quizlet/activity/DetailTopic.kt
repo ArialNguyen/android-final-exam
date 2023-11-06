@@ -4,10 +4,12 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
 import android.content.Intent
+import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.animation.DecelerateInterpolator
 import android.widget.TextView
 import android.widget.Toast
@@ -15,20 +17,25 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.example.final_android_quizlet.R
+import com.example.final_android_quizlet.adapter.DetailTopicHoriAdapter
 import com.example.final_android_quizlet.auth.Login
 import com.example.final_android_quizlet.common.ActionTransition
+import com.example.final_android_quizlet.common.HorizontalSpaceItemDecoration
 import com.example.final_android_quizlet.common.ManageScopeApi
-import com.example.final_android_quizlet.dao.ResponseObject
-import com.example.final_android_quizlet.db.CallbackInterface
+import com.example.final_android_quizlet.models.Term
 import com.example.final_android_quizlet.service.AuthService
 import com.example.final_android_quizlet.service.TopicService
-import com.example.final_android_quizlet.service.TopicService.TopicForUserLogged
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.launch
+import me.relex.circleindicator.CircleIndicator2
 import me.relex.circleindicator.CircleIndicator3
-import kotlin.math.log
+
 
 class DetailTopic : AppCompatActivity() {
 
@@ -39,8 +46,8 @@ class DetailTopic : AppCompatActivity() {
 
 
     private var toolbar: Toolbar? = null
-    private var textVocabulary: TextView? = null
-    private var indicator: CircleIndicator3? = null
+    private var tvTerm: TextView? = null
+    private var indicator2: CircleIndicator2? = null
     private var cvFlashCard: CardView? = null
     private var cvChoice: CardView? = null
     private var cvWriteText: CardView? = null
@@ -50,6 +57,9 @@ class DetailTopic : AppCompatActivity() {
     private var tvDecription: TextView? = null
     private var tvTotalTerm: TextView? = null
 
+    // Adapter
+    private var recyclerViewHorizontal: RecyclerView? = null
+    private val items: MutableList<Term> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,8 +72,8 @@ class DetailTopic : AppCompatActivity() {
 
 
         toolbar = findViewById(R.id.toolbar_detail_hocphan)
-        textVocabulary = findViewById(R.id.text_vocabulary)
-        indicator = findViewById(R.id.indicator)
+        tvTerm = findViewById(R.id.tv_Term_TopicDetail)
+        recyclerViewHorizontal = findViewById(R.id.recyclerView_DetailTopic)
         cvFlashCard = findViewById(R.id.cardview_flashcard)
         cvChoice = findViewById(R.id.cardview_choice)
         cvWriteText = findViewById(R.id.cardview_writeText)
@@ -81,16 +91,7 @@ class DetailTopic : AppCompatActivity() {
         }
 
 
-        lifecycleScope.launch {
-            val topicId = intent.getStringExtra("topicId")!!
-            val topic = topicService.TopicForUserLogged().getTopicById(topicId).topic!!
-            val user = authService.getUserLogin().user!!
-            tvTopicName!!.text = topic.title
-            tvDecription!!.text = topic.description
-            tvTotalTerm!!.text = "${topic.terms.size} thuật ngữ"
-            tvUserName!!.text = user.name
-            Picasso.get().load(user.avatar).into(avatarUser)
-        }
+
 
 
         cvChoice!!.setOnClickListener {
@@ -106,9 +107,24 @@ class DetailTopic : AppCompatActivity() {
         }
         setSupportActionBar(toolbar)
 
-        textVocabulary!!.setOnClickListener {
-            val anime_1 = ObjectAnimator.ofFloat(textVocabulary, "scaleX", 1f, 0f)
-            val anime_2 = ObjectAnimator.ofFloat(textVocabulary, "scaleX", 0f, 1f)
+        // Recycler View
+        val adapter = DetailTopicHoriAdapter(items)
+        recyclerViewHorizontal = findViewById(R.id.recyclerView_DetailTopic)
+        recyclerViewHorizontal!!.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        recyclerViewHorizontal!!.adapter = adapter
+        val horizontalSpaceItemDecoration = HorizontalSpaceItemDecoration()
+        recyclerViewHorizontal!!.addItemDecoration(horizontalSpaceItemDecoration)
+        // CircleIndicator2
+        val pagerSnapHelper = PagerSnapHelper()
+        pagerSnapHelper.attachToRecyclerView(recyclerViewHorizontal)
+
+        indicator2 = findViewById(R.id.indicator2_DetailTopic)
+        indicator2!!.attachToRecyclerView(recyclerViewHorizontal!!, pagerSnapHelper)
+        adapter.registerAdapterDataObserver(indicator2!!.adapterDataObserver); // Need to have this line to update data
+
+        adapter.setOnItemClickListener{term ->
+            val anime_1 = ObjectAnimator.ofFloat(tvTerm, "scaleX", 1f, 0f)
+            val anime_2 = ObjectAnimator.ofFloat(tvTerm, "scaleX", 0f, 1f)
 
             anime_1.interpolator = DecelerateInterpolator()
             anime_2.interpolator = DecelerateInterpolator()
@@ -116,11 +132,7 @@ class DetailTopic : AppCompatActivity() {
             anime_1.addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
                     super.onAnimationEnd(animation)
-                    if (textVocabulary!!.text == "Xin chào") {
-                        textVocabulary!!.text = "Hello"
-                    } else {
-                        textVocabulary!!.text = "Xin chào"
-                    }
+                    tvTerm!!.text = if (tvTerm!!.text == term.term) term.definition else term.term
                     anime_2.start()
                 }
             })
@@ -130,6 +142,19 @@ class DetailTopic : AppCompatActivity() {
         cvFlashCard!!.setOnClickListener {
             val intent = Intent(this, FlashcardActivity::class.java)
             startActivity(intent)
+        }
+
+        lifecycleScope.launch {
+            val topicId = intent.getStringExtra("topicId")!!
+            val topic = topicService.TopicForUserLogged().getTopicById(topicId).topic!!
+            val user = authService.getUserLogin().user!!
+            tvTopicName!!.text = topic.title
+            tvDecription!!.text = topic.description
+            tvTotalTerm!!.text = "${topic.terms.size} thuật ngữ"
+            tvUserName!!.text = user.name
+            Picasso.get().load(user.avatar).into(avatarUser)
+            items.addAll(topic.terms)
+            adapter.notifyDataSetChanged()
         }
 
     }

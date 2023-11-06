@@ -18,6 +18,7 @@ class QuizActivity : AppCompatActivity() {
 
     private lateinit var countDownTimer: CountDownTimer
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val exerciseType = intent.getStringExtra("exercise_type")

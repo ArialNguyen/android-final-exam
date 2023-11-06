@@ -19,7 +19,6 @@ class MainQuizActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_quiz)
 
-
         Handler().postDelayed({
             val exerciseType = intent.getStringExtra("exercise_type")
 

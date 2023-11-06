@@ -46,7 +46,7 @@ class FragmentFolderLibrary(ctx: Context) : Fragment() {
             val folders = folderService.getFoldersByUserId(user.uid).folders!!
             Log.i("TAG", "folders: $folders")
             val list =  folders.map {
-                LibraryFolderAdapterItem(it.name, it.topics.size, user.avatar, user.name!!)
+                LibraryFolderAdapterItem(it, it.topics.size, user)
             }.toMutableList()
             items.addAll(list)
             adapter.notifyDataSetChanged()

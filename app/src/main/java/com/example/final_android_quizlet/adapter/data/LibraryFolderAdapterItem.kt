@@ -1,8 +1,10 @@
 package com.example.final_android_quizlet.adapter.data
 
+import com.example.final_android_quizlet.models.Folder
+import com.example.final_android_quizlet.models.User
+
 data class LibraryFolderAdapterItem(
-    val folderName: String,
+    val folder: Folder,
     val totalTopic: Number,
-    val avatarUser: String?,
-    val userName: String
+    val user: User
 )

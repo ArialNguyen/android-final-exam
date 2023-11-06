@@ -21,11 +21,11 @@ class LibraryFolderAdapter(private val items: List<LibraryFolderAdapterItem>) : 
         val tvUserName: TextView = itemView.findViewById(R.id.tvUserName_FolderLibrary)
         val imgAvatar: CircleImageView = itemView.findViewById(R.id.imgAvatarIcon_folderLibrary)
         fun bind(item: LibraryFolderAdapterItem) {
-            tvFolderName.text = item.folderName
+            tvFolderName.text = item.folder.name
             tvTotalTopic.text = "${item.totalTopic} học phần"
-            tvUserName.text = item.userName
-            if(item.avatarUser!!.isNotEmpty()){
-                Picasso.get().load(item.avatarUser).into(imgAvatar)
+            tvUserName.text = item.user.name
+            if(item.user.avatar!!.isNotEmpty()){
+                Picasso.get().load(item.user.avatar).into(imgAvatar)
             }
 //            itemView.setOnClickListener {
 //                itemClickListener?.invoke(item)
