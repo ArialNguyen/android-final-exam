@@ -122,22 +122,6 @@ class DetailTopic : AppCompatActivity() {
         indicator2!!.attachToRecyclerView(recyclerViewHorizontal!!, pagerSnapHelper)
         adapter.registerAdapterDataObserver(indicator2!!.adapterDataObserver); // Need to have this line to update data
 
-        adapter.setOnItemClickListener{term ->
-            val anime_1 = ObjectAnimator.ofFloat(tvTerm, "scaleX", 1f, 0f)
-            val anime_2 = ObjectAnimator.ofFloat(tvTerm, "scaleX", 0f, 1f)
-
-            anime_1.interpolator = DecelerateInterpolator()
-            anime_2.interpolator = DecelerateInterpolator()
-
-            anime_1.addListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator) {
-                    super.onAnimationEnd(animation)
-                    tvTerm!!.text = if (tvTerm!!.text == term.term) term.definition else term.term
-                    anime_2.start()
-                }
-            })
-            anime_1.start()
-        }
 
         cvFlashCard!!.setOnClickListener {
             val intent = Intent(this, FlashcardActivity::class.java)
