@@ -1,16 +1,17 @@
 package com.example.final_android_quizlet.models
 
 class Folder(
-    val name: String,
-    val description: String,
-    val topics: List<String>
+    var name: String,
+    var description: String,
+    var topics: List<String>,
+    var userId: String
 ) {
     constructor() : this(
-        "", "", listOf()
+        "", "", listOf(), ""
     )
 
     override fun toString(): String {
-        return "Folder(name='$name', description='$description', topics=$topics)"
+        return "Folder(name='$name', description='$description', topics=$topics, userId=$userId)"
     }
 
 }

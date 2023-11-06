@@ -4,240 +4,290 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBackground">
+    android:background="@color/colorBackground"
+    android:padding="15dp"
+>
 
     <androidx.appcompat.widget.Toolbar
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/toolbar_detail_hocphan"
-        android:background="@color/colorBackground"
-        app:logo="@drawable/ic_baseline_back_black_24"
-        app:titleMarginStart="30dp"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:layout_constraintTop_toTopOf="parent"/>
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:id="@+id/toolbar_detail_hocphan"
+            android:background="@color/colorBackground"
+            app:logo="@drawable/ic_baseline_back_black_24"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+    <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
+                                                       android:layout_height="wrap_content"
+                                                       app:layout_constraintStart_toStartOf="parent"
+                                                       android:padding="5dp"
+                                                       app:layout_constraintTop_toBottomOf="@+id/toolbar_detail_hocphan">
+        <TextView
+                android:id="@+id/text_vocabulary"
+                android:layout_width="363dp"
+                android:layout_height="173dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/white_background_algorithm"
+                android:gravity="center"
+                android:text="Hello"
+                android:textSize="25sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" tools:ignore="MissingConstraints"/>
 
-    <TextView
-        android:id="@+id/text_vocabulary"
-        android:layout_width="363dp"
-        android:layout_height="173dp"
-        android:layout_marginTop="5dp"
-        android:background="@drawable/white_background_algorithm"
-        android:gravity="center"
-        android:text="Hello"
-        android:textSize="25sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar_detail_hocphan" />
-
-    <me.relex.circleindicator.CircleIndicator3
-        android:id="@+id/indicator"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:layout_marginTop="5dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:ci_drawable="@drawable/bg_indicator"
-        app:layout_constraintTop_toBottomOf="@+id/text_vocabulary" />
-
-    <TextView
-        android:id="@+id/name_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:text="Tiếng anh"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.067"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/indicator" />
-    <LinearLayout
-        android:id="@+id/llcode_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.084"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/name_title">
-        <ImageView
-            android:id="@+id/imageView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-           android:src="@drawable/ic_baseline_profile" />
+        <me.relex.circleindicator.CircleIndicator3
+                android:id="@+id/indicator"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginTop="5dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:ci_drawable="@drawable/bg_indicator"
+                app:layout_constraintTop_toBottomOf="@+id/text_vocabulary"/>
 
         <TextView
-            android:id="@+id/code_quiz"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="15dp"
-            android:text="quizlette23254363" />
-    </LinearLayout>
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardview_flashcard"
-        android:layout_width="371dp"
-        android:layout_height="wrap_content"
-        android:layout_rowWeight="1"
-        android:layout_columnWeight="1"
-        android:layout_gravity="fill"
-        android:layout_margin="8dp"
-        android:layout_marginTop="16dp"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="8dp"
-
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.525"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/llcode_view">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_margin="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.084"
-            app:layout_constraintStart_toStartOf="parent">
-
-            <ImageView
-                android:layout_width="wrap_content"
+                android:id="@+id/tvTopicName_DetailTopic"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_baseline_flashcard" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="Tiếng anh"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.067"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/indicator"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/llcode_view"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:orientation="horizontal"
+
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.084"
                 app:layout_constraintStart_toStartOf="parent"
-                android:layout_marginStart="15dp">
+                app:layout_constraintTop_toBottomOf="@+id/tvTopicName_DetailTopic">
 
+            <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
+                                                               android:layout_marginTop="10dp"
+                                                               android:id="@+id/constraintLayout5"
+                                                               android:layout_height="wrap_content"
+                                                               app:layout_constraintTop_toTopOf="parent"
+                                                               app:layout_constraintStart_toStartOf="parent"
+                                                               app:layout_constraintEnd_toEndOf="parent">
+                <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/imgAvatarIcon_DetailTopic"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:src="@drawable/person"
+                        tools:ignore="NotSibling"
+                        app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" app:layout_constraintVertical_bias="0.0"/>
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Flashcard"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+                        android:id="@+id/tvUserName_DetailTopic"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="8dp"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:text="quizlette23254363"
+                        app:layout_constraintStart_toEndOf="@+id/imgAvatarIcon_DetailTopic"
+                        app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent"/>
+                <View
+                        android:id="@+id/divider2"
+                        android:layout_width="1dp"
+                        android:layout_height="30dp"
+                        android:background="?android:attr/listDivider"
+                        app:layout_constraintStart_toEndOf="@+id/tvUserName_DetailTopic"
+                        android:layout_marginStart="12dp"
+                        app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent"/>
                 <TextView
-                    android:layout_width="wrap_content"
+                        android:text="2 thuật ngữ"
+                        android:layout_width="74dp"
+                        android:textSize="14sp"
+                        android:layout_marginLeft="12dp"
+                        android:layout_height="match_parent" android:id="@+id/tvTotalTerm_DetailTopic"
+                        tools:ignore="MissingConstraints" app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toEndOf="@+id/divider2"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                    android:text="Description"
+                    android:layout_width="match_parent"
+                    android:textSize="18sp"
+                    android:paddingTop="5dp"
+                    android:layout_height="wrap_content" android:id="@+id/tvDescriptionTopic_DetailTopic"
+                    app:layout_constraintTop_toBottomOf="@+id/constraintLayout5"
+                    app:layout_constraintStart_toStartOf="parent" app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintVertical_bias="0.0"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
+                                                           android:layout_height="wrap_content"
+                                                           app:layout_constraintStart_toStartOf="parent"
+                                                           app:layout_constraintEnd_toEndOf="parent"
+                                                           android:padding="10dp"
+                                                           app:layout_constraintTop_toBottomOf="@+id/llcode_view">
+            <androidx.cardview.widget.CardView
+                    android:id="@+id/cardview_flashcard"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Ôn lại các thuật ngữ và định nghĩa"/>
-            </LinearLayout>
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
+                    android:layout_rowWeight="1"
+                    android:layout_columnWeight="1"
+                    android:layout_gravity="fill"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="5dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.525"
+                    app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardview_choice"
-        android:layout_width="371dp"
-        android:layout_height="wrap_content"
-        android:layout_rowWeight="1"
-        android:layout_columnWeight="1"
-        android:layout_gravity="fill"
-        android:layout_margin="8dp"
-        android:layout_marginTop="16dp"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.525"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardview_flashcard">
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_margin="8dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.084"
+                        app:layout_constraintStart_toStartOf="parent">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_margin="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.084"
-            app:layout_constraintStart_toStartOf="parent">
+                    <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_baseline_flashcard"/>
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_baseline_multiple_choice" />
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.084"
+                            app:layout_constraintStart_toStartOf="parent"
+                            android:layout_marginStart="15dp">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.084"
-                app:layout_constraintStart_toStartOf="parent"
-                android:layout_marginStart="15dp">
+                        <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Flashcard"
+                                android:textSize="20sp"
+                                android:textStyle="bold"/>
+                        <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Ôn lại các thuật ngữ và định nghĩa"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-                <TextView
-                    android:layout_width="wrap_content"
+            <androidx.cardview.widget.CardView
+                    android:id="@+id/cardview_choice"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Trắc nghiệm"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-                <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_rowWeight="1"
+                    android:layout_columnWeight="1"
+                    android:layout_gravity="fill"
+                    android:layout_marginTop="10dp"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="5dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.525"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/cardview_flashcard">
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_margin="8dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.084"
+                        app:layout_constraintStart_toStartOf="parent">
+
+                    <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_baseline_multiple_choice"/>
+
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.084"
+                            app:layout_constraintStart_toStartOf="parent"
+                            android:layout_marginStart="15dp">
+
+                        <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Trắc nghiệm"
+                                android:textSize="20sp"
+                                android:textStyle="bold"/>
+                        <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Làm bài kiểm tra trắc nghiệm thư"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                    android:id="@+id/cardview_writeText"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Làm bài kiểm tra trắc nghiệm thư"/>
-            </LinearLayout>
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
+                    android:layout_rowWeight="1"
+                    android:layout_columnWeight="1"
+                    android:layout_gravity="fill"
+                    android:layout_marginTop="10dp"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="5dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.525"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/cardview_choice">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardview_writeText"
-        android:layout_width="371dp"
-        android:layout_height="wrap_content"
-        android:layout_rowWeight="1"
-        android:layout_columnWeight="1"
-        android:layout_gravity="fill"
-        android:layout_margin="8dp"
-        android:layout_marginTop="16dp"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.525"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardview_choice">
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_margin="8dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.084"
+                        app:layout_constraintStart_toStartOf="parent">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_margin="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.084"
-            app:layout_constraintStart_toStartOf="parent">
+                    <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_baseline_word"/>
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_baseline_word" />
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.084"
+                            app:layout_constraintStart_toStartOf="parent"
+                            android:layout_marginStart="15dp">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.084"
-                app:layout_constraintStart_toStartOf="parent"
-                android:layout_marginStart="15dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Gõ từ"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Nhập lại nghĩa tiếng Anh và ngược lại"/>
-            </LinearLayout>
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
+                        <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Gõ từ"
+                                android:textSize="20sp"
+                                android:textStyle="bold"/>
+                        <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Nhập lại nghĩa tiếng Anh và ngược lại"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

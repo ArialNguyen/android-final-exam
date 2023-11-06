@@ -14,6 +14,6 @@ data class Topic (
          "","", "", listOf(), ""
      )
     override fun toString(): String {
-        return "Topic(title='$title', description=$description, terms=$terms, userId=$userId)"
+        return "Topic(uid='$uid', title='$title', description=$description, terms=$terms, userId=$userId)"
     }
 }

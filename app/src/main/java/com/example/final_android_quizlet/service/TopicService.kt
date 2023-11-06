@@ -5,6 +5,7 @@ import com.example.final_android_quizlet.dao.ResponseObject
 import com.example.final_android_quizlet.mapper.TopicMapper
 import com.example.final_android_quizlet.models.Topic
 import com.example.final_android_quizlet.models.User
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
@@ -31,6 +32,7 @@ class TopicService {
         return res
     }
 
+
     suspend fun getTopicsByUserId(userId: String): ResponseObject {
         val res: ResponseObject = ResponseObject()
         try {
@@ -50,4 +52,27 @@ class TopicService {
         return res
     }
 
+    inner class TopicForUserLogged{
+        private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+        suspend fun getTopicById(id: String): ResponseObject {
+            val res: ResponseObject = ResponseObject()
+            Log.i("id", id)
+            try {
+                val data = db.collection("topics")
+                    .whereEqualTo("uid", id)
+                    .whereEqualTo("userId", firebaseAuth.currentUser!!.uid)
+                    .get().await()
+                if (data.documents.size == 0) {
+                    throw Exception("Error... Make sure you already logged and had this topic!")
+                } else {
+                    res.topic = topicMapper.convertToTopic(data.documents[0].data!!)
+                    res.status = true
+                }
+            } catch (e: Exception) {
+                res.data = e.message.toString()
+                res.status = false
+            }
+            return res
+        }
+    }
 }

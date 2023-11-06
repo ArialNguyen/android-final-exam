@@ -17,17 +17,16 @@ class LibraryTopicAdapter(private val items: List<LibraryTopicAdapterItem>) : Re
     private var itemClickListener: ((LibraryTopicAdapterItem) -> Unit)? = null
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val itemView: ConstraintLayout = itemView.findViewById(R.id.itemAdapterLibraryTopic)
         val tvTopicTitle: TextView = itemView.findViewById(R.id.tvTitleName_library)
         val tvTotalTerm: TextView = itemView.findViewById(R.id.tvTotalTerm_library)
         val tvUserName: TextView = itemView.findViewById(R.id.tvUserName_library)
         val imgAvatar: CircleImageView = itemView.findViewById(R.id.imgAvatarIcon_library)
         fun bind(item: LibraryTopicAdapterItem) {
-            tvTopicTitle.text = item.topicTitle
-            tvTotalTerm.text = "${item.totalTerm} thuật ngữ"
-            tvUserName.text = item.userName
-            if(item.avatarUser!!.isNotEmpty()){
-                Picasso.get().load(item.avatarUser).into(imgAvatar)
+            tvTopicTitle.text = item.topic.title
+            tvTotalTerm.text = "${item.topic.terms.size} thuật ngữ"
+            tvUserName.text = item.user.name
+            if(item.user.avatar!!.isNotEmpty()){
+                Picasso.get().load(item.user.avatar).into(imgAvatar)
             }
             itemView.setOnClickListener {
                 itemClickListener?.invoke(item)

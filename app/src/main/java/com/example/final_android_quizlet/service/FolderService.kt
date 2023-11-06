@@ -30,4 +30,23 @@ class FolderService {
         }
         return res
     }
+
+    suspend fun getFoldersByUserId(userId: String): ResponseObject {
+        val res: ResponseObject = ResponseObject()
+        try {
+            val data = db.collection("folders")
+                .whereEqualTo("userId", userId)
+                .get().await()
+            if (data.documents.size == 0) {
+                throw Exception("User doesn't have any topic yet")
+            } else {
+                res.folders = folderMapper.convertToFolders(data.documents)
+                res.status = true
+            }
+        } catch (e: Exception) {
+            res.data = e.message.toString()
+            res.status = false
+        }
+        return res
+    }
 }

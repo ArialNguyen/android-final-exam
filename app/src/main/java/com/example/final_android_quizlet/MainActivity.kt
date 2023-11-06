@@ -111,7 +111,7 @@ class MainActivity : AppCompatActivity() {
                 Log.i("TAG", "$folderName, $des")
                 manageScopeApi.getResponseWithCallback(
                     lifecycleScope,
-                    {(folderService::createFolder)(Folder(folderName, des, listOf()))},
+                    {(folderService::createFolder)(Folder(folderName, des, listOf(), authService.getCurrentUser().uid))},
                     object : CallbackInterface{
                         override fun onCallback(res: ResponseObject) {
                             if(res.status){

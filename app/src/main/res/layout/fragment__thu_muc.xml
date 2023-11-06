@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="16dp"
-    tools:context=".fragments.FragmentTopicLibrary">
+    tools:context=".fragments.FragmentFolderLibrary">
 
     <!-- TODO: Update blank fragment layout -->
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -14,7 +14,7 @@
         android:layout_height="match_parent">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/thuMucRecyclerView"
+            android:id="@+id/folderRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardCornerRadius="8dp"

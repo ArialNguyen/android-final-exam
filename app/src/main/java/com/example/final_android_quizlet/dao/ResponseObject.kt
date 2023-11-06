@@ -10,8 +10,13 @@ class ResponseObject(
     public var user: User? = null,
     public var topic: Topic? = null,
     public var topics: List<Topic>? = null,
-    public var folder: Folder? = null
-){}
+    public var folder: Folder? = null,
+    public var folders: List<Folder>? = null,
+){
+    override fun toString(): String {
+        return "ResponseObject(status=$status, data=$data, user=$user, topic=$topic, topics=$topics, folder=$folder, folders=$folders)"
+    }
+}
 
 fun ResponseObject.clone(): ResponseObject {
     val res = ResponseObject()
@@ -21,5 +26,6 @@ fun ResponseObject.clone(): ResponseObject {
     res.topic = this.topic
     res.topics = this.topics
     res.folder = this.folder
+    res.folders = this.folders
     return res
 }
