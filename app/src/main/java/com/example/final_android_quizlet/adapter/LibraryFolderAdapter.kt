@@ -20,6 +20,7 @@ class LibraryFolderAdapter(private val items: List<LibraryFolderAdapterItem>) : 
         val tvTotalTopic: TextView = itemView.findViewById(R.id.tvTotalTopic_FolderLibrary)
         val tvUserName: TextView = itemView.findViewById(R.id.tvUserName_FolderLibrary)
         val imgAvatar: CircleImageView = itemView.findViewById(R.id.imgAvatarIcon_folderLibrary)
+
         fun bind(item: LibraryFolderAdapterItem) {
             tvFolderName.text = item.folder.name
             tvTotalTopic.text = "${item.totalTopic} học phần"
@@ -41,6 +42,11 @@ class LibraryFolderAdapter(private val items: List<LibraryFolderAdapterItem>) : 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
         holder.bind(item)
+
+        // Gọi sự kiện khi người dùng nhấn vào item
+        holder.itemView.setOnClickListener {
+            itemClickListener?.invoke(item)
+        }
     }
 
     override fun getItemCount(): Int {

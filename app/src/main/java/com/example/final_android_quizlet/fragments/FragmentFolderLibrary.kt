@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.final_android_quizlet.R
+import com.example.final_android_quizlet.activity.DetailFolderActivity
 import com.example.final_android_quizlet.activity.DetailTopic
 import com.example.final_android_quizlet.adapter.LibraryFolderAdapter
 import com.example.final_android_quizlet.adapter.data.LibraryFolderAdapterItem
@@ -57,11 +58,11 @@ class FragmentFolderLibrary(private val ctx: Context,private val getBackAdapterF
         }
 
         adapter.setOnItemClickListener { item ->
-            val intent = Intent(context, DetailTopic::class.java)
-//            intent.putExtra("topicName", item.topicTitle)
-//            intent.putExtra("totalTerm", item.totalTerm)
-//            intent.putExtra("userName", item.userName)
-//            intent.putExtra("avatar", item.avatarUser)
+            val intent = Intent(requireContext(), DetailFolderActivity::class.java)
+            intent.putExtra("folderName", item.folder.name)
+            intent.putExtra("totalTerm", "${item.totalTopic} học phần")
+            intent.putExtra("userName", item.user.name)
+            intent.putExtra("avatar", item.user.avatar)
             startActivity(intent)
         }
         getBackAdapterFromViewPager.onResult(items, adapter)
