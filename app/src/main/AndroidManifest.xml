@@ -82,6 +82,10 @@
             android:exported="false">
         </activity>
         <activity
+            android:name=".activity.DetailFolderActivity"
+            android:exported="false">
+        </activity>
+        <activity
             android:name=".activity.FlashcardActivity" android:exported="false">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

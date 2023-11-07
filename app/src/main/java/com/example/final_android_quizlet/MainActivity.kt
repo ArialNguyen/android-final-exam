@@ -25,6 +25,7 @@ import com.example.final_android_quizlet.fragments.DialogFolder
 import com.example.final_android_quizlet.models.Folder
 import com.example.final_android_quizlet.service.AuthService
 import com.example.final_android_quizlet.service.FolderService
+import com.squareup.picasso.Picasso
 import kotlinx.coroutines.launch
 
 
@@ -32,12 +33,14 @@ class MainActivity : AppCompatActivity() {
     private val authService: AuthService = AuthService()
     private val manageScopeApi: ManageScopeApi = ManageScopeApi()
     private val folderService: FolderService = FolderService()
+    private var txName_main: TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val plusIcon: ImageView = findViewById(R.id.imageView5)
 //        val btn_logout = findViewById<Button>(R.id.btn_logout)
+        txName_main = findViewById(R.id.txName_main)
 
         if(!authService.isLogin()){
             startActivity(Intent(this, Login::class.java).putExtra("checkLogin", this@MainActivity::class.java.name))
@@ -48,6 +51,11 @@ class MainActivity : AppCompatActivity() {
 //                authService.logout()
 //            }
 //        }
+
+        lifecycleScope.launch {
+            val user = authService.getUserLogin().user!!
+            txName_main!!.text = user.name
+        }
 
 
         plusIcon.setOnClickListener {
