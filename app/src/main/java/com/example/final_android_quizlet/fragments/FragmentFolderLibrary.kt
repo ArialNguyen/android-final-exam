@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -20,6 +21,7 @@ import com.example.final_android_quizlet.adapter.LibraryTopicAdapter
 import com.example.final_android_quizlet.adapter.data.LibraryTopicAdapterItem
 import com.example.final_android_quizlet.adapter.data.LibraryFolderAdapterItem
 import com.example.final_android_quizlet.mapper.TopicMapper
+import com.example.final_android_quizlet.models.Folder
 import com.example.final_android_quizlet.service.AuthService
 import com.example.final_android_quizlet.service.FolderService
 import com.example.final_android_quizlet.service.TopicService
@@ -43,7 +45,13 @@ class FragmentFolderLibrary(ctx: Context) : Fragment() {
 
         lifecycleScope.launch {
             val user = authService.getUserLogin().user!!
-            val folders = folderService.getFoldersByUserId(user.uid).folders!!
+            val fetch1 = folderService.FolderForUserLogged().getFolders()
+            val folders = mutableListOf<Folder>()
+            if(fetch1.status) {
+                folders.addAll(fetch1.folders!!)
+            }else{
+                Toast.makeText(activity, fetch1.data.toString(), Toast.LENGTH_LONG).show()
+            }
             Log.i("TAG", "folders: $folders")
             val list =  folders.map {
                 LibraryFolderAdapterItem(it, it.topics.size, user)

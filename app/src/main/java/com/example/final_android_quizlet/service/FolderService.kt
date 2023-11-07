@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.final_android_quizlet.dao.ResponseObject
 import com.example.final_android_quizlet.mapper.FolderMapper
 import com.example.final_android_quizlet.models.Folder
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
@@ -30,23 +31,27 @@ class FolderService {
         }
         return res
     }
+    inner class FolderForUserLogged{
+        private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 
-    suspend fun getFoldersByUserId(userId: String): ResponseObject {
-        val res: ResponseObject = ResponseObject()
-        try {
-            val data = db.collection("folders")
-                .whereEqualTo("userId", userId)
-                .get().await()
-            if (data.documents.size == 0) {
-                throw Exception("User doesn't have any topic yet")
-            } else {
-                res.folders = folderMapper.convertToFolders(data.documents)
+        suspend fun getFolders(): ResponseObject {
+            val res: ResponseObject = ResponseObject()
+            try {
+                val data = db.collection("folders")
+                    .whereEqualTo("userId", firebaseAuth.currentUser!!.uid)
+                    .get().await()
                 res.status = true
+                if (data.documents.size == 0) {
+                    res.folders = listOf()
+                } else {
+                    res.folders = folderMapper.convertToFolders(data.documents)
+                }
+            } catch (e: Exception) {
+                res.data = e.message.toString()
+                res.status = false
             }
-        } catch (e: Exception) {
-            res.data = e.message.toString()
-            res.status = false
+            return res
         }
-        return res
     }
+
 }
