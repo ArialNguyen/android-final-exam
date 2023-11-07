@@ -1,5 +1,6 @@
 package com.example.final_android_quizlet.models
 
+import java.io.Serializable
 import java.util.*
 
 data class Topic (
@@ -8,7 +9,7 @@ data class Topic (
     var description: String,
     var terms: List<Term>,
     var userId: String
-){
+): Serializable{
 
      constructor() : this(
          "","", "", listOf(), ""

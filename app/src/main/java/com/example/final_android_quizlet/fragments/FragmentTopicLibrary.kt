@@ -3,14 +3,10 @@ package com.example.final_android_quizlet.fragments
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -20,12 +16,13 @@ import com.example.final_android_quizlet.R
 import com.example.final_android_quizlet.activity.DetailTopic
 import com.example.final_android_quizlet.adapter.LibraryTopicAdapter
 import com.example.final_android_quizlet.adapter.data.LibraryTopicAdapterItem
+import com.example.final_android_quizlet.common.GetBackAdapterFromViewPager
 import com.example.final_android_quizlet.mapper.TopicMapper
 import com.example.final_android_quizlet.service.AuthService
 import com.example.final_android_quizlet.service.TopicService
 import kotlinx.coroutines.launch
 
-class FragmentTopicLibrary(val ctx: Context) : Fragment() {
+class FragmentTopicLibrary(val ctx: Context, private val getBackAdapterFromViewPager: GetBackAdapterFromViewPager) : Fragment() {
     private var items: MutableList<LibraryTopicAdapterItem> = mutableListOf()
     private val itemsTemp: MutableList<LibraryTopicAdapterItem> = mutableListOf()
     private val authService: AuthService = AuthService()
@@ -67,6 +64,7 @@ class FragmentTopicLibrary(val ctx: Context) : Fragment() {
             items.addAll(itemsTemp.filter { it.topic.title.contains(text!!, ignoreCase = true) }.toMutableList())
             adapter.notifyDataSetChanged()
         }
+        getBackAdapterFromViewPager.onResult(items, adapter)
         return view
     }
 }

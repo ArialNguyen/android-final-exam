@@ -43,7 +43,7 @@ class ManageScopeApi {
                 Log.i("PASS VALIDATE", "getResponseWithCallback: ")
                 callback.onCallback(result)
             } catch (e: Exception) {
-                Log.i("ERROR VALIDATE", "getResponseWithCallback: ")
+                Log.i("ERROR VALIDATE", e.message.toString())
             } finally {
                 callback.onFinally()
             }

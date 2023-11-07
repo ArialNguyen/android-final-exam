@@ -1,7 +1,9 @@
 package com.example.final_android_quizlet.activity
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
@@ -107,6 +109,12 @@ class CreateTermActivity : AppCompatActivity() {
                     }
                     override fun onCallback(res: ResponseObject) {
                         if(res.status){
+                            if(intent.getStringExtra("className") != null && intent.getStringExtra("className")!!.isNotEmpty()){
+                                Log.i("TAG", "COME TO create Term check intent")
+                                val resIntent = Intent()
+                                resIntent.putExtra("extra_topic", res.topic!!)
+                                setResult(Activity.RESULT_OK, resIntent)
+                            }
                             finish()
                             actionTransition.rollBackTransition()
                         }else{

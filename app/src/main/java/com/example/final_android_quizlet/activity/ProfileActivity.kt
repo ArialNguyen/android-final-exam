@@ -3,7 +3,6 @@ package com.example.final_android_quizlet.activity
 
 import android.app.ProgressDialog
 import android.content.Intent
-import android.media.Image
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -16,8 +15,9 @@ import androidx.lifecycle.lifecycleScope
 import com.example.final_android_quizlet.R
 import com.example.final_android_quizlet.auth.ChangePassword
 import com.example.final_android_quizlet.auth.Login
-import com.example.final_android_quizlet.auth.Logout
 import com.example.final_android_quizlet.common.ActionTransition
+import com.example.final_android_quizlet.common.DialogClickedEvent
+import com.example.final_android_quizlet.fragments.dialog.DialogLogout
 import com.example.final_android_quizlet.service.AuthService
 import com.example.final_android_quizlet.service.UserService
 import com.squareup.picasso.Picasso
@@ -76,8 +76,7 @@ class ProfileActivity : AppCompatActivity() {
         }
 
         layoutLogout!!.setOnClickListener {
-            val confirmationDialog = Logout(this)
-            confirmationDialog.show()
+            openLogoutDialog()
         }
         imgAvatar!!.setOnClickListener {
             CropImage.activity().setAspectRatio(1, 1).start(this)
@@ -89,6 +88,11 @@ class ProfileActivity : AppCompatActivity() {
             actionTransition.rollBackTransition()
         }
 
+    }
+
+    private fun openLogoutDialog() {
+        val folder = DialogLogout(this, this, object : DialogClickedEvent {})
+        folder.show(supportFragmentManager, "Logout Dialog")
     }
 
     private suspend fun uploadAvatar(uid: String, imageUri: Uri){
