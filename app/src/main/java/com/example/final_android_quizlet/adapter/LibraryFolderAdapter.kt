@@ -7,7 +7,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.final_android_quizlet.R
 import com.example.final_android_quizlet.adapter.data.LibraryFolderAdapterItem
-import com.example.final_android_quizlet.adapter.data.LibraryTopicAdapterItem
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 

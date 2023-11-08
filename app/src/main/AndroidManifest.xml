@@ -17,9 +17,6 @@
             android:usesCleartextTraffic="true"
             tools:targetApi="31">
         <activity
-                android:name=".DialogLogout"
-                android:exported="false"/>
-        <activity
                 android:name=".auth.ForgotPwd_sendMail"
                 android:exported="false">
         </activity>
@@ -89,6 +86,7 @@
             android:name=".activity.DetailFolderActivity"
             android:exported="false">
         </activity>
+        <activity android:name=".activity.AddTopicInFolderActivity" android:exported="false"/>
         <activity
             android:name=".activity.FlashcardActivity" android:exported="false">
             <meta-data

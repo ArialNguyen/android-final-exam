@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.final_android_quizlet.R
 import com.example.final_android_quizlet.activity.DetailFolderActivity
-import com.example.final_android_quizlet.activity.DetailTopic
 import com.example.final_android_quizlet.adapter.LibraryFolderAdapter
 import com.example.final_android_quizlet.adapter.data.LibraryFolderAdapterItem
 import com.example.final_android_quizlet.common.GetBackAdapterFromViewPager

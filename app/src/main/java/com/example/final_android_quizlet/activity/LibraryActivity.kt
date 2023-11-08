@@ -22,7 +22,6 @@ import com.example.final_android_quizlet.common.ActionDialog
 import com.example.final_android_quizlet.common.GetBackAdapterFromViewPager
 import com.example.final_android_quizlet.fragments.FragmentFolderLibrary
 import com.example.final_android_quizlet.fragments.FragmentTopicLibrary
-import com.example.final_android_quizlet.fragments.Fragment_LopHoc
 import com.example.final_android_quizlet.models.Topic
 import com.example.final_android_quizlet.service.AuthService
 import com.google.android.material.tabs.TabLayout
@@ -68,9 +67,6 @@ class LibraryActivity : AppCompatActivity() {
                 libraryAdapter.addAdapterForChild(items, adapter)
             }
         }), "Thư Mục")
-        libraryAdapter.addFragment(Fragment_LopHoc(this, object : GetBackAdapterFromViewPager{
-
-        }), "Lớp Học")
         viewPager.adapter = libraryAdapter
 
         TabLayoutMediator(tabLibrary, viewPager){tab, position ->

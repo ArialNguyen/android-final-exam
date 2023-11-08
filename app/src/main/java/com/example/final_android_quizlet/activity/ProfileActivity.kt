@@ -45,7 +45,6 @@ class ProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_info)
 
-        val backButton = findViewById<ImageView>(R.id.backButton)
 
         if(!authService.isLogin()){
             startActivity(Intent(this, Login::class.java))
@@ -82,11 +81,6 @@ class ProfileActivity : AppCompatActivity() {
             CropImage.activity().setAspectRatio(1, 1).start(this)
         }
 
-
-        backButton.setOnClickListener {
-            finish()
-            actionTransition.rollBackTransition()
-        }
 
     }
 

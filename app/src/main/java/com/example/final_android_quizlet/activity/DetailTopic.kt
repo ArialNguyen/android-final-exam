@@ -1,16 +1,15 @@
 package com.example.final_android_quizlet.activity
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
-import android.animation.ObjectAnimator
+import android.app.Dialog
 import android.content.Intent
-import android.graphics.Rect
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.view.animation.DecelerateInterpolator
+import android.view.Gravity
+import android.view.ViewGroup
+import android.view.Window
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -20,7 +19,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.example.final_android_quizlet.R
 import com.example.final_android_quizlet.adapter.DetailTopicHoriAdapter
 import com.example.final_android_quizlet.auth.Login
@@ -34,8 +32,6 @@ import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.launch
 import me.relex.circleindicator.CircleIndicator2
-import me.relex.circleindicator.CircleIndicator3
-
 
 class DetailTopic : AppCompatActivity() {
 
@@ -72,7 +68,7 @@ class DetailTopic : AppCompatActivity() {
 
 
         toolbar = findViewById(R.id.toolbar_detail_hocphan)
-        tvTerm = findViewById(R.id.tv_Term_TopicDetail)
+//        tvTerm = findViewById(R.id.tv_Term_TopicDetail)
         recyclerViewHorizontal = findViewById(R.id.recyclerView_DetailTopic)
         cvFlashCard = findViewById(R.id.cardview_flashcard)
         cvChoice = findViewById(R.id.cardview_choice)
@@ -84,15 +80,23 @@ class DetailTopic : AppCompatActivity() {
         avatarUser = findViewById(R.id.imgAvatarIcon_DetailTopic)
         tvUserName = findViewById(R.id.tvUserName_DetailTopic)
 
+        val imgMenuTopic = findViewById<ImageView>(R.id.imgMenuTopic_DetailTopic)
+        val imgBack = findViewById<ImageView>(R.id.imgBack_DetailTopic)
+
+        imgMenuTopic.setOnClickListener {
+            showMenuDetailTopic()
+        }
+
+        imgBack.setOnClickListener {
+            onBackPressed()
+        }
+
+
         if(intent.getStringExtra("topicId") == null || intent.getStringExtra("topicId")!!.isEmpty()){
             Toast.makeText(this, "Something error... Try again!", Toast.LENGTH_LONG).show()
             finish()
             actionTransition.rollBackTransition()
         }
-
-
-
-
 
         cvChoice!!.setOnClickListener {
             val intent = Intent(this, MainQuizActivity::class.java)
@@ -105,7 +109,6 @@ class DetailTopic : AppCompatActivity() {
             intent.putExtra("exercise_type", "write")
             startActivity(intent)
         }
-        setSupportActionBar(toolbar)
 
         // Recycler View
         val adapter = DetailTopicHoriAdapter(items)
@@ -143,29 +146,44 @@ class DetailTopic : AppCompatActivity() {
 
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_detail_hocphan, menu)
-        return true
+    private fun showMenuDetailTopic() {
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.dialog_menu_topic)
+
+        val addInFolder: LinearLayout = dialog.findViewById(R.id.liAddInFolder_DetailTopic)
+        val editDetailTopic: LinearLayout = dialog.findViewById(R.id.liEdit_DetailTopic)
+        val removeDetailTopic: LinearLayout = dialog.findViewById(R.id.liRemove_DetailTopic)
+        val cancelDetailTopic: ImageView = dialog.findViewById(R.id.imgCancel_DetailTopic)
+
+
+
+        addInFolder.setOnClickListener {
+            val intent = Intent(this, AddTopicInFolderActivity::class.java)
+            startActivity(intent)
+        }
+
+        editDetailTopic.setOnClickListener {
+
+            dialog.dismiss()
+        }
+
+        removeDetailTopic.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        cancelDetailTopic.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
+        dialog.window?.setGravity(Gravity.BOTTOM)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.add_inFolder -> {
-                Toast.makeText(this, "Add In Folder", Toast.LENGTH_SHORT).show()
-                true
-            }
-
-            R.id.fix_hocphan -> {
-                Toast.makeText(this, "Sửa Học Phần", Toast.LENGTH_SHORT).show()
-                true
-            }
-
-            R.id.remove_hocphan -> {
-                Toast.makeText(this, "Xóa Học Phần", Toast.LENGTH_SHORT).show()
-                true
-            }
-
-            else -> super.onOptionsItemSelected(item)
-        }
+    override fun onBackPressed() {
+        super.onBackPressed()
     }
 }
