@@ -1,6 +1,7 @@
 package com.example.final_android_quizlet.activity
 
 import android.app.Dialog
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -11,12 +12,15 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.example.final_android_quizlet.R
+import com.example.final_android_quizlet.common.ActionDialog
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 
 
 class DetailFolderActivity : AppCompatActivity() {
+    private val actionDialog: ActionDialog = ActionDialog(this, lifecycleScope)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail_folder)
@@ -59,16 +63,18 @@ class DetailFolderActivity : AppCompatActivity() {
         dialog.setContentView(R.layout.dialog_menu_detail_folder)
 
         val editDetailFolder: LinearLayout = dialog.findViewById(R.id.liEdit_DetailFolderActivity)
-        val addTopicDetailTopic: LinearLayout = dialog.findViewById(R.id.liAddTopic_DetailFolderActivity)
+        val addTopicDetailFolder: LinearLayout = dialog.findViewById(R.id.liAddTopic_DetailFolderActivity)
         val removeDetailFolder: LinearLayout = dialog.findViewById(R.id.liRemove_DetailFolderActivity)
         val cancelDetailFolder: ImageView = dialog.findViewById(R.id.imgCancel_DetailFolderActivity)
 
         editDetailFolder.setOnClickListener {
+            actionDialog.openCreateFolderDialog(null)
             dialog.dismiss()
         }
 
-        addTopicDetailTopic.setOnClickListener {
-
+        addTopicDetailFolder.setOnClickListener {
+            val intent = Intent(this, AddTopic_FolderActivity::class.java)
+            startActivity(intent)
             dialog.dismiss()
         }
 

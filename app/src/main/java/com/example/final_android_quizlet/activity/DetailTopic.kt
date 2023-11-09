@@ -1,5 +1,6 @@
 package com.example.final_android_quizlet.activity
 
+import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
@@ -153,8 +154,10 @@ class DetailTopic : AppCompatActivity() {
 
         val addInFolder: LinearLayout = dialog.findViewById(R.id.liAddInFolder_DetailTopic)
         val editDetailTopic: LinearLayout = dialog.findViewById(R.id.liEdit_DetailTopic)
+        val statusDetailTopic: LinearLayout = dialog.findViewById(R.id.liEditStatus_DetailTopic)
         val removeDetailTopic: LinearLayout = dialog.findViewById(R.id.liRemove_DetailTopic)
         val cancelDetailTopic: ImageView = dialog.findViewById(R.id.imgCancel_DetailTopic)
+
 
 
 
@@ -165,6 +168,11 @@ class DetailTopic : AppCompatActivity() {
 
         editDetailTopic.setOnClickListener {
 
+            dialog.dismiss()
+        }
+
+        statusDetailTopic.setOnClickListener {
+            statusActivity()
             dialog.dismiss()
         }
 
@@ -181,6 +189,27 @@ class DetailTopic : AppCompatActivity() {
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
         dialog.window?.setGravity(Gravity.BOTTOM)
+    }
+
+    private fun statusActivity() {
+        val builder = AlertDialog.Builder(this)
+
+        builder.setTitle("Status")
+        val statusArray = resources.getStringArray(R.array.status)
+        builder.setSingleChoiceItems(statusArray, 0) { dialog, i ->
+            val selectedStatus = statusArray[i]
+            Toast.makeText(this, "You Selected $selectedStatus status", Toast.LENGTH_SHORT).show()
+        }
+
+        builder.setPositiveButton("OK") { dialog, i ->
+
+        }
+
+        builder.setNegativeButton("Cancel") { dialog, i ->
+
+        }
+
+        builder.show()
     }
 
     override fun onBackPressed() {

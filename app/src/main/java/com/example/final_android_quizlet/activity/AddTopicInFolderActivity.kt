@@ -1,19 +1,16 @@
 package com.example.final_android_quizlet.activity
 
 import android.os.Bundle
-import android.os.Parcelable
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import androidx.appcompat.widget.Toolbar
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.final_android_quizlet.R
-import com.example.final_android_quizlet.adapter.LibraryFolderAdapter
-import java.util.ArrayList
 
 class AddTopicInFolderActivity : AppCompatActivity() {
+
     private var toAddInFolder: Toolbar? = null
     private var imgBack: ImageView? = null
     private var imgYes: ImageView? = null
@@ -23,7 +20,7 @@ class AddTopicInFolderActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_topicinfolder)
+        setContentView(R.layout.activity_add_topicinfolder_intopic)
 
         toAddInFolder = findViewById(R.id.toAddInFolder_AddTopicInFolderActivity)
         imgBack = findViewById(R.id.imgBack_AddTopicInFolderActivity)
@@ -32,5 +29,13 @@ class AddTopicInFolderActivity : AppCompatActivity() {
         txCreateFolder = findViewById(R.id.txCreateFolder_AddTopicInFolderActivity)
         folderRecyclerView = findViewById(R.id.folderRecyclerView)
 
+        imgBack!!.setOnClickListener {
+            onBackPressed()
+        }
+
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
     }
 }
