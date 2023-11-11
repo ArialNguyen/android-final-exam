@@ -57,12 +57,12 @@ class LibraryActivity : AppCompatActivity() {
 //        tabLibrary.setupWithViewPager(viewPager)
 
         libraryAdapter = LibraryAdapter(this)
-        libraryAdapter.addFragment(FragmentTopicLibrary(this, object : GetBackAdapterFromViewPager{
+        libraryAdapter.addFragment(FragmentTopicLibrary( object : GetBackAdapterFromViewPager{
             override fun onResult(items: MutableList<LibraryTopicAdapterItem>, adapter: LibraryTopicAdapter) {
                 libraryAdapter.addAdapterForChild(items, adapter)
             }
         }), "Học Phần")
-        libraryAdapter.addFragment(FragmentFolderLibrary(this, object : GetBackAdapterFromViewPager{
+        libraryAdapter.addFragment(FragmentFolderLibrary( object : GetBackAdapterFromViewPager{
             override fun onResult(items: MutableList<LibraryFolderAdapterItem>, adapter: LibraryFolderAdapter) {
                 libraryAdapter.addAdapterForChild(items, adapter)
             }

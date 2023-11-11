@@ -1,5 +1,6 @@
 package com.example.final_android_quizlet.fragments
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -20,9 +21,11 @@ import com.example.final_android_quizlet.common.GetBackAdapterFromViewPager
 import com.example.final_android_quizlet.mapper.TopicMapper
 import com.example.final_android_quizlet.service.AuthService
 import com.example.final_android_quizlet.service.TopicService
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class FragmentTopicLibrary(val ctx: Context, private val getBackAdapterFromViewPager: GetBackAdapterFromViewPager) : Fragment() {
+class FragmentTopicLibrary(private val getBackAdapterFromViewPager: GetBackAdapterFromViewPager) : Fragment() {
     private var items: MutableList<LibraryTopicAdapterItem> = mutableListOf()
     private val itemsTemp: MutableList<LibraryTopicAdapterItem> = mutableListOf()
     private val authService: AuthService = AuthService()
@@ -49,14 +52,18 @@ class FragmentTopicLibrary(val ctx: Context, private val getBackAdapterFromViewP
         }
 
         lifecycleScope.launch {
-            val user = authService.getUserLogin().user!!
-            val topics = topicService.getTopicsByUserId(user.uid).topics!!
-            val list =  topics.map {
-                LibraryTopicAdapterItem(it, user)
-            }.toMutableList()
-            itemsTemp.addAll(list)
-            items.addAll(list)
-            adapter.notifyDataSetChanged()
+            withContext(Dispatchers.IO){
+                val user = authService.getUserLogin().user!!
+                val topics = topicService.getTopicsByUserId(user.uid).topics!!
+                val list =  topics.map {
+                    LibraryTopicAdapterItem(it, user)
+                }.toMutableList()
+                itemsTemp.addAll(list)
+                items.addAll(list)
+                (context as Activity).runOnUiThread {
+                    adapter.notifyDataSetChanged()
+                }
+            }
         }
 
         etSearchTopic?.doOnTextChanged { text, start, before, count ->

@@ -1,11 +1,14 @@
 package com.example.final_android_quizlet.service
 
 import android.util.Log
+import com.example.final_android_quizlet.common.MyFBQuery
+import com.example.final_android_quizlet.common.MyFBQueryMethod
 import com.example.final_android_quizlet.dao.ResponseObject
 import com.example.final_android_quizlet.mapper.TopicMapper
 import com.example.final_android_quizlet.models.Topic
-import com.example.final_android_quizlet.models.User
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
@@ -51,7 +54,26 @@ class TopicService {
         }
         return res
     }
-
+    suspend fun getDocumentsByFields(params: List<MyFBQuery>): List<DocumentSnapshot> {
+        var collectionRef = db.collection("topics")
+        var query: Query? = null
+        params.forEach { it ->
+            when (it.mode) {
+                MyFBQueryMethod.EQUAL -> {
+                    Log.i("TAG", "String: ${it.field}, value = ${it.value}")
+                    query = if (query == null) collectionRef.whereEqualTo(it.field, it.value.toString())
+                    else query!!.whereEqualTo(it.field, it.value.toString())
+                }
+                MyFBQueryMethod.IN -> {
+                    Log.i("TAG", "List: ${it.field}, value = ${it.value as List<Any>}")
+                    query = if (query == null) collectionRef.whereIn(it.field, it.value as List<Any>)
+                    else query!!.whereIn(it.field, it.value as List<Any>)
+                }
+            }
+        }
+        Log.i("TAG", "getDocumentIdsByFields: ")
+        return query!!.get().await().documents.toList()
+    }
     inner class TopicForUserLogged{
         private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
         suspend fun getTopicById(id: String): ResponseObject {
@@ -87,6 +109,25 @@ class TopicService {
                     res.topics = topicMapper.convertToTopics(data.documents)
                 }
             } catch (e: Exception) {
+                res.data = e.message.toString()
+                res.status = false
+            }
+            return res
+        }
+
+        suspend fun getTopicsByQuerys(myFBQuery: List<MyFBQuery>): ResponseObject {
+            val res: ResponseObject = ResponseObject()
+            try {
+                myFBQuery.toMutableList().add(MyFBQuery("userId", firebaseAuth.currentUser!!.uid, MyFBQueryMethod.EQUAL))
+                val data = getDocumentsByFields(myFBQuery)
+                res.status = true
+                if (data.isEmpty()) {
+                    res.topics = listOf()
+                } else {
+                    res.topics = topicMapper.convertToTopics(data)
+                }
+            } catch (e: Exception) {
+                Log.i("ERROR", "getTopicsByQuerys: ${e.message}")
                 res.data = e.message.toString()
                 res.status = false
             }

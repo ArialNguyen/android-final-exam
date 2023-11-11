@@ -89,6 +89,7 @@ class FolderService {
         }
 
         suspend fun getFolderById(uid: String): ResponseObject {
+            Log.i("TAG", "getFolderById: $uid")
             val res: ResponseObject = ResponseObject()
             try {
                 val data = db.collection("folders")
@@ -100,9 +101,10 @@ class FolderService {
                     throw Exception("Not Found Folder with id = $uid")
                 } else {
                     res.status = true
-                    res.folder = folderMapper.convertToFolder(data.documents[0])
+                    res.folder = folderMapper.convertToFolder(data.documents[0].data!!)
                 }
             } catch (e: Exception) {
+                Log.i("TAG", "getFolderById: ${e.message}")
                 res.data = e.message.toString()
                 res.status = false
             }

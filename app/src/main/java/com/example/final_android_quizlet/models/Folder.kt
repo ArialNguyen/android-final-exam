@@ -6,7 +6,7 @@ class Folder(
     var uid: String,
     var name: String,
     var description: String,
-    var topics: List<Topic>,
+    var topics: List<String>,
     var userId: String
 ) : Serializable{
     constructor() : this(

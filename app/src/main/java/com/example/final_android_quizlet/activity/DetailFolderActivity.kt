@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.ViewGroup
 import android.view.Window
@@ -20,15 +21,16 @@ import com.example.final_android_quizlet.R
 import com.example.final_android_quizlet.adapter.LibraryTopicAdapter
 import com.example.final_android_quizlet.adapter.data.LibraryTopicAdapterItem
 import com.example.final_android_quizlet.auth.Login
-import com.example.final_android_quizlet.common.ActionDialog
-import com.example.final_android_quizlet.common.ActionTransition
-import com.example.final_android_quizlet.common.ManageScopeApi
+import com.example.final_android_quizlet.common.*
 import com.example.final_android_quizlet.models.Folder
 import com.example.final_android_quizlet.service.AuthService
 import com.example.final_android_quizlet.service.FolderService
+import com.example.final_android_quizlet.service.TopicService
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class DetailFolderActivity : AppCompatActivity() {
@@ -43,6 +45,7 @@ class DetailFolderActivity : AppCompatActivity() {
 
     // Service
     private val folderService: FolderService = FolderService()
+    private val topicService: TopicService = TopicService()
     private val manageScopeApi: ManageScopeApi = ManageScopeApi()
     private val actionTransition: ActionTransition = ActionTransition(this)
     private val authService: AuthService = AuthService()
@@ -98,16 +101,23 @@ class DetailFolderActivity : AppCompatActivity() {
 
         // Handle CallBack
         lifecycleScope.launch {
-            val user = authService.getUserLogin().user!!
-            tvUserName!!.text = user.name
-            Picasso.get().load(user.avatar).into(imgAvatar)
-            val foldersFetch = folderService.FolderForUserLogged().getFolderById(folder.uid)
-            if(foldersFetch.status){
-                val topics = foldersFetch.folder!!.topics.map { LibraryTopicAdapterItem(it, user) }
-                items.addAll(topics)
-                adapter.notifyDataSetChanged()
-            }else{
-                Toast.makeText(this@DetailFolderActivity, foldersFetch.data.toString(), Toast.LENGTH_LONG).show()
+            withContext(Dispatchers.IO){
+                val user = authService.getUserLogin().user!!
+                runOnUiThread {
+                    tvUserName!!.text = user.name
+                    Picasso.get().load(user.avatar).into(imgAvatar)
+                }
+                val foldersFetch = folderService.FolderForUserLogged().getFolderById(folder.uid)
+                if(foldersFetch.status){
+                    val topicsId = foldersFetch.folder!!.topics
+                    val fetchTopics = topicService.TopicForUserLogged().getTopicsByQuerys(listOf(MyFBQuery("uid", topicsId, MyFBQueryMethod.IN)))
+                    items.addAll(fetchTopics.topics!!.map { LibraryTopicAdapterItem(it, user) })
+                    runOnUiThread { adapter.notifyDataSetChanged() }
+                }else{
+                    runOnUiThread {
+                        Toast.makeText(this@DetailFolderActivity, foldersFetch.data.toString(), Toast.LENGTH_LONG).show()
+                    }
+                }
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.example.final_android_quizlet.fragments
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -20,9 +21,11 @@ import com.example.final_android_quizlet.common.GetBackAdapterFromViewPager
 import com.example.final_android_quizlet.models.Folder
 import com.example.final_android_quizlet.service.AuthService
 import com.example.final_android_quizlet.service.FolderService
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class FragmentFolderLibrary(private val ctx: Context,private val getBackAdapterFromViewPager: GetBackAdapterFromViewPager) : Fragment() {
+class FragmentFolderLibrary(private val getBackAdapterFromViewPager: GetBackAdapterFromViewPager) : Fragment() {
     private var items: MutableList<LibraryFolderAdapterItem> = mutableListOf()
     private val authService: AuthService = AuthService()
     private val folderService: FolderService = FolderService()
@@ -39,13 +42,16 @@ class FragmentFolderLibrary(private val ctx: Context,private val getBackAdapterF
         recyclerView.adapter = adapter
 
         lifecycleScope.launch {
+            withContext(Dispatchers.IO){}
             val user = authService.getUserLogin().user!!
             val fetch1 = folderService.FolderForUserLogged().getFolders()
             val folders = mutableListOf<Folder>()
             if(fetch1.status) {
                 folders.addAll(fetch1.folders!!)
             }else{
-                Toast.makeText(activity, fetch1.data.toString(), Toast.LENGTH_LONG).show()
+                (context as Activity).runOnUiThread {
+                    Toast.makeText(activity, fetch1.data.toString(), Toast.LENGTH_LONG).show()
+                }
             }
             Log.i("TAG", "folders: $folders")
             val list =  folders.map {
@@ -53,7 +59,9 @@ class FragmentFolderLibrary(private val ctx: Context,private val getBackAdapterF
             }.toMutableList()
             items.addAll(list)
 //            getBackAdapterFromViewPager.onResult(items, adapter::class.java)
-            adapter.notifyDataSetChanged()
+            (context as Activity).runOnUiThread {
+                adapter.notifyDataSetChanged()
+            }
         }
 
         adapter.setOnItemClickListener { item ->
