@@ -11,48 +11,103 @@ import android.view.Window
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.final_android_quizlet.R
+import com.example.final_android_quizlet.adapter.LibraryTopicAdapter
+import com.example.final_android_quizlet.adapter.data.LibraryTopicAdapterItem
+import com.example.final_android_quizlet.auth.Login
 import com.example.final_android_quizlet.common.ActionDialog
+import com.example.final_android_quizlet.common.ActionTransition
+import com.example.final_android_quizlet.common.ManageScopeApi
+import com.example.final_android_quizlet.models.Folder
+import com.example.final_android_quizlet.service.AuthService
+import com.example.final_android_quizlet.service.FolderService
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
+import kotlinx.coroutines.launch
 
 
 class DetailFolderActivity : AppCompatActivity() {
+
+    private var imgMenuFolder: ImageView? = null
+    private var imgBack: ImageView? = null
+
+    private var tvFolderName: TextView? = null
+    private var tvTotalTerm: TextView? = null
+    private var tvUserName: TextView? = null
+    private var imgAvatar: CircleImageView? = null
+
+    // Service
+    private val folderService: FolderService = FolderService()
+    private val manageScopeApi: ManageScopeApi = ManageScopeApi()
+    private val actionTransition: ActionTransition = ActionTransition(this)
+    private val authService: AuthService = AuthService()
     private val actionDialog: ActionDialog = ActionDialog(this, lifecycleScope)
+
+    // Adapter
+    private var items: MutableList<LibraryTopicAdapterItem> = mutableListOf()
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail_folder)
 
-        val folderName = intent.getStringExtra("folderName")
-        val totalTerm = intent.getStringExtra("totalTerm")
-        val userName = intent.getStringExtra("userName")
-        val avatar = intent.getStringExtra("avatar")
+        if(!authService.isLogin()){
+            startActivity(Intent(this, Login::class.java))
+        }
 
-        val tvFolderName = findViewById<TextView>(R.id.tvFolderName)
-        val tvTotalTerm = findViewById<TextView>(R.id.tvTotalTerm)
-        val tvUserName = findViewById<TextView>(R.id.tvUserName)
-        val imgAvatar = findViewById<CircleImageView>(R.id.imgAvatar)
+        // Get intent
+        val folder = intent.getSerializableExtra("folder") as Folder
 
-        val imgMenuFolder = findViewById<ImageView>(R.id.imgMenuFolder_DetailFolderActivity)
-        val imgBack = findViewById<ImageView>(R.id.imgBack_DetailFolderActivity)
+        tvFolderName = findViewById(R.id.tvFolderName)
+        tvTotalTerm = findViewById(R.id.tvTotalTerm)
+        tvUserName = findViewById(R.id.tvUserName)
+        imgAvatar = findViewById(R.id.imgAvatar)
 
-        imgMenuFolder.setOnClickListener {
+        imgMenuFolder = findViewById(R.id.imgMenuFolder_DetailFolderActivity)
+        imgBack = findViewById(R.id.imgBack_DetailFolderActivity)
+
+        // Load draw data
+        tvFolderName!!.text = folder.name
+        tvTotalTerm!!.text = "${folder.topics.size} học phần"
+//        tvUserName!!.text = getSharedPreferences()
+
+        // Handle Event Listener
+        imgMenuFolder!!.setOnClickListener {
             showMenuDetailFolder()
         }
 
-        imgBack.setOnClickListener {
+        imgBack!!.setOnClickListener {
             onBackPressed()
         }
+        // Adapter
+        val adapter = LibraryTopicAdapter(items)
+        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView_DetailFolder)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = adapter
 
-        tvFolderName.text = folderName
-        tvTotalTerm.text = totalTerm
-        tvUserName.text = userName
+        adapter.setOnItemClickListener { item ->
+            val intent = Intent(this, DetailTopic::class.java)
+            intent.putExtra("topicId", item.topic.uid) // should be move to topic
+            startActivity(intent)
+        }
 
-        if (avatar != null) {
-            if (avatar.isNotEmpty()) {
-                Picasso.get().load(avatar).into(imgAvatar)
+        // Handle CallBack
+        lifecycleScope.launch {
+            val user = authService.getUserLogin().user!!
+            tvUserName!!.text = user.name
+            Picasso.get().load(user.avatar).into(imgAvatar)
+            val foldersFetch = folderService.FolderForUserLogged().getFolderById(folder.uid)
+            if(foldersFetch.status){
+                val topics = foldersFetch.folder!!.topics.map { LibraryTopicAdapterItem(it, user) }
+                items.addAll(topics)
+                adapter.notifyDataSetChanged()
+            }else{
+                Toast.makeText(this@DetailFolderActivity, foldersFetch.data.toString(), Toast.LENGTH_LONG).show()
             }
         }
     }

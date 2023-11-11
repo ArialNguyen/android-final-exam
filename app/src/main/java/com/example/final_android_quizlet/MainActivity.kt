@@ -109,13 +109,6 @@ class MainActivity : AppCompatActivity() {
         dialog.window?.setGravity(Gravity.BOTTOM)
     }
 
-
-
-
-
-
-
-
     override fun onResume() {
         super.onResume()
         if(!authService.isLogin()){

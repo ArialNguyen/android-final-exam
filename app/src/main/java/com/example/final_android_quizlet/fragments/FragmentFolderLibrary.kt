@@ -58,10 +58,7 @@ class FragmentFolderLibrary(private val ctx: Context,private val getBackAdapterF
 
         adapter.setOnItemClickListener { item ->
             val intent = Intent(requireContext(), DetailFolderActivity::class.java)
-            intent.putExtra("folderName", item.folder.name)
-            intent.putExtra("totalTerm", "${item.totalTopic} học phần")
-            intent.putExtra("userName", item.user.name)
-            intent.putExtra("avatar", item.user.avatar)
+            intent.putExtra("folder", item.folder)
             startActivity(intent)
         }
         getBackAdapterFromViewPager.onResult(items, adapter)
