@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.final_android_quizlet.activity.CreateTermActivity
 import com.example.final_android_quizlet.activity.LibraryActivity
 import com.example.final_android_quizlet.activity.ProfileActivity
+import com.example.final_android_quizlet.activity.RankingActivity
 import com.example.final_android_quizlet.auth.Login
 import com.example.final_android_quizlet.common.ActionDialog
 import com.example.final_android_quizlet.common.ManageScopeApi
@@ -69,6 +70,13 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, LibraryActivity::class.java)
             startActivity(intent)
         }
+
+        val rankingButton: ImageView = findViewById(R.id.imgRanking_Main)
+        rankingButton.setOnClickListener {
+            val intent = Intent(this, RankingActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 
     private fun showBottomDialog() {
