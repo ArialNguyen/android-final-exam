@@ -22,11 +22,11 @@ class LibraryAdapter(activity: FragmentActivity) : FragmentStateAdapter(activity
     }
 
     fun addAdapterForChild(items: MutableList<LibraryTopicAdapterItem>, adapter: LibraryTopicAdapter) {
-        adaptersChild.add(AdapterAndItems(items, adapter))
+        adaptersChild.add(AdapterAndItems(items, null, adapter))
     }
 
     fun addAdapterForChild(items: MutableList<LibraryFolderAdapterItem>, adapter: LibraryFolderAdapter) {
-        adaptersChild.add(AdapterAndItems(items, adapter))
+        adaptersChild.add(AdapterAndItems(items, null, adapter))
     }
 
     override fun getItemCount(): Int {

@@ -7,27 +7,22 @@
     tools:context=".fragments.FragmentAddTopic_CreateFolder">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="đã tao" />
-<!--    <androidx.constraintlayout.widget.ConstraintLayout-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent">-->
 
-<!--        <androidx.recyclerview.widget.RecyclerView-->
-<!--            android:id="@+id/recyclerView_library"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            app:cardCornerRadius="8dp"-->
-<!--            android:layout_marginTop="15dp"-->
-<!--            app:cardElevation="20dp"-->
-<!--            app:cardUseCompatPadding="true"-->
-<!--            tools:listitem="@layout/item_tien_trinh"-->
-<!--            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"-->
-<!--            tools:ignore="MissingConstraints"-->
-<!--            tools:layout_editor_absoluteX="0dp" />-->
-<!--    </androidx.constraintlayout.widget.ConstraintLayout>-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView_FragmentAddTopic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="20dp"
+                app:cardUseCompatPadding="true"
+                android:padding="15dp"
+                tools:listitem="@layout/item_tien_trinh"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:ignore="MissingConstraints"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

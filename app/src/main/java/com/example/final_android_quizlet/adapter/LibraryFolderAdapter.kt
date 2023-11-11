@@ -1,5 +1,6 @@
 package com.example.final_android_quizlet.adapter
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,9 +28,6 @@ class LibraryFolderAdapter(private val items: List<LibraryFolderAdapterItem>) : 
             if(item.user.avatar!!.isNotEmpty()){
                 Picasso.get().load(item.user.avatar).into(imgAvatar)
             }
-//            itemView.setOnClickListener {
-//                itemClickListener?.invoke(item)
-//            }
         }
     }
 

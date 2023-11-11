@@ -54,6 +54,8 @@ class DetailFolderActivity : AppCompatActivity() {
     // Adapter
     private var items: MutableList<LibraryTopicAdapterItem> = mutableListOf()
 
+    // Data for intent
+    private var folder: Folder? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,7 +66,8 @@ class DetailFolderActivity : AppCompatActivity() {
         }
 
         // Get intent
-        val folder = intent.getSerializableExtra("folder") as Folder
+        folder = intent.getSerializableExtra("folder") as Folder
+        Log.i("TAG", "Receivie Folder: $folder")
 
         tvFolderName = findViewById(R.id.tvFolderName)
         tvTotalTerm = findViewById(R.id.tvTotalTerm)
@@ -75,8 +78,8 @@ class DetailFolderActivity : AppCompatActivity() {
         imgBack = findViewById(R.id.imgBack_DetailFolderActivity)
 
         // Load draw data
-        tvFolderName!!.text = folder.name
-        tvTotalTerm!!.text = "${folder.topics.size} học phần"
+        tvFolderName!!.text = folder!!.name
+        tvTotalTerm!!.text = "${folder!!.topics.size} học phần"
 //        tvUserName!!.text = getSharedPreferences()
 
         // Handle Event Listener
@@ -107,15 +110,17 @@ class DetailFolderActivity : AppCompatActivity() {
                     tvUserName!!.text = user.name
                     Picasso.get().load(user.avatar).into(imgAvatar)
                 }
-                val foldersFetch = folderService.FolderForUserLogged().getFolderById(folder.uid)
-                if(foldersFetch.status){
-                    val topicsId = foldersFetch.folder!!.topics
-                    val fetchTopics = topicService.TopicForUserLogged().getTopicsByQuerys(listOf(MyFBQuery("uid", topicsId, MyFBQueryMethod.IN)))
-                    items.addAll(fetchTopics.topics!!.map { LibraryTopicAdapterItem(it, user) })
-                    runOnUiThread { adapter.notifyDataSetChanged() }
+                val folderFetch = folderService.FolderForUserLogged().getFolderById(folder!!.uid)
+                if(folderFetch.status){
+                    if(folderFetch.folder!!.topics.isNotEmpty()){
+                        val topicsId = folderFetch.folder!!.topics
+                        val fetchTopics = topicService.TopicForUserLogged().getTopicsByQuerys(mutableListOf(MyFBQuery("uid", topicsId, MyFBQueryMethod.IN)))
+                        items.addAll(fetchTopics.topics!!.map { LibraryTopicAdapterItem(it, user) })
+                        runOnUiThread { adapter.notifyDataSetChanged() }
+                    }
                 }else{
                     runOnUiThread {
-                        Toast.makeText(this@DetailFolderActivity, foldersFetch.data.toString(), Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@DetailFolderActivity, folderFetch.data.toString(), Toast.LENGTH_LONG).show()
                     }
                 }
             }
@@ -138,7 +143,9 @@ class DetailFolderActivity : AppCompatActivity() {
         }
 
         addTopicDetailFolder.setOnClickListener {
-            val intent = Intent(this, AddTopic_FolderActivity::class.java)
+            val intent = Intent(this, AddTopicFolderActivity::class.java)
+            Log.i("TAG", "INTENT: $folder")
+            intent.putExtra("folder", folder!!)
             startActivity(intent)
             dialog.dismiss()
         }

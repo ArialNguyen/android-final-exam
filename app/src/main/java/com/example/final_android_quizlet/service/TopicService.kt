@@ -96,29 +96,29 @@ class TopicService {
             }
             return res
         }
-        suspend fun getTopics(): ResponseObject {
-            val res: ResponseObject = ResponseObject()
-            try {
-                val data = db.collection("topics")
-                    .whereEqualTo("userId", firebaseAuth.currentUser!!.uid)
-                    .get().await()
-                res.status = true
-                if (data.documents.size == 0) {
-                    res.topics = listOf()
-                } else {
-                    res.topics = topicMapper.convertToTopics(data.documents)
-                }
-            } catch (e: Exception) {
-                res.data = e.message.toString()
-                res.status = false
-            }
-            return res
-        }
+//        suspend fun getTopics(): ResponseObject {
+//            val res: ResponseObject = ResponseObject()
+//            try {
+//                val data = db.collection("topics")
+//                    .whereEqualTo("userId", firebaseAuth.currentUser!!.uid)
+//                    .get().await()
+//                res.status = true
+//                if (data.documents.size == 0) {
+//                    res.topics = listOf()
+//                } else {
+//                    res.topics = topicMapper.convertToTopics(data.documents)
+//                }
+//            } catch (e: Exception) {
+//                res.data = e.message.toString()
+//                res.status = false
+//            }
+//            return res
+//        }
 
-        suspend fun getTopicsByQuerys(myFBQuery: List<MyFBQuery>): ResponseObject {
+        suspend fun getTopicsByQuerys(myFBQuery: MutableList<MyFBQuery>): ResponseObject {
             val res: ResponseObject = ResponseObject()
             try {
-                myFBQuery.toMutableList().add(MyFBQuery("userId", firebaseAuth.currentUser!!.uid, MyFBQueryMethod.EQUAL))
+                myFBQuery.add(MyFBQuery("userId", firebaseAuth.currentUser!!.uid, MyFBQueryMethod.EQUAL))
                 val data = getDocumentsByFields(myFBQuery)
                 res.status = true
                 if (data.isEmpty()) {

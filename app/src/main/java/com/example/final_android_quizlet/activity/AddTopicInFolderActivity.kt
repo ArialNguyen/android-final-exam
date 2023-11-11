@@ -102,7 +102,7 @@ class AddTopicInFolderActivity : AppCompatActivity() {
             }
         }
         txCreateFolder!!.setOnClickListener {
-            actionDialog.openCreateFolderDialog(AdapterAndItems(listOf(items, itemsChosen), adapter))
+            actionDialog.openCreateFolderDialog(AdapterAndItems(listOf(items, itemsChosen), null, adapter))
         }
 
         // Handle CallBack

@@ -6,8 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.final_android_quizlet.R
+import com.example.final_android_quizlet.common.GetBackAdapterFromViewPager
 
-class FragmentAddTopic_LearnFolder : Fragment() {
+class FragmentAddTopic_LearnFolder(private val getBackAdapterFromViewPager: GetBackAdapterFromViewPager): Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

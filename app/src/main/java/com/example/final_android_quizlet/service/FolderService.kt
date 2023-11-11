@@ -6,6 +6,7 @@ import com.example.final_android_quizlet.common.MyFBQueryMethod
 import com.example.final_android_quizlet.dao.ResponseObject
 import com.example.final_android_quizlet.mapper.FolderMapper
 import com.example.final_android_quizlet.models.Folder
+import com.example.final_android_quizlet.models.Topic
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FieldValue
@@ -38,12 +39,24 @@ class FolderService {
         return res
     }
 
-    suspend fun getDocumentIdByFields(fields: HashMap<String, Any>): String {
-        val query = db.collection("folders")
-        fields.forEach { (field, value) ->
-            query.whereEqualTo(field, value)
+    suspend fun getDocumentIdByFields(params: List<MyFBQuery>): String {
+        var collectionRef = db.collection("folders")
+        var query: Query? = null
+        params.forEach { it ->
+            when (it.mode) {
+                MyFBQueryMethod.EQUAL -> {
+                    Log.i("TAG", "String: ${it.field}, value = ${it.value}")
+                    query = if (query == null) collectionRef.whereEqualTo(it.field, it.value.toString())
+                    else query!!.whereEqualTo(it.field, it.value.toString())
+                }
+                MyFBQueryMethod.IN -> {
+                    Log.i("TAG", "List: ${it.field}, value = ${it.value as List<Any>}")
+                    query = if (query == null) collectionRef.whereIn(it.field, it.value as List<Any>)
+                    else query!!.whereIn(it.field, it.value as List<Any>)
+                }
+            }
         }
-        return query.get().await().documents[0].id
+        return query!!.get().await().documents[0].id
     }
 
     suspend fun getDocumentIdsByFields(params: List<MyFBQuery>): List<String> {
@@ -132,6 +145,30 @@ class FolderService {
             }
             return res
         }
+        suspend fun addTopicsToFolder(folderId: String, topics: MutableList<Topic>): ResponseObject{
+            val res: ResponseObject = ResponseObject()
+            try {
+                val query = mutableListOf<MyFBQuery>()
+                query.add(MyFBQuery("userId", firebaseAuth.currentUser!!.uid, MyFBQueryMethod.EQUAL))
+                query.add(MyFBQuery("uid", folderId, MyFBQueryMethod.EQUAL))
+                val documentId = getDocumentIdByFields(
+                    query
+                )
+                Log.i("TAG", "documentId: $documentId")
+                val topicIds = topics.map { it.uid }
+                Log.i("TAG", "topicIds: $topicIds")
+
+                db.collection("folders").document(documentId)
+                    .update("topics", FieldValue.arrayUnion(*topicIds.toTypedArray())).await()
+                res.status = true
+            } catch (e: Exception) {
+                Log.i("TAG", "ERROR: ${e.message}")
+                res.data = e.message.toString()
+                res.status = false
+            }
+            return res
+        }
+
     }
 
 }
