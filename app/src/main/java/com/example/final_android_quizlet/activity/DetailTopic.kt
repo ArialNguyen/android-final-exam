@@ -27,6 +27,7 @@ import com.example.final_android_quizlet.common.ActionTransition
 import com.example.final_android_quizlet.common.HorizontalSpaceItemDecoration
 import com.example.final_android_quizlet.common.ManageScopeApi
 import com.example.final_android_quizlet.models.Term
+import com.example.final_android_quizlet.models.Topic
 import com.example.final_android_quizlet.service.AuthService
 import com.example.final_android_quizlet.service.TopicService
 import com.squareup.picasso.Picasso
@@ -57,6 +58,9 @@ class DetailTopic : AppCompatActivity() {
     // Adapter
     private var recyclerViewHorizontal: RecyclerView? = null
     private val items: MutableList<Term> = mutableListOf()
+
+    // Info Current
+    private var topic: Topic? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -135,6 +139,7 @@ class DetailTopic : AppCompatActivity() {
         lifecycleScope.launch {
             val topicId = intent.getStringExtra("topicId")!!
             val topic = topicService.TopicForUserLogged().getTopicById(topicId).topic!!
+            this@DetailTopic.topic = topic
             val user = authService.getUserLogin().user!!
             tvTopicName!!.text = topic.title
             tvDecription!!.text = topic.description
@@ -158,11 +163,9 @@ class DetailTopic : AppCompatActivity() {
         val removeDetailTopic: LinearLayout = dialog.findViewById(R.id.liRemove_DetailTopic)
         val cancelDetailTopic: ImageView = dialog.findViewById(R.id.imgCancel_DetailTopic)
 
-
-
-
         addInFolder.setOnClickListener {
             val intent = Intent(this, AddTopicInFolderActivity::class.java)
+            intent.putExtra("topicId", topic!!.uid)
             startActivity(intent)
         }
 
