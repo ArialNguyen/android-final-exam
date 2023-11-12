@@ -35,7 +35,9 @@ import com.example.final_android_quizlet.service.AuthService
 import com.example.final_android_quizlet.service.TopicService
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import me.relex.circleindicator.CircleIndicator2
 
 class DetailTopic : AppCompatActivity() {
@@ -141,17 +143,21 @@ class DetailTopic : AppCompatActivity() {
         }
 
         lifecycleScope.launch {
-            val topicId = intent.getStringExtra("topicId")!!
-            val topic = topicService.TopicForUserLogged().getTopicById(topicId).topic!!
-            this@DetailTopic.topic = topic
-            val user = authService.getUserLogin().user!!
-            tvTopicName!!.text = topic.title
-            tvDecription!!.text = topic.description
-            tvTotalTerm!!.text = "${topic.terms.size} thuật ngữ"
-            tvUserName!!.text = user.name
-            Picasso.get().load(user.avatar).into(avatarUser)
-            items.addAll(topic.terms)
-            adapter.notifyDataSetChanged()
+            withContext(Dispatchers.IO){
+                val topicId = intent.getStringExtra("topicId")!!
+                val topic = topicService.TopicForUserLogged().getTopicById(topicId).topic!!
+                this@DetailTopic.topic = topic
+                val user = authService.getUserLogin().user!!
+                items.addAll(topic.terms)
+                runOnUiThread {
+                    Picasso.get().load(user.avatar).into(avatarUser)
+                    tvTopicName!!.text = topic.title
+                    tvDecription!!.text = topic.description
+                    tvTotalTerm!!.text = "${topic.terms.size} thuật ngữ"
+                    tvUserName!!.text = user.name
+                    adapter.notifyDataSetChanged()
+                }
+            }
         }
 
     }

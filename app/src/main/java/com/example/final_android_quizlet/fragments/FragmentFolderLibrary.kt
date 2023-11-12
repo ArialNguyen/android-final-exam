@@ -55,13 +55,15 @@ class FragmentFolderLibrary(private val getBackAdapterFromViewPager: GetBackAdap
                 }
             }
             Log.i("TAG", "folders: $folders")
-            val list =  folders.map {
-                LibraryFolderAdapterItem(it, it.topics.size, user)
-            }.toMutableList()
-            items.addAll(list)
+            if(folders.isNotEmpty()){
+                val list =  folders.map {
+                    LibraryFolderAdapterItem(it, it.topics.size, user)
+                }.toMutableList()
+                items.addAll(list)
 //            getBackAdapterFromViewPager.onResult(items, adapter::class.java)
-            (context as Activity).runOnUiThread {
-                adapter.notifyDataSetChanged()
+                (context as Activity).runOnUiThread {
+                    adapter.notifyDataSetChanged()
+                }
             }
         }
 
