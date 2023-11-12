@@ -4,9 +4,12 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
+import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.ImageView
@@ -16,6 +19,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
+import androidx.core.view.size
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
@@ -24,7 +28,6 @@ import com.example.final_android_quizlet.R
 import com.example.final_android_quizlet.adapter.DetailTopicHoriAdapter
 import com.example.final_android_quizlet.auth.Login
 import com.example.final_android_quizlet.common.ActionTransition
-import com.example.final_android_quizlet.common.HorizontalSpaceItemDecoration
 import com.example.final_android_quizlet.common.ManageScopeApi
 import com.example.final_android_quizlet.models.Term
 import com.example.final_android_quizlet.models.Topic
@@ -120,8 +123,9 @@ class DetailTopic : AppCompatActivity() {
         recyclerViewHorizontal = findViewById(R.id.recyclerView_DetailTopic)
         recyclerViewHorizontal!!.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         recyclerViewHorizontal!!.adapter = adapter
-        val horizontalSpaceItemDecoration = HorizontalSpaceItemDecoration()
-        recyclerViewHorizontal!!.addItemDecoration(horizontalSpaceItemDecoration)
+
+        val spacingInPixels = -30
+        recyclerViewHorizontal!!.addItemDecoration(HorizontalSpaceItemDecoration(spacingInPixels))
         // CircleIndicator2
         val pagerSnapHelper = PagerSnapHelper()
         pagerSnapHelper.attachToRecyclerView(recyclerViewHorizontal)
@@ -217,5 +221,24 @@ class DetailTopic : AppCompatActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
+    }
+}
+
+class HorizontalSpaceItemDecoration(private val spaceInPixels: Int) : RecyclerView.ItemDecoration() {
+
+    override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+        super.getItemOffsets(outRect, view, parent, state)
+        val itemPosition = parent.getChildAdapterPosition(view)
+        val itemCount = state.itemCount
+
+        if (itemPosition == 0) {
+            outRect.right = spaceInPixels
+        }
+        /** last position */
+        else if (itemCount > 0 && itemPosition == itemCount - 1) {}
+        /** positions between first and last */
+        else {
+            outRect.right = spaceInPixels
+        }
     }
 }

@@ -74,9 +74,11 @@ class UserService {
                 throw Exception("Email not registered yet")
             } else {
                 res.user = data.documents[0].toObject(User::class.java)!!
+                Log.i("TAG", "User: ${res.user}")
                 res.status = true
             }
         } catch (e: Exception) {
+            Log.i("TAG", "ERROR: ${e.message}")
             res.data = e.message.toString()
             res.status = false
         }

@@ -49,10 +49,10 @@ class MainActivity : AppCompatActivity() {
 //            }
 //        }
 
-        lifecycleScope.launch {
-            val user = authService.getUserLogin().user!!
-            txName_main!!.text = user.name
-        }
+//        lifecycleScope.launch {
+//            val user = authService.getUserLogin().user!!
+//            txName_main!!.text = user.name
+//        }
 
 
         plusIcon.setOnClickListener {

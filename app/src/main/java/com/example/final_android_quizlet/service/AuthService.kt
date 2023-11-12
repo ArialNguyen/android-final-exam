@@ -145,6 +145,7 @@ class AuthService() {
 
     suspend fun getUserLogin(): ResponseObject {
         val email = firebaseAuth.currentUser!!.email!!
+        Log.i("TAG", "email: $email")
         return userService.getUserByEmail(email)
     }
 

@@ -17,6 +17,7 @@ import com.example.final_android_quizlet.R
 import com.example.final_android_quizlet.activity.DetailTopic
 import com.example.final_android_quizlet.adapter.LibraryTopicAdapter
 import com.example.final_android_quizlet.adapter.data.LibraryTopicAdapterItem
+import com.example.final_android_quizlet.auth.Login
 import com.example.final_android_quizlet.common.GetBackAdapterFromViewPager
 import com.example.final_android_quizlet.mapper.TopicMapper
 import com.example.final_android_quizlet.service.AuthService
@@ -38,6 +39,10 @@ class FragmentTopicLibrary(private val getBackAdapterFromViewPager: GetBackAdapt
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+        if(!authService.isLogin()){
+            startActivity(Intent(context, Login::class.java))
+        }
 
         val adapter = LibraryTopicAdapter(items)
         val view = inflater.inflate(R.layout.fragment__hoc_phan, container, false)

@@ -1,71 +1,61 @@
 package com.example.final_android_quizlet.activity
 
-import android.animation.Animator
-import android.animation.ObjectAnimator
+import android.animation.AnimatorInflater
+import android.animation.AnimatorSet
 import android.os.Bundle
-import android.view.View
-import android.widget.RelativeLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import com.example.final_android_quizlet.R
-import android.view.animation.DecelerateInterpolator
 
 class FlashcardActivity : AppCompatActivity() {
 
-    private lateinit var cardDTFlashcard: CardView
-    private lateinit var cardDNFlashcard: CardView
+    private lateinit var cardFront: CardView
+    private lateinit var cardBack: CardView
+    private lateinit var tvFront: TextView
+    private lateinit var tvBack: TextView
     private var isFront = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_flashcard)
 
-        cardDTFlashcard = findViewById(R.id.cardDT_flashcard)
-        cardDNFlashcard = findViewById(R.id.cardDN_flashcard)
+        cardFront = findViewById(R.id.cardFront_flashcard)
+        cardBack = findViewById(R.id.cardBack_flashcard)
+        tvFront = findViewById(R.id.tvFront_Flashcard)
+        tvBack = findViewById(R.id.tvBack_Flashcard)
 
-        // Gán sự kiện click cho các thẻ
-        cardDTFlashcard.setOnClickListener { onCardClick(cardDTFlashcard) }
-        cardDNFlashcard.setOnClickListener { onCardClick(cardDNFlashcard) }
+        // Animate
+        var scale = applicationContext.resources.displayMetrics.density
+
+        cardFront.cameraDistance = 8000 * scale
+        cardBack.cameraDistance = 8000 * scale
+
+        val frontAnimation = AnimatorInflater.loadAnimator(applicationContext, R.anim.front_animator_horizontal) as AnimatorSet
+        val backAnimation = AnimatorInflater.loadAnimator(applicationContext, R.anim.back_animator_horizontal) as AnimatorSet
+
+        cardFront.setOnClickListener {
+            flipCard(frontAnimation, backAnimation)
+        }
+        cardBack.setOnClickListener {
+            flipCard(frontAnimation, backAnimation)
+        }
+    }
+    private fun flipCard(frontAnimation: AnimatorSet, backAnimation: AnimatorSet){
+        if (isFront) {
+            frontAnimation.setTarget(cardFront);
+            backAnimation.setTarget(cardBack);
+            frontAnimation.start()
+            backAnimation.start()
+            isFront = false
+
+        } else {
+            frontAnimation.setTarget(cardBack)
+            backAnimation.setTarget(cardFront)
+            backAnimation.start()
+            frontAnimation.start()
+            isFront = true
+        }
     }
 
-    private fun onCardClick(cardView: CardView) {
-        val textInsideCard = cardView.findViewById<TextView>(R.id.textInsideCard) // Chỉnh lại ID của TextView trong layout XML của thẻ
-        val scaleAnime = ObjectAnimator.ofFloat(textInsideCard, "scaleX", 1f, 0f)
-        scaleAnime.duration = 500 // Thời gian của hiệu ứng (milliseconds)
-        scaleAnime.interpolator = DecelerateInterpolator()
-
-        scaleAnime.addListener(object : Animator.AnimatorListener {
-            override fun onAnimationStart(animation: Animator) {
-                // Xử lý khi bắt đầu animation (nếu cần)
-            }
-
-            override fun onAnimationEnd(animation: Animator) {
-                // Xử lý khi animation kết thúc, thay đổi nội dung và thực hiện hiệu ứng scale ngược lại
-                if (isFront) {
-                    textInsideCard.text = "Xin chào"
-                } else {
-                    textInsideCard.text = "Hello"
-                }
-                isFront = !isFront
-
-                val scaleAnimeReverse = ObjectAnimator.ofFloat(textInsideCard, "scaleX", 0f, 1f)
-                scaleAnimeReverse.duration = 500
-                scaleAnimeReverse.interpolator = DecelerateInterpolator()
-                scaleAnimeReverse.start()
-            }
-
-            override fun onAnimationCancel(animation: Animator) {
-                // Xử lý khi animation bị hủy (nếu cần)
-            }
-
-            override fun onAnimationRepeat(animation: Animator) {
-                // Xử lý khi animation lặp lại (nếu cần)
-            }
-        })
-
-        // Khởi chạy hiệu ứng scale
-        scaleAnime.start()
-    }
 }
