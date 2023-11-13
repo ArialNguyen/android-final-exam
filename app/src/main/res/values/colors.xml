@@ -36,4 +36,8 @@
     <color name="colorBackground">#E7E7EA</color>
     <color name="primary_quiz">#003366</color>
     <color name="next_btn_color">#3297ca</color>
+
+<!--    Flash Card-->
+    <color name="text_Learning">#fb923c</color>
+    <color name="text_Knew">#59e8b5</color>
 </resources>
