@@ -137,8 +137,9 @@ class DetailTopic : AppCompatActivity() {
 
 
         cvFlashCard!!.setOnClickListener {
-            val intent = Intent(this, FlashcardActivity::class.java)
-            intent.putExtra("topic", topic)
+            val intent = Intent(this, MainQuizActivity::class.java)
+            intent.putExtra("exercise_type", "FlashCard")
+            intent.putExtra("topicId", topic!!.uid)
             startActivity(intent)
         }
 

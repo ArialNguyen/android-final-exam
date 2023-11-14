@@ -59,14 +59,16 @@ class FragmentTopicLibrary(private val getBackAdapterFromViewPager: GetBackAdapt
         lifecycleScope.launch {
             withContext(Dispatchers.IO){
                 val user = authService.getUserLogin().user!!
-                val topics = topicService.getTopicsByUserId(user.uid).topics!!
-                val list =  topics.map {
-                    LibraryTopicAdapterItem(it, user)
-                }.toMutableList()
-                itemsTemp.addAll(list)
-                items.addAll(list)
-                (context as Activity).runOnUiThread {
-                    adapter.notifyDataSetChanged()
+                val topics = topicService.getTopicsByUserId(user.uid).topics
+                if(topics!!.isNotEmpty()){
+                    val list =  topics.map {
+                        LibraryTopicAdapterItem(it, user)
+                    }.toMutableList()
+                    itemsTemp.addAll(list)
+                    items.addAll(list)
+                    (context as Activity).runOnUiThread {
+                        adapter.notifyDataSetChanged()
+                    }
                 }
             }
         }

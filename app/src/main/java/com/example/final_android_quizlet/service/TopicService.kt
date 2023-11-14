@@ -42,11 +42,11 @@ class TopicService {
             val data = db.collection("topics")
                 .whereEqualTo("userId", userId)
                 .get().await()
+            res.status = true
             if (data.documents.size == 0) {
-                throw Exception("User doesn't have any topic yet")
+                res.topics = listOf()
             } else {
                 res.topics = topicMapper.convertToTopics(data.documents)
-                res.status = true
             }
         } catch (e: Exception) {
             res.data = e.message.toString()
@@ -96,24 +96,6 @@ class TopicService {
             }
             return res
         }
-//        suspend fun getTopics(): ResponseObject {
-//            val res: ResponseObject = ResponseObject()
-//            try {
-//                val data = db.collection("topics")
-//                    .whereEqualTo("userId", firebaseAuth.currentUser!!.uid)
-//                    .get().await()
-//                res.status = true
-//                if (data.documents.size == 0) {
-//                    res.topics = listOf()
-//                } else {
-//                    res.topics = topicMapper.convertToTopics(data.documents)
-//                }
-//            } catch (e: Exception) {
-//                res.data = e.message.toString()
-//                res.status = false
-//            }
-//            return res
-//        }
 
         suspend fun getTopicsByQuerys(myFBQuery: MutableList<MyFBQuery>): ResponseObject {
             val res: ResponseObject = ResponseObject()

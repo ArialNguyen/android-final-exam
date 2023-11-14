@@ -4,15 +4,14 @@ import CustomDragShadowBuilder
 import TypeFlashCard
 import android.animation.AnimatorInflater
 import android.animation.AnimatorSet
-import android.content.ClipData
-import android.content.ClipDescription
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.DragEvent
 import android.view.View
 import android.view.View.DRAG_FLAG_OPAQUE
-import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -24,11 +23,16 @@ import com.example.final_android_quizlet.auth.Login
 import com.example.final_android_quizlet.common.ActionDialog
 import com.example.final_android_quizlet.common.ActionTransition
 import com.example.final_android_quizlet.common.ManageScopeApi
+import com.example.final_android_quizlet.models.FlashCard
 import com.example.final_android_quizlet.models.Term
 import com.example.final_android_quizlet.models.Topic
 import com.example.final_android_quizlet.service.AuthService
+import com.example.final_android_quizlet.service.FlashCardService
 import com.example.final_android_quizlet.service.FolderService
 import com.example.final_android_quizlet.service.TopicService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 
 class FlashcardActivity : AppCompatActivity() {
@@ -39,27 +43,43 @@ class FlashcardActivity : AppCompatActivity() {
     private val manageScopeApi: ManageScopeApi = ManageScopeApi()
     private val actionTransition: ActionTransition = ActionTransition(this)
     private val authService: AuthService = AuthService()
+    private val flashCardService: FlashCardService = FlashCardService()
     private val actionDialog: ActionDialog = ActionDialog(this, lifecycleScope)
 
+    // Layout Learning
+    private lateinit var imgBackToPreTerm: ImageView
+    private lateinit var layoutLearning: ConstraintLayout
+    private lateinit var tvProgressBar: TextView
+    private lateinit var tvTotalLearning: TextView
+    private lateinit var tvTotalKnew: TextView
     private lateinit var cardBackground: CardView
     private lateinit var cardFront: CardView
     private lateinit var cardBack: CardView
     private lateinit var tvFront: TextView
     private lateinit var tvBack: TextView
     private lateinit var tvBackground: TextView
-    private lateinit var tvAboveBG: TextView
     private lateinit var layoutCard: ConstraintLayout
     private lateinit var areaLearning: ConstraintLayout
     private lateinit var areaKnew: ConstraintLayout
+    private lateinit var progressTerm: ProgressBar
 
-    private var isFront = true
+    // Layout Result
+    private lateinit var layoutResult: ConstraintLayout
+    private lateinit var tvTotalKnewResult: TextView
+    private lateinit var tvTotalTermLeftResult: TextView
+    private lateinit var tvTotalLearningResult: TextView
 
     // Hard Data
-    private lateinit var topic: Topic
-    private lateinit var items: List<Term>
+    private var isFront = true
 
+    private lateinit var topicIntent: Topic
+    private lateinit var items: List<Term>
+    private var flashCardIntent: FlashCard? = null
+    private val listIndexLearning: MutableList<Int> = mutableListOf()
+    private val listIndexKnew: MutableList<Int> = mutableListOf()
+    private var indexCurrentTerm: Int = 0
+    private var userId: String? = null
     // Drag
-    private val uid: UUID = UUID.randomUUID()
 
     // Shadow
     private var dragShadowBuilder: CustomDragShadowBuilder? = null
@@ -69,14 +89,11 @@ class FlashcardActivity : AppCompatActivity() {
         val viewDestination = view as ConstraintLayout
         when (event.action) {
             DragEvent.ACTION_DRAG_STARTED -> {
-                event.clipDescription.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)
-                tvFront.visibility = View.INVISIBLE
                 dragShadowBuilder!!.updateDragShadow(TypeFlashCard.START)
                 true
             }
 
             DragEvent.ACTION_DRAG_ENTERED -> {
-                Log.i("TAG", "ACTION_DRAG_ENTERED: ")
                 if (resources.getResourceName(viewDestination.id).contains("areaLearning", ignoreCase = true)) {
                     // Handle areaLearning
                     dragShadowBuilder!!.updateDragShadow(TypeFlashCard.LEARNING)
@@ -89,21 +106,14 @@ class FlashcardActivity : AppCompatActivity() {
             }
 
             DragEvent.ACTION_DRAG_LOCATION -> {
-//                view.invalidate()
                 val currentX = event.x
                 val widthFixed = viewDestination.width.toFloat()
-                val halfWidth = widthFixed / 2;
-                Log.i("TAG", "halfWidth: $halfWidth")
-                Log.i("TAG", "ACTION_DRAG_LOCATION. currentX = $currentX")
-                Log.i("TAG", "ACTION_DRAG_LOCATION. WidthX = ${viewDestination.width}")
                 if (resources.getResourceName(viewDestination.id).contains("areaLearning", ignoreCase = true)) {
                     // Handle areaLearning
-                    dragShadowBuilder!!.updateWithPosition(TypeFlashCard.LEARNING,  currentX, widthFixed)
-
+                    dragShadowBuilder!!.updateWithPosition(TypeFlashCard.LEARNING, currentX, widthFixed)
                 } else {
                     // Handle areaKnew
                     dragShadowBuilder!!.updateWithPosition(TypeFlashCard.KNEW, currentX, widthFixed)
-
                 }
                 true
             }
@@ -114,26 +124,65 @@ class FlashcardActivity : AppCompatActivity() {
             }
 
             DragEvent.ACTION_DROP -> {
-                val item = event.clipData.getItemAt(0)
-                val text = item.text
-                Toast.makeText(this, text, Toast.LENGTH_LONG).show()
-//                view.invalidate()
-                val viewBeforeDrag = event.localState as View
-                val owner = viewBeforeDrag.parent as ViewGroup
-
-                val viewDestination = view as ConstraintLayout
-                Log.i("TAG", "viewDestination: ${resources.getResourceName(viewDestination.id)}")
+                val currentX = event.x
+                val widthFixed = viewDestination.width.toFloat()
                 if (resources.getResourceName(viewDestination.id).contains("areaLearning", ignoreCase = true)) {
                     // Handle areaLearning
+                    if (currentX < (widthFixed / 2)) {
+                        // Save Temp data to flashcard
+                        listIndexLearning.add(indexCurrentTerm)
+                        tvTotalLearning.text = listIndexLearning.size.toString()
+                        indexCurrentTerm += 1
+                        updateProgressBar()
+                    }
                 } else {
                     // Handle areaKnew
+                    if (currentX > (widthFixed / 2)) {
+                        // Save Temp data to flashcard
+                        listIndexKnew.add(indexCurrentTerm)
+                        tvTotalKnew.text = listIndexKnew.size.toString()
+                        indexCurrentTerm += 1
+                        updateProgressBar()
+                    }
+                }
+                if (indexCurrentTerm == items.size) {
+                    val flashCard = if(flashCardIntent == null) saveFlashCard() else saveFlashCardIntent()
+                    Log.i("TAG", "flashCard: $flashCard")
+                    tvTotalLearningResult.text = flashCard.termsLearning.size.toString()
+                    tvTotalKnewResult.text = flashCard.termsKnew.size.toString()
+                    tvTotalTermLeftResult.text =
+                        (topicIntent.terms.size - (flashCard.termsLearning.size + flashCard.termsKnew.size)).toString()
+                    layoutLearning.visibility = View.GONE
+                    layoutResult.visibility = View.VISIBLE
+
+                    // Update data in background
+                    lifecycleScope.launch {
+                        withContext(Dispatchers.IO) {
+                            if (flashCardIntent != null) {
+
+                            }
+                            val saveFlashCardDb =
+                                if (flashCardIntent == null) flashCardService.createFlashCard(flashCard)
+//                                else if (flashCard.termsKnew.size == topicIntent.terms.size) flashCardService.resetFlashCard(flashCardIntent!!.uid)
+                                else flashCardService.updateFlashCard(flashCardIntent!!.uid, flashCard)
+                            if (!saveFlashCardDb.status) {
+                                Toast.makeText(
+                                    this@FlashcardActivity,
+                                    saveFlashCardDb.data.toString(),
+                                    Toast.LENGTH_LONG
+                                ).show()
+                                finish()
+                                actionTransition.rollBackTransition()
+                            }
+                        }
+                    }
+                } else {
+                    dragShadowBuilder!!.updateNewItem(items[indexCurrentTerm])
                 }
                 true
             }
 
             DragEvent.ACTION_DRAG_ENDED -> {
-//                view.invalidate()
-                tvFront.visibility = View.VISIBLE
                 dragShadowBuilder!!.updateDragShadow(TypeFlashCard.END)
                 true
             }
@@ -143,8 +192,63 @@ class FlashcardActivity : AppCompatActivity() {
             }
         }
     }
-    fun rollBackDragShadowBegin(){
 
+    private fun saveFlashCard(): FlashCard {
+        val termsLearning = items.filterIndexed { index, term -> listIndexLearning.contains(index) }.toMutableList()
+        val termsKnew = items.filterIndexed { index, term -> listIndexKnew.contains(index) }.toMutableList()
+        val currentTermId = items[indexCurrentTerm - 1].uid
+        return FlashCard(
+            UUID.randomUUID().toString(), termsLearning,
+            termsKnew, currentTermId, topicIntent.uid, userId!!
+        )
+    }
+    private fun saveFlashCardIntent(): FlashCard {
+        // add learning term or leftTerm to knew term
+        val termsKnew = items.filterIndexed { index, term ->  listIndexKnew.contains(index)  }
+        val termsLearning = items.filterIndexed { index, term -> listIndexLearning.contains(index) }
+        val listIdKnewDb = flashCardIntent!!.termsKnew.map { x -> x.uid }
+        val list = termsKnew.filter {
+            !listIdKnewDb.contains(it.uid)
+        }
+        flashCardIntent!!.termsKnew.addAll(list)
+        flashCardIntent!!.termsLearning = flashCardIntent!!.termsLearning.filter {
+            !termsKnew.map { x -> x.uid }.contains(it.uid)
+        }.toMutableList()
+
+        // add to learn
+        val listIdLearnDb = flashCardIntent!!.termsLearning.map { x -> x.uid }
+        val listTemp = termsLearning.filter {
+            !listIdLearnDb.contains(it.uid)
+        }
+        flashCardIntent!!.termsLearning.addAll(listTemp)
+        flashCardIntent!!.termsKnew = flashCardIntent!!.termsKnew.filter {
+            !termsLearning.map { x -> x.uid }.contains(it.uid)
+        }.toMutableList()
+        return this.flashCardIntent!!
+    }
+
+    private fun updateProgressBar() {
+        if (indexCurrentTerm < items.size) {
+            tvProgressBar.text = "${indexCurrentTerm + 1} / ${items.size}"
+        }
+        val percent =
+            (((listIndexLearning.size.toFloat() + listIndexKnew.size.toFloat()) / items.size.toFloat()) * 100).toInt()
+        progressTerm.setProgress(percent, true)
+    }
+
+
+    fun moveBackTerm() {
+        indexCurrentTerm -= 1
+        dragShadowBuilder!!.updateNewItem(items[indexCurrentTerm])
+        if (listIndexLearning.contains(indexCurrentTerm)) {
+            listIndexLearning.remove(indexCurrentTerm)
+            tvTotalLearning.text = listIndexLearning.size.toString()
+        }
+        else {
+            listIndexKnew.remove(indexCurrentTerm)
+            tvTotalKnew.text = listIndexKnew.size.toString()
+        }
+        updateProgressBar()
     }
 
 
@@ -156,12 +260,19 @@ class FlashcardActivity : AppCompatActivity() {
             startActivity(Intent(this, Login::class.java))
         }
 
-        if (intent.getSerializableExtra("topic") != null) {
-            topic = intent.getSerializableExtra("topic") as Topic
-            items = topic.terms
-            Log.i("TAG", "Topic received FlashCard: $topic")
-        }
+        if (intent.getSerializableExtra("topic") == null || intent.getSerializableExtra("remainTerms") == null) {
+            finish()
+            actionTransition.rollBackTransition()
+            Toast.makeText(this, "Some thing error, please try again!!!", Toast.LENGTH_LONG).show()
 
+            Log.i("TAG", "Topic received FlashCard: $topicIntent")
+        }
+        // Learning layout
+        layoutLearning = findViewById(R.id.layoutStudy_flashcard)
+        imgBackToPreTerm = findViewById(R.id.img_BackToPreTerm_flashcard)
+        tvProgressBar = findViewById(R.id.tvProgress_flashcard)
+        tvTotalLearning = findViewById(R.id.tvTotalLearning_flashcard)
+        tvTotalKnew = findViewById(R.id.tvTotalKnew_flashcard)
         layoutCard = findViewById(R.id.layoutCard_Flashcard)
         cardFront = findViewById(R.id.cardFront_flashcard)
         cardBack = findViewById(R.id.cardBack_flashcard)
@@ -171,12 +282,30 @@ class FlashcardActivity : AppCompatActivity() {
         tvBackground = findViewById(R.id.tvBackground_Flashcard)
         areaLearning = findViewById(R.id.areaLearning)
         areaKnew = findViewById(R.id.areaKnew)
-        // Load data
-        items = listOf(Term("IT", "Information Technology",UUID.randomUUID().toString()))
+        progressTerm = findViewById(R.id.progressBarTerm_flashcard)
 
-        tvFront.text = items[0].term
-        tvBack.text = items[0].definition
-        tvBackground.text = items[0].term
+        // Result layout
+        layoutResult = findViewById(R.id.layoutResult_flashcard)
+        tvTotalTermLeftResult = findViewById(R.id.tvTotalTermLeftResult_flashcard)
+        tvTotalLearningResult = findViewById(R.id.tvTotalLearningResult_flashcard)
+        tvTotalKnewResult = findViewById(R.id.tvTotalKnewResult_flashcard)
+
+        // Load data
+
+        dragShadowBuilder = CustomDragShadowBuilder(cardBackground)
+
+        topicIntent = intent.getSerializableExtra("topic") as Topic
+        items = intent.getSerializableExtra("remainTerms") as List<Term>
+        if (intent.getSerializableExtra("flashcard") != null) {
+            flashCardIntent = intent.getSerializableExtra("flashcard") as FlashCard
+        }
+        Log.i("TAG", "onCreate: items: $items")
+        userId = authService.getCurrentUser().uid
+
+        // Load view
+        dragShadowBuilder!!.updateNewItem(items[0])
+
+
         // Animate
         var scale = applicationContext.resources.displayMetrics.density
 
@@ -196,14 +325,15 @@ class FlashcardActivity : AppCompatActivity() {
         areaLearning.setOnDragListener(dragListener)
         areaKnew.setOnDragListener(dragListener)
 
+        tvProgressBar.text = "${indexCurrentTerm + 1} / ${items.size}"
+
         layoutCard.setOnLongClickListener {
-            val clipText = "some thing"
-            val items = ClipData.Item(clipText)
-            val mimeTypes = arrayOf(ClipDescription.MIMETYPE_TEXT_PLAIN)
-            val data = ClipData(clipText, mimeTypes, items)
-            dragShadowBuilder = CustomDragShadowBuilder(cardBackground)
-            it.startDragAndDrop(data, dragShadowBuilder, it, DRAG_FLAG_OPAQUE)
+            it.startDragAndDrop(null, dragShadowBuilder, it, DRAG_FLAG_OPAQUE)
             true
+        }
+
+        imgBackToPreTerm.setOnClickListener {
+            moveBackTerm()
         }
         // Call Back
     }
@@ -225,4 +355,7 @@ class FlashcardActivity : AppCompatActivity() {
         }
     }
 
+//    override fun onStop() {
+//        db.save(flashCard)
+//    }
 }

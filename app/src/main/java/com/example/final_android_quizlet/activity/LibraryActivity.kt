@@ -29,7 +29,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.launch
 
 
-class LibraryActivity : AppCompatActivity() {
+class LibraryActivity() : AppCompatActivity() {
     private val authService: AuthService = AuthService()
     private val actionDialog: ActionDialog = ActionDialog(this, lifecycleScope)
 
