@@ -172,7 +172,7 @@ class FlashcardActivity : AppCompatActivity() {
         areaLearning = findViewById(R.id.areaLearning)
         areaKnew = findViewById(R.id.areaKnew)
         // Load data
-        items = listOf(Term("IT", "Information Technology"))
+        items = listOf(Term("IT", "Information Technology",UUID.randomUUID().toString()))
 
         tvFront.text = items[0].term
         tvBack.text = items[0].definition

@@ -72,12 +72,12 @@ class CreateTermActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
 
         val addAlgorithmButton = findViewById<ImageView>(R.id.addAlgorithmButton)
-        termList.add(Term("", ""))
-        termList.add(Term("", ""))
+        termList.add(Term("", "", UUID.randomUUID().toString()))
+        termList.add(Term("", "",UUID.randomUUID().toString()))
         adapter.notifyDataSetChanged()
 
         addAlgorithmButton.setOnClickListener {
-            val newItem = Term("", "")
+            val newItem = Term("", "",UUID.randomUUID().toString())
             termList.add(newItem)
             adapter.notifyItemInserted(termList.size - 1)
         }

@@ -1,6 +1,7 @@
 package com.example.final_android_quizlet.dao
 
 import com.example.final_android_quizlet.models.Folder
+import com.example.final_android_quizlet.models.QuizWrite
 import com.example.final_android_quizlet.models.Topic
 import com.example.final_android_quizlet.models.User
 
@@ -12,9 +13,10 @@ class ResponseObject(
     public var topics: List<Topic>? = null,
     public var folder: Folder? = null,
     public var folders: List<Folder>? = null,
+    public var quizWrite: QuizWrite? = null,
 ){
     override fun toString(): String {
-        return "ResponseObject(status=$status, data=$data, user=$user, topic=$topic, topics=$topics, folder=$folder, folders=$folders)"
+        return "ResponseObject(status=$status, data=$data, user=$user, topic=$topic, topics=$topics, folder=$folder, folders=$folders, quizWrite=$quizWrite)"
     }
 }
 
@@ -27,5 +29,6 @@ fun ResponseObject.clone(): ResponseObject {
     res.topics = this.topics
     res.folder = this.folder
     res.folders = this.folders
+    res.quizWrite = this.quizWrite
     return res
 }

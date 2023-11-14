@@ -71,10 +71,6 @@
                 android:exported="false">
         </activity>
         <activity
-                android:name=".activity.MainQuizActivity"
-                android:exported="false">
-        </activity>
-        <activity
                 android:name=".activity.QuizActivity"
                 android:exported="false">
         </activity>
@@ -89,6 +85,7 @@
         <activity android:name=".activity.AddTopicInFolderActivity" android:exported="false"/>
         <activity android:name=".activity.AddTopicFolderActivity" android:exported="false"/>
         <activity android:name=".activity.RankingActivity" android:exported="false"/>
+        <activity android:name=".activity.WriteQuizActivity" android:exported="false"/>
         <activity
             android:name=".activity.FlashcardActivity" android:exported="false">
             <meta-data

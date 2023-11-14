@@ -109,14 +109,13 @@ class DetailTopic : AppCompatActivity() {
         }
 
         cvChoice!!.setOnClickListener {
-            val intent = Intent(this, MainQuizActivity::class.java)
-            intent.putExtra("exercise_type", "quiz")
+            val intent = Intent(this, QuizActivity::class.java)
             startActivity(intent)
         }
 
         cvWriteText!!.setOnClickListener {
-            val intent = Intent(this, MainQuizActivity::class.java)
-            intent.putExtra("exercise_type", "write")
+            val intent = Intent(this, WriteQuizActivity::class.java)
+            intent.putExtra("topic", topic)
             startActivity(intent)
         }
 

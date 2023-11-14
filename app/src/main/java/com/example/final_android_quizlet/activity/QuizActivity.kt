@@ -21,46 +21,34 @@ class QuizActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val exerciseType = intent.getStringExtra("exercise_type")
+        setContentView(R.layout.activity_dashboard_quiz)
 
-        if (exerciseType == "quiz") {
-            setContentView(R.layout.activity_dashboard_quiz)
+        val btnSubmitQuiz = findViewById<LinearLayout>(R.id.btnSubmit_quiz)
 
-            val btnSubmitQuiz = findViewById<LinearLayout>(R.id.btnSubmit_quiz)
+        val txTimer_quiz = findViewById<TextView>(R.id.txTimer_quiz)
 
-            val txTimer_quiz = findViewById<TextView>(R.id.txTimer_quiz)
-
-            countDownTimer = object : CountDownTimer(20000, 1000) {
-                override fun onTick(millisUntilFinished: Long) {
-                    val secondsRemaining = millisUntilFinished / 1000
-                    txTimer_quiz.text = String.format("%02d:%02d", secondsRemaining / 60, secondsRemaining % 60)
-                }
-
-                override fun onFinish() {
-                    val dialog = Dialog(this@QuizActivity)
-                    dialog.window?.addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND)
-                    dialog.setContentView(R.layout.time_out_dialog)
-
-                    dialog.findViewById<LinearLayout>(R.id.btnAgain_quiz).setOnClickListener {
-                        val intent = Intent(this@QuizActivity, MainQuizActivity::class.java)
-                        startActivity(intent)
-                    }
-                    dialog.show()
-                }
-            }.start()
-
-            btnSubmitQuiz.setOnClickListener {
-                val intent = Intent(this, ResultQuizActivity::class.java)
-                startActivity(intent)
+        countDownTimer = object : CountDownTimer(20000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                val secondsRemaining = millisUntilFinished / 1000
+                txTimer_quiz.text = String.format("%02d:%02d", secondsRemaining / 60, secondsRemaining % 60)
             }
 
-        } else if (exerciseType == "write") {
-            setContentView(R.layout.activity_dashboard_write)
-            val btnSubmitWrite = findViewById<LinearLayout>(R.id.btnSubmit_write)
-            btnSubmitWrite.setOnClickListener {
-                val intent = Intent(this, ResultQuizActivity::class.java)
-                startActivity(intent)
+            override fun onFinish() {
+                val dialog = Dialog(this@QuizActivity)
+                dialog.window?.addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND)
+                dialog.setContentView(R.layout.time_out_dialog)
+
+                dialog.findViewById<LinearLayout>(R.id.btnAgain_quiz).setOnClickListener {
+                    val intent = Intent(this@QuizActivity, DetailTopic::class.java)
+                    startActivity(intent)
+                }
+                dialog.show()
             }
+        }.start()
+
+        btnSubmitQuiz.setOnClickListener {
+            val intent = Intent(this, ResultQuizActivity::class.java)
+            startActivity(intent)
         }
 
     }

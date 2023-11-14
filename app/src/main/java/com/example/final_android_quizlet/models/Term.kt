@@ -5,11 +5,12 @@ import java.io.Serializable
 data class Term(
     var term: String,
     var definition: String,
+    var uid: String,
 ): Serializable{
     constructor() : this(
-        "",""
+        "","",""
     )
     override fun toString(): String {
-        return "Term(term='$term', definition='$definition')"
+        return "Term(term='$term', definition='$definition',uid='$uid')"
     }
 }
