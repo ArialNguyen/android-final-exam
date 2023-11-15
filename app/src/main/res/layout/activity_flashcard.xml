@@ -16,6 +16,7 @@
             app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" app:layout_constraintHorizontal_bias="1.0">
         <ImageView
+                android:id="@+id/img_exit_flashcard"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -186,9 +187,9 @@
                 app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@+id/layoutCard_Flashcard"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
     <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
-                                                       android:visibility="gone"
                                                        android:id="@+id/layoutResult_flashcard"
                                                        android:layout_height="0dp"
+                                                       android:visibility="gone"
                                                        app:layout_constraintBottom_toBottomOf="parent"
                                                        app:layout_constraintStart_toStartOf="parent"
                                                        app:layout_constraintTop_toBottomOf="@+id/progressBarTerm_flashcard"
@@ -212,7 +213,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@+id/imageView11" app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent">
+                app:layout_constraintStart_toStartOf="parent" android:id="@+id/constraintLayout6">
 
             <ImageView
                     android:layout_width="140dp"
@@ -281,26 +282,28 @@
                         app:layout_constraintBottom_toTopOf="@+id/tvTotalTermLeftResult_flashcard"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
-        <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="0dp"
+        <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
+                android:orientation="vertical"
+                android:gravity="center"
                 app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
             <Button
                     android:text="Tiếp tục ôn 2 thuật ngữ"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
+                    android:visibility="gone"
                     android:layout_height="wrap_content" android:id="@+id/btn_LearningResult_flashcard"
                     app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent"
                      app:layout_constraintTop_toTopOf="parent"/>
             <Button
-                    android:text="Ôn luyện trong chế độ Học"
-                    android:layout_width="0dp"
+                    android:text="Làm bài kiểm tra thử"
+                    android:layout_width="match_parent"
+                    android:visibility="gone"
                     android:layout_marginTop="5dp"
-                    android:layout_height="wrap_content" android:id="@+id/btn_examResult_flashcard"
-                    app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/btn_LearningResult_flashcard"/>
+                    android:layout_height="wrap_content" android:id="@+id/btn_examResult_flashcard"/>
             <TextView
                     android:text="Đặt lại Thẻ ghi nhớ"
                     android:textSize="14dp"
@@ -308,10 +311,8 @@
                     android:textStyle="bold"
                     android:layout_marginTop="10dp"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:id="@+id/tv_resetFCResult_flashcard"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/btn_examResult_flashcard"/>
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                    android:layout_height="wrap_content" android:id="@+id/tv_resetFCResult_flashcard"/>
+        </LinearLayout
+>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

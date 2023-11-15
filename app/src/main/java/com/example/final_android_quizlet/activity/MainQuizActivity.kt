@@ -67,9 +67,6 @@ class MainQuizActivity : AppCompatActivity() {
                         finish()
                         actionTransition.rollBackTransition()
                     }
-                    Log.i("TAG", "MAIN QUIZ: ")
-                    Log.i("TAG", "fetchTopic: ${fetchTopic.topic}")
-                    Log.i("TAG", "fetchFlashCard: ${fetchFlashCard.flashCard}")
                     // Get remain terms learning
                     val isExistFlashCard = fetchFlashCard.flashCard != null
                     val listTermIdKnew = mutableListOf<String>()
@@ -86,7 +83,6 @@ class MainQuizActivity : AppCompatActivity() {
                         remainTerms.addAll(fetchTopic.topic!!.terms)
                     }
                     runOnUiThread {
-
                         intent.putExtra("topic", fetchTopic.topic!!)
                         intent.putExtra("remainTerms", remainTerms as Serializable?)
                         startActivity(intent)

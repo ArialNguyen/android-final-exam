@@ -5,11 +5,13 @@ import TypeFlashCard
 import android.animation.AnimatorInflater
 import android.animation.AnimatorSet
 import android.content.Intent
+import android.media.Image
 import android.os.Bundle
 import android.util.Log
 import android.view.DragEvent
 import android.view.View
 import android.view.View.DRAG_FLAG_OPAQUE
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -38,15 +40,12 @@ import java.util.*
 class FlashcardActivity : AppCompatActivity() {
 
     // Service
-    private val folderService: FolderService = FolderService()
-    private val topicService: TopicService = TopicService()
-    private val manageScopeApi: ManageScopeApi = ManageScopeApi()
     private val actionTransition: ActionTransition = ActionTransition(this)
     private val authService: AuthService = AuthService()
     private val flashCardService: FlashCardService = FlashCardService()
-    private val actionDialog: ActionDialog = ActionDialog(this, lifecycleScope)
 
     // Layout Learning
+    private lateinit var imgExit: ImageView
     private lateinit var imgBackToPreTerm: ImageView
     private lateinit var layoutLearning: ConstraintLayout
     private lateinit var tvProgressBar: TextView
@@ -68,6 +67,9 @@ class FlashcardActivity : AppCompatActivity() {
     private lateinit var tvTotalKnewResult: TextView
     private lateinit var tvTotalTermLeftResult: TextView
     private lateinit var tvTotalLearningResult: TextView
+    private lateinit var tvResetFCResult: TextView
+    private lateinit var btnExamResult: Button
+    private lateinit var btnLearningResult: Button
 
     // Hard Data
     private var isFront = true
@@ -152,8 +154,46 @@ class FlashcardActivity : AppCompatActivity() {
                     tvTotalKnewResult.text = flashCard.termsKnew.size.toString()
                     tvTotalTermLeftResult.text =
                         (topicIntent.terms.size - (flashCard.termsLearning.size + flashCard.termsKnew.size)).toString()
+
+                    if(flashCard.termsLearning.size == 0){
+                        btnExamResult.setOnClickListener {
+                            val intent = Intent(this, DetailTopic::class.java)
+                            intent.putExtra("openExamChoice", "flashcard")
+                            startActivity(intent)
+                            finish()
+                            actionTransition.rollBackTransition()
+                        }
+                        btnExamResult.visibility = View.VISIBLE
+                        btnLearningResult.visibility = View.GONE
+                    }else{
+                        btnLearningResult.setOnClickListener {
+                            val intent = Intent(this, MainQuizActivity::class.java)
+                            intent.putExtra("exercise_type", "flashcard")
+                            intent.putExtra("topicId", topicIntent.uid)
+                            startActivity(intent)
+                            finish()
+                            actionTransition.moveNextTransition()
+                        }
+                        btnLearningResult.text = "Tiếp tục ôn ${flashCard.termsLearning.size} thuật ngữ"
+                        btnLearningResult.visibility = View.VISIBLE
+                        btnExamResult.visibility = View.GONE
+                    }
                     layoutLearning.visibility = View.GONE
                     layoutResult.visibility = View.VISIBLE
+
+                    tvResetFCResult.setOnClickListener {
+                        lifecycleScope.launch {
+                            withContext(Dispatchers.IO){
+                                flashCardService.resetFlashCard(flashCard.uid)
+                                finish()
+                                actionTransition.rollBackTransition()
+                                runOnUiThread {
+                                    Toast.makeText(this@FlashcardActivity,"Đã đặt lại thẻ ghi nhớ", Toast.LENGTH_LONG).show()
+                                }
+                            }
+                        }
+                    }
+
 
                     // Update data in background
                     lifecycleScope.launch {
@@ -268,6 +308,7 @@ class FlashcardActivity : AppCompatActivity() {
             Log.i("TAG", "Topic received FlashCard: $topicIntent")
         }
         // Learning layout
+        imgExit = findViewById(R.id.img_exit_flashcard)
         layoutLearning = findViewById(R.id.layoutStudy_flashcard)
         imgBackToPreTerm = findViewById(R.id.img_BackToPreTerm_flashcard)
         tvProgressBar = findViewById(R.id.tvProgress_flashcard)
@@ -289,7 +330,9 @@ class FlashcardActivity : AppCompatActivity() {
         tvTotalTermLeftResult = findViewById(R.id.tvTotalTermLeftResult_flashcard)
         tvTotalLearningResult = findViewById(R.id.tvTotalLearningResult_flashcard)
         tvTotalKnewResult = findViewById(R.id.tvTotalKnewResult_flashcard)
-
+        tvResetFCResult = findViewById(R.id.tv_resetFCResult_flashcard)
+        btnExamResult = findViewById(R.id.btn_examResult_flashcard)
+        btnLearningResult = findViewById(R.id.btn_LearningResult_flashcard)
         // Load data
 
         dragShadowBuilder = CustomDragShadowBuilder(cardBackground)
@@ -321,7 +364,7 @@ class FlashcardActivity : AppCompatActivity() {
             flipCard(frontAnimation, backAnimation)
         }
 
-        // Handle Drag
+        // Handle Event
         areaLearning.setOnDragListener(dragListener)
         areaKnew.setOnDragListener(dragListener)
 
@@ -334,6 +377,11 @@ class FlashcardActivity : AppCompatActivity() {
 
         imgBackToPreTerm.setOnClickListener {
             moveBackTerm()
+        }
+
+        imgExit.setOnClickListener {
+            finish()
+            actionTransition.rollBackTransition()
         }
         // Call Back
     }

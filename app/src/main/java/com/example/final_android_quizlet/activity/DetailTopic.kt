@@ -101,6 +101,10 @@ class DetailTopic : AppCompatActivity() {
             onBackPressed()
         }
 
+        if(intent.getStringExtra("openExamChoice") != null){
+
+        }
+
 
         if(intent.getStringExtra("topicId") == null || intent.getStringExtra("topicId")!!.isEmpty()){
             Toast.makeText(this, "Something error... Try again!", Toast.LENGTH_LONG).show()
