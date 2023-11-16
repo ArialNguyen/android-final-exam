@@ -47,8 +47,8 @@ class QuizActivity : AppCompatActivity() {
         }.start()
 
         btnSubmitQuiz.setOnClickListener {
-            val intent = Intent(this, ResultQuizActivity::class.java)
-            startActivity(intent)
+//            val intent = Intent(this, ResultQuizActivity::class.java)
+//            startActivity(intent)
         }
 
     }

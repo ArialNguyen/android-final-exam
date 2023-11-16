@@ -1,7 +1,6 @@
 package com.example.final_android_quizlet.models
 
 import java.io.Serializable
-import java.util.*
 
 data class Topic (
     var uid: String,

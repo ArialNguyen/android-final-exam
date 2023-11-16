@@ -102,8 +102,8 @@ class WriteQuizActivity : AppCompatActivity() {
         if (currentIndex == items.size - 1) {
             txNext.text = "SUBMIT"
             txNext.setOnClickListener {
-                val intent = Intent(this, ResultQuizActivity::class.java)
-                startActivity(intent)
+//                val intent = Intent(this, ResultQuizActivity::class.java)
+//                startActivity(intent)
             }
         } else {
             txNext.text = "NEXT"

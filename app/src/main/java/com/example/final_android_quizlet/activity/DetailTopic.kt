@@ -111,9 +111,17 @@ class DetailTopic : AppCompatActivity() {
             finish()
             actionTransition.rollBackTransition()
         }
+        cvFlashCard!!.setOnClickListener {
+            val intent = Intent(this, MainQuizActivity::class.java)
+            intent.putExtra("exercise_type", "FlashCard")
+            intent.putExtra("topicId", topic!!.uid)
+            startActivity(intent)
+        }
 
         cvChoice!!.setOnClickListener {
-            val intent = Intent(this, QuizActivity::class.java)
+            val intent = Intent(this, MainQuizActivity::class.java)
+            intent.putExtra("exercise_type", "choice")
+            intent.putExtra("topicId", topic!!.uid)
             startActivity(intent)
         }
 
@@ -140,12 +148,7 @@ class DetailTopic : AppCompatActivity() {
         adapter.registerAdapterDataObserver(indicator2!!.adapterDataObserver); // Need to have this line to update data
 
 
-        cvFlashCard!!.setOnClickListener {
-            val intent = Intent(this, MainQuizActivity::class.java)
-            intent.putExtra("exercise_type", "FlashCard")
-            intent.putExtra("topicId", topic!!.uid)
-            startActivity(intent)
-        }
+
 
         lifecycleScope.launch {
             withContext(Dispatchers.IO){

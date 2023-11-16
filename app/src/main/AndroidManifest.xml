@@ -17,6 +17,9 @@
             android:usesCleartextTraffic="true"
             tools:targetApi="31">
         <activity
+                android:name=".activity.ChoiceTest"
+                android:exported="false"/>
+        <activity
                 android:name=".auth.ForgotPwd_sendMail"
                 android:exported="false">
         </activity>
@@ -74,20 +77,29 @@
                 android:name=".activity.QuizActivity"
                 android:exported="false">
         </activity>
-        <activity
-                android:name=".activity.ResultQuizActivity"
-                android:exported="false">
-        </activity>
+<!--        <activity-->
+<!--                android:name=".activity.ResultQuizActivity"-->
+<!--                android:exported="false">-->
+<!--        </activity>-->
         <activity
                 android:name=".activity.DetailFolderActivity"
                 android:exported="false">
         </activity>
-        <activity android:name=".activity.AddTopicInFolderActivity" android:exported="false"/>
-        <activity android:name=".activity.AddTopicFolderActivity" android:exported="false"/>
-        <activity android:name=".activity.RankingActivity" android:exported="false"/>
-        <activity android:name=".activity.WriteQuizActivity" android:exported="false"/>
-        <activity android:name=".activity.MainQuizActivity" android:exported="false"/>
-
+        <activity
+                android:name=".activity.AddTopicInFolderActivity"
+                android:exported="false"/>
+        <activity
+                android:name=".activity.AddTopicFolderActivity"
+                android:exported="false"/>
+        <activity
+                android:name=".activity.RankingActivity"
+                android:exported="false"/>
+        <activity
+                android:name=".activity.WriteQuizActivity"
+                android:exported="false"/>
+        <activity
+                android:name=".activity.MainQuizActivity"
+                android:exported="false"/>
         <activity
                 android:name=".activity.FlashcardActivity"
                 android:exported="false">
