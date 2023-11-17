@@ -23,7 +23,7 @@
                     android:hint="Filtering Topic"
                     android:inputType="textEmailAddress"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="49dp"
                     android:maxLines="1" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -42,13 +42,14 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView_library"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             app:cardCornerRadius="8dp"
             android:layout_marginTop="15dp"
             app:cardElevation="20dp"
             app:cardUseCompatPadding="true"
             tools:listitem="@layout/item_tien_trinh"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/text_tien_trinh"
             tools:ignore="MissingConstraints"
             tools:layout_editor_absoluteX="0dp" />

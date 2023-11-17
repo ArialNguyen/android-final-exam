@@ -6,6 +6,7 @@ import android.util.Log
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.final_android_quizlet.R
@@ -33,7 +34,8 @@ class WriteQuizActivity : AppCompatActivity() {
     private var currentIndex = 0
 
     // Hard Data
-    private lateinit var topic: Topic
+    private lateinit var quizWrite: QuizWrite
+    private lateinit var topicIntent: Topic
     private lateinit var items: List<Term>
 
     private lateinit var txCard: TextView
@@ -56,36 +58,32 @@ class WriteQuizActivity : AppCompatActivity() {
         if (!authService.isLogin()) {
             startActivity(Intent(this, Login::class.java))
         }
-
-        if (intent.getSerializableExtra("topic") != null) {
-            topic = intent.getSerializableExtra("topic") as Topic
-            items = topic.terms
-            Log.i("TAG", "Topic received Write: $items")
+        val userId = authService.getCurrentUser().uid
+        if (intent.getSerializableExtra("topic") == null) {
+            finish()
+            Toast.makeText(this, "Oops something wrong. Try again!!!", Toast.LENGTH_LONG).show()
+            actionTransition.rollBackTransition()
         }
+        topicIntent = intent.getSerializableExtra("topic") as Topic
+        items = topicIntent.terms
 
-        updateUIWithTerm(items[currentIndex])
+        quizWrite = QuizWrite()
+        quizWrite.uid = UUID.randomUUID().toString()
+        quizWrite.topicId = topicIntent.uid
+        quizWrite.userId = userId
+
+        updateUIWithTerm()
         updatePageNumber()
 
         txNext.setOnClickListener {
-            val answerText = edWrite.text.toString()
-
-            if (currentIndex < items.size - 1) {
-                saveUserAnswer(answerText)
-                currentIndex++
-                updateUIWithTerm(items[currentIndex])
-                updatePageNumber()
-            } else {
-
-            }
+            insertData()
         }
 
         imBackQuiz.setOnClickListener {
             if (currentIndex > 0) {
                 currentIndex--
-                updateUIWithTerm(items[currentIndex])
+                updateUIWithTerm()
                 updatePageNumber()
-            } else {
-
             }
         }
 
@@ -94,66 +92,68 @@ class WriteQuizActivity : AppCompatActivity() {
         }
 
     }
+    private fun backAction(){
+        if(quizWrite.listAnswer.isNotEmpty()){
+            quizWrite.listAnswer.removeLast()
+            currentIndex--
+            updateUIWithTerm()
+            updatePageNumber()
+        }
+    }
+    private fun insertData(){
+        val answerText = edWrite.text.toString()
+        quizWrite.listAnswer.add(
+            Answer(
+                answerText, items[currentIndex], answerText == items[currentIndex].definition
+            )
+        )
+        currentIndex++
+        updateUIWithTerm()
+        updatePageNumber()
+    }
 
-    private fun updateUIWithTerm(term: Term) {
-        txCard.text = term.definition
-        edWrite.text = null
+    private fun updateUIWithTerm() {
+        txCard.text = items[currentIndex].definition
+        edWrite.text.clear()
+
 
         if (currentIndex == items.size - 1) {
             txNext.text = "SUBMIT"
             txNext.setOnClickListener {
-//                val intent = Intent(this, ResultQuizActivity::class.java)
-//                startActivity(intent)
+
+                val answerText = edWrite.text.toString()
+                quizWrite.listAnswer.add(
+                    Answer(
+                        answerText, items[currentIndex], answerText == items[currentIndex].definition
+                    )
+                )
+    //                val intent = Intent(this, ResultQuizActivity::class.java)
+
+                lifecycleScope.launch {
+                    withContext(Dispatchers.IO){
+                        val createQuiz = quizWriteService.saveUserAnswer(quizWrite)
+                        if(createQuiz.status){
+                            intent.putExtra("result", quizWrite)
+                            startActivity(intent)
+                        }
+                    }
+                }
             }
         } else {
             txNext.text = "NEXT"
-
             txNext.setOnClickListener {
-                currentIndex++
-                updateUIWithTerm(items[currentIndex])
-                updatePageNumber()
+                insertData()
             }
         }
     }
-
-    private fun saveUserAnswer(answerText: String) {
-        val termId = items[currentIndex].uid
-        val result = answerText.equals(items[currentIndex].term, ignoreCase = true)
-
-        val answer = Answer(UUID.randomUUID().toString(), answerText, termId, result)
-
-        val quizWrite = QuizWrite(
-            UUID.randomUUID().toString(),
-            topic.uid,
-            listOf(answer),
-            0.0f
-        )
-
-        lifecycleScope.launch(Dispatchers.IO) {
-            val response = quizWriteService.saveUserAnswer(quizWrite)
-            withContext(Dispatchers.Main) {
-                if (response.status) {
-
-                } else {
-
-                }
-            }
-        }
-    }
-
     private fun updatePageNumber() {
         txRightQuiz.text = "${currentIndex + 1} / ${items.size}"
     }
 
+
+
     override fun onBackPressed() {
-        if (currentIndex > 0) {
-            val answerText = edWrite.text.toString()
-            saveUserAnswer(answerText)
-            currentIndex--
-            updateUIWithTerm(items[currentIndex])
-            updatePageNumber()
-        } else {
-            super.onBackPressed()
-        }
+        super.onBackPressed()
+        backAction()
     }
 }

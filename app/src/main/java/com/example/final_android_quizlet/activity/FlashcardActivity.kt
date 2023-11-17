@@ -206,11 +206,13 @@ class FlashcardActivity : AppCompatActivity() {
 //                                else if (flashCard.termsKnew.size == topicIntent.terms.size) flashCardService.resetFlashCard(flashCardIntent!!.uid)
                                 else flashCardService.updateFlashCard(flashCardIntent!!.uid, flashCard)
                             if (!saveFlashCardDb.status) {
-                                Toast.makeText(
-                                    this@FlashcardActivity,
-                                    saveFlashCardDb.data.toString(),
-                                    Toast.LENGTH_LONG
-                                ).show()
+                                runOnUiThread {
+                                    Toast.makeText(
+                                        this@FlashcardActivity,
+                                        saveFlashCardDb.data.toString(),
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
                                 finish()
                                 actionTransition.rollBackTransition()
                             }

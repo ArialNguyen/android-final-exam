@@ -163,10 +163,10 @@ class ChoiceTest : AppCompatActivity() {
 
             tvTotalTrue.text = choiceTest.overall.toString()
             tvTotalFalse.text = (items.size - choiceTest.overall as Int).toString()
-
             btnExam.setOnClickListener {
                 val intent = Intent(this, DetailTopic::class.java)
                 intent.putExtra("action", "openExam")
+                intent.putExtra("topicId", topicIntent!!.uid) // Need to convert to whole topic not id
                 startActivity(intent)
                 finish()
                 actionTransition.rollBackTransition()
@@ -220,13 +220,7 @@ class ChoiceTest : AppCompatActivity() {
             result = true
         }
         val answer = AnswerChoice(items[currentTermIndex], answerChosen, result)
-//        val tmpList = choiceTest.answers.toMutableList()
-//        tmpList.add(answer)
-//        choiceTest.answers = tmpList.toList()
         choiceTest.answers.add(answer)
-//        Log.i("TAG", "handleClickOnAnswer: $tmpList")
-        Log.i("TAG", "choiceTest: ${choiceTest.answers}")
-
         currentTermIndex++
         loadExamView()
     }

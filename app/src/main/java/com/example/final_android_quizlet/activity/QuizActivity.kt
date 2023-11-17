@@ -7,12 +7,9 @@ import android.os.CountDownTimer
 import android.view.WindowManager
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
 import com.example.final_android_quizlet.R
 //import com.example.final_android_quizlet.activity.SplashActivity.Companion.listOfQ
-import com.example.final_android_quizlet.models.Quiz
 
 class QuizActivity : AppCompatActivity() {
 

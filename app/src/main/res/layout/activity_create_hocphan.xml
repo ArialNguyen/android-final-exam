@@ -44,14 +44,6 @@
                 android:contentDescription="Xác nhận"
                 android:src="@drawable/ic_baseline_tick"/>
 
-        <ImageView
-                android:id="@+id/settingsButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_marginEnd="20dp"
-                android:contentDescription="Cài đặt"
-                android:src="@drawable/ic_baseline_settings_24"/>
 
     </androidx.appcompat.widget.Toolbar>
 

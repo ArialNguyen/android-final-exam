@@ -111,6 +111,7 @@ class DetailTopic : AppCompatActivity() {
             finish()
             actionTransition.rollBackTransition()
         }
+
         cvFlashCard!!.setOnClickListener {
             val intent = Intent(this, MainQuizActivity::class.java)
             intent.putExtra("exercise_type", "FlashCard")

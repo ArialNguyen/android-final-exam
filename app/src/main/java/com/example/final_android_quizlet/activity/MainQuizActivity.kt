@@ -63,7 +63,7 @@ class MainQuizActivity : AppCompatActivity() {
                 }
                 val fetchChoice = choiceService.findChoiceTestByTopicId(topicId)
                 if(fetchChoice.status){
-                    intent.putExtra("choice", fetchTopic.testChoice!!)
+                    intent.putExtra("choice", fetchTopic.testChoice)
                 }
                 runOnUiThread {
                     intent.putExtra("topic", fetchTopic.topic!!)
