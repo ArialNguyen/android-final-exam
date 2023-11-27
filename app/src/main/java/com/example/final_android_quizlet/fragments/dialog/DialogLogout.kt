@@ -25,7 +25,7 @@ class DialogLogout(private val activity: Activity, private val ctx: Context, pri
     private val actionTransition: ActionTransition = ActionTransition(activity)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView: View = inflater.inflate(R.layout.dialog_logout, container, false)
-
+    
 
         rootView.findViewById<MaterialButton>(R.id.btnDialogLogout).setOnClickListener {
             authService.logout()

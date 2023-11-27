@@ -21,6 +21,7 @@ import com.example.final_android_quizlet.common.ActionDialog
 import com.example.final_android_quizlet.common.ManageScopeApi
 import com.example.final_android_quizlet.service.AuthService
 import com.example.final_android_quizlet.service.FolderService
+import com.google.android.material.bottomnavigation.BottomNavigationItemView
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.launch
 
@@ -43,35 +44,28 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, Login::class.java).putExtra("checkLogin", this@MainActivity::class.java.name))
         }
 
-//        btn_logout!!.setOnClickListener {
-//            lifecycleScope.launch {
-//                authService.logout()
-//            }
-//        }
-
         lifecycleScope.launch {
             val user = authService.getUserLogin().user!!
             txName_main!!.text = user.name
         }
 
-
         plusIcon.setOnClickListener {
             showBottomDialog()
         }
 
-        val profileButton: ImageView = findViewById(R.id.imageView7)
+        val profileButton: BottomNavigationItemView = findViewById(R.id.imageView7)
         profileButton.setOnClickListener {
             val intent = Intent(this, ProfileActivity::class.java)
             startActivity(intent)
         }
 
-        val libraryButton: ImageView = findViewById(R.id.imageView6)
+        val libraryButton: BottomNavigationItemView = findViewById(R.id.imageView6)
         libraryButton.setOnClickListener {
             val intent = Intent(this, LibraryActivity::class.java)
             startActivity(intent)
         }
 
-        val rankingButton: ImageView = findViewById(R.id.imgRanking_Main)
+        val rankingButton: BottomNavigationItemView = findViewById(R.id.imgRanking_Main)
         rankingButton.setOnClickListener {
             val intent = Intent(this, RankingActivity::class.java)
             startActivity(intent)
@@ -88,8 +82,6 @@ class MainActivity : AppCompatActivity() {
         val createFolder: LinearLayout = dialog.findViewById(R.id.create_folder)
         val createClass: LinearLayout = dialog.findViewById(R.id.create_class)
         val cancelButton: ImageView = dialog.findViewById(R.id.cancelButton)
-
-
 
         createHocPhan.setOnClickListener {
             dialog.dismiss()

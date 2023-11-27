@@ -13,18 +13,19 @@
         android:layout_height="match_parent">
         <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textInputEmail"
-                style="@style/parent"
+                style="@style/Theme.Finalandroidquizlet"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/loginViewsMargin" tools:ignore="MissingConstraints">
+                tools:ignore="MissingConstraints" app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent">
             <EditText
                     android:id="@+id/etFilterTopic_library"
-                    style="@style/modifiedEditText"
+                    style="@style/Theme.MaterialComponents.Light"
                     android:hint="Filtering Topic"
                     android:inputType="textEmailAddress"
                     android:layout_width="match_parent"
                     android:layout_height="49dp"
-                    android:maxLines="1" />
+                    android:maxLines="1"/>
         </com.google.android.material.textfield.TextInputLayout>
 
 
