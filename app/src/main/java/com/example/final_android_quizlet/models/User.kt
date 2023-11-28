@@ -8,6 +8,7 @@ class User(
     val passwordAuth: String,
     val password: String,
     val passcodeFGP: Int? = null
+    // topicSaved: TopicId???
 ) {
     constructor() : this(
         "", "", "", "", "", "", null
