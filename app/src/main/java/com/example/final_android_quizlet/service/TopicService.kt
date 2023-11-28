@@ -74,6 +74,7 @@ class TopicService {
         Log.i("TAG", "getDocumentIdsByFields: ")
         return query!!.get().await().documents.toList()
     }
+
     inner class TopicForUserLogged{
         private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
         suspend fun getTopicById(id: String): ResponseObject {
@@ -91,6 +92,25 @@ class TopicService {
                     res.status = true
                 }
             } catch (e: Exception) {
+                res.data = e.message.toString()
+                res.status = false
+            }
+            return res
+        }
+
+        fun createTopics(topics: MutableList<Topic>): ResponseObject {
+            val res = ResponseObject()
+            try {
+                val batch = db.batch()
+                val docRef = db.collection("topics")
+                topics.forEach {
+                    batch.set(docRef.document(), it)
+                }
+                batch.commit()
+
+                res.topics = topics
+                res.status = true
+            }catch (e: Exception){
                 res.data = e.message.toString()
                 res.status = false
             }

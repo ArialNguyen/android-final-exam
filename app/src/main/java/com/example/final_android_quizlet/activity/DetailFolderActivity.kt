@@ -18,7 +18,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.final_android_quizlet.R
-import com.example.final_android_quizlet.adapter.LibraryTopicAdapter
+import com.example.final_android_quizlet.adapter.TopicAdapter
 import com.example.final_android_quizlet.adapter.data.LibraryTopicAdapterItem
 import com.example.final_android_quizlet.auth.Login
 import com.example.final_android_quizlet.common.*
@@ -91,7 +91,7 @@ class DetailFolderActivity : AppCompatActivity() {
             onBackPressed()
         }
         // Adapter
-        val adapter = LibraryTopicAdapter(items)
+        val adapter = TopicAdapter(EOrientationRecyclerView.VERTICAL, items)
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView_DetailFolder)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter

@@ -21,7 +21,7 @@ class LibraryAdapter(activity: FragmentActivity) : FragmentStateAdapter(activity
         return adaptersChild[position]
     }
 
-    fun addAdapterForChild(items: MutableList<LibraryTopicAdapterItem>, adapter: LibraryTopicAdapter) {
+    fun addAdapterForChild(items: MutableList<LibraryTopicAdapterItem>, adapter: TopicAdapter) {
         adaptersChild.add(AdapterAndItems(items, null, adapter))
     }
 

@@ -14,7 +14,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.final_android_quizlet.R
 import com.example.final_android_quizlet.adapter.LibraryAdapter
 import com.example.final_android_quizlet.adapter.LibraryFolderAdapter
-import com.example.final_android_quizlet.adapter.LibraryTopicAdapter
+import com.example.final_android_quizlet.adapter.TopicAdapter
 import com.example.final_android_quizlet.adapter.data.LibraryFolderAdapterItem
 import com.example.final_android_quizlet.adapter.data.LibraryTopicAdapterItem
 import com.example.final_android_quizlet.auth.Login
@@ -58,7 +58,7 @@ class LibraryActivity() : AppCompatActivity() {
 
         libraryAdapter = LibraryAdapter(this)
         libraryAdapter.addFragment(FragmentTopicLibrary( object : GetBackAdapterFromViewPager{
-            override fun onResult(items: MutableList<LibraryTopicAdapterItem>, adapter: LibraryTopicAdapter) {
+            override fun onResult(items: MutableList<LibraryTopicAdapterItem>, adapter: TopicAdapter) {
                 libraryAdapter.addAdapterForChild(items, adapter)
             }
         }), "Học Phần")
@@ -106,7 +106,7 @@ class LibraryActivity() : AppCompatActivity() {
                 Log.i("TAG", "Received TOPIC: $topic")
                 (libraryAdapter.getAdapter(0).items as MutableList<LibraryTopicAdapterItem>)
                     .add(LibraryTopicAdapterItem(topic, authService.getUserLogin().user!!))
-                (libraryAdapter.getAdapter(0).adapter as LibraryTopicAdapter).notifyDataSetChanged()
+                (libraryAdapter.getAdapter(0).adapter as TopicAdapter).notifyDataSetChanged()
             }
         }
     }

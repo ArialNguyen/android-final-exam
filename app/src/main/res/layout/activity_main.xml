@@ -10,219 +10,158 @@
 
 
     <LinearLayout
-        android:id="@+id/liTop_main"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@color/colorBackground"
-        tools:ignore="MissingConstraints">
+            android:id="@+id/liTop_main"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/colorBackground"
+            tools:ignore="MissingConstraints" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:background="@drawable/top_background"
-            android:orientation="vertical">
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:background="@drawable/top_background"
+                android:orientation="vertical">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="24dp">
-
-                <TextView
-                    android:id="@+id/tx_welcome"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Welcome"
-                    android:textColor="@color/white"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"/>
-
-                <TextView
-                    android:id="@+id/txName_main"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Alex Dastjerdi"
-                    android:textColor="@color/white"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="@+id/tx_welcome"
-                    app:layout_constraintTop_toBottomOf="@id/tx_welcome"/>
-
-                <ImageView
-                    android:id="@+id/imageView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
                     android:layout_marginTop="16dp"
-                    android:layout_marginEnd="20dp"
-                    android:src="@drawable/bell"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0"/>
-
-                <ImageView
-                    android:id="@+id/imageView2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="12dp"
-                    android:src="@drawable/red_circle"
-                    app:layout_constraintBottom_toTopOf="@id/imageView"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/imageView"
-                    app:layout_constraintTop_toTopOf="@id/imageView"
-                    app:layout_constraintVertical_bias="0.0"/>
+                    android:layout_marginEnd="24dp">
 
                 <TextView
-                    android:id="@+id/textView3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="1"
-                    android:textColor="@color/white"
-                    app:layout_constraintBottom_toBottomOf="@id/imageView2"
-                    app:layout_constraintEnd_toEndOf="@id/imageView2"
-                    app:layout_constraintStart_toStartOf="@id/imageView2"
-                    app:layout_constraintTop_toTopOf="@id/imageView2"/>
+                        android:id="@+id/tx_welcome"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:gravity="center"
+                        android:text="Welcome "
+                        android:textColor="@color/white"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent"/>
+
+                <TextView
+                        android:id="@+id/txName_main"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:gravity="center"
+                        android:layout_marginStart="5dp"
+                        android:text="Alex Dastjerdi"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toEndOf="@+id/tx_welcome"
+                        app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent"/>
+
+                <ImageView
+                        android:id="@+id/imageView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="20dp"
+                        android:src="@drawable/bell"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.0"/>
+
+                <ImageView
+                        android:id="@+id/imageView2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="12dp"
+                        android:src="@drawable/red_circle"
+                        app:layout_constraintBottom_toTopOf="@id/imageView"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/imageView"
+                        app:layout_constraintTop_toTopOf="@id/imageView"
+                        app:layout_constraintVertical_bias="0.0"/>
+
+                <TextView
+                        android:id="@+id/textView3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1"
+                        android:textColor="@color/white"
+                        app:layout_constraintBottom_toBottomOf="@id/imageView2"
+                        app:layout_constraintEnd_toEndOf="@id/imageView2"
+                        app:layout_constraintStart_toStartOf="@id/imageView2"
+                        app:layout_constraintTop_toTopOf="@id/imageView2"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <EditText
-                android:id="@+id/ediTextText"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="24dp"
-                android:layout_marginBottom="24dp"
-                android:background="@drawable/edittext_background"
-                android:drawableStart="@drawable/search_icon"
-                android:drawablePadding="8dp"
-                android:ems="10"
-                android:hint="Học phần"
-                android:inputType="text"
-                android:padding="8dp"
-                android:textColor="#9AA2AA"/>
+                    android:id="@+id/etSearchTopic_main"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="24dp"
+                    android:layout_marginBottom="24dp"
+                    android:background="@drawable/edittext_background"
+                    android:drawableStart="@drawable/search_icon"
+                    android:drawablePadding="8dp"
+                    android:ems="10"
+                    android:hint="Học phần"
+                    android:inputType="text"
+                    android:padding="8dp"
+                    android:textColor="#9AA2AA"/>
         </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/liHocPhan_main"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/liTop_main">
+            android:id="@+id/liHocPhan_main"
+            android:layout_width="match_parent"
+            android:layout_height="190dp"
+            app:layout_constraintTop_toBottomOf="@+id/liTop_main" app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_20sdp"
-            android:layout_marginStart="@dimen/_10sdp"
-            android:layout_marginEnd="@dimen/_10sdp"
-            android:orientation="vertical">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:orientation="vertical">
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Học phần"
-                    android:textStyle="bold"
-                    android:textSize="@dimen/_13sdp"
-                    android:layout_weight="1"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Xem tất cả"
-                    android:textColor="@color/next_btn_color"
-                    android:textSize="@dimen/_13sdp"
-                    android:layout_weight="0"/>
-            </LinearLayout>
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_rowWeight="1"
-                android:layout_columnWeight="1"
-                android:layout_gravity="fill"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="5dp"
-                android:layout_marginTop="@dimen/_10sdp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.525"
-                app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent">
-
-                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/_8sdp"
-                    android:orientation="vertical">
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
 
-                    <TextView
-                        android:id="@+id/tvTitleName_main"
+                <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:text="Tiếng anh"
-                        android:textSize="18sp"
+                        android:text="Học phần"
                         android:textStyle="bold"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="@dimen/_13sdp"
+                        android:layout_weight="1"/>
 
-                    <RelativeLayout
-                        android:id="@+id/round_background"
-                        android:layout_width="110dp"
+                <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="10dp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tvTitleName_library">
+                        android:id="@+id/tvViewAllTopic_main"
+                        android:text="Xem tất cả"
+                        android:textColor="@color/next_btn_color"
+                        android:textSize="@dimen/_13sdp"
+                        android:layout_weight="0"/>
+            </LinearLayout>
 
-                        <TextView
-                            android:id="@+id/tvTotalTerm_main"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentStart="true"
-                            android:layout_alignParentEnd="true"
-                            android:text="3 thuật ngữ"
-                            android:textSize="16sp" />
-                    </RelativeLayout>
-
-                    <RelativeLayout android:layout_width="368dp" android:layout_height="33dp"
-                        app:layout_constraintTop_toBottomOf="@+id/round_background"
-                        app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
-                        android:layout_marginTop="8dp" app:layout_constraintHorizontal_bias="0.627">
-
-                        <de.hdodenhof.circleimageview.CircleImageView
-                            android:id="@+id/imgAvatarIcon_main"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:layout_marginTop="2dp"
-                            android:src="@drawable/person"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/round_background"
-                            android:layout_marginLeft="12dp" tools:ignore="NotSibling"/>
-                        <TextView
-                            android:id="@+id/tvUserName_main"
-                            android:layout_width="223dp"
-                            android:layout_height="match_parent"
-                            android:text="quizlette23254363"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintStart_toEndOf="@+id/imgAvatarIcon_main"
-                            app:layout_constraintTop_toBottomOf="@+id/round_background"
-                            android:gravity="center_vertical"
-                            android:layout_alignParentEnd="true" android:layout_marginEnd="85dp"
-                            android:layout_toEndOf="@+id/imgAvatarIcon_main" android:layout_marginStart="8dp"
-                            tools:ignore="NotSibling"/>
-                    </RelativeLayout>
-
-                </LinearLayout>
-
-
-            </androidx.cardview.widget.CardView>
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/topicRV_Main"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="20dp"
+                    android:layout_marginTop="10dp"
+                    app:cardUseCompatPadding="true"
+                    tools:listitem="@layout/item_topic_horizontal"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:orientation="horizontal"
+                    tools:ignore="MissingConstraints"
+                    tools:layout_editor_absoluteX="0dp" />
 
         </LinearLayout>
     </LinearLayout>
@@ -237,7 +176,6 @@
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_20sdp"
                 android:layout_marginStart="@dimen/_10sdp"
                 android:layout_marginEnd="@dimen/_10sdp"
                 android:orientation="vertical">

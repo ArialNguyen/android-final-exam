@@ -1,6 +1,7 @@
 package com.example.final_android_quizlet.models
 
 import java.io.Serializable
+import java.util.UUID
 
 data class Topic (
     var uid: String,
@@ -11,7 +12,7 @@ data class Topic (
 ): Serializable{
 
      constructor() : this(
-         "","", "", listOf(), ""
+         UUID.randomUUID().toString(),"", "", listOf(), ""
      )
     override fun toString(): String {
         return "Topic(uid='$uid', title='$title', description=$description, terms=$terms, userId=$userId)"

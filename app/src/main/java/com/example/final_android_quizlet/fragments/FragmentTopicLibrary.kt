@@ -1,7 +1,6 @@
 package com.example.final_android_quizlet.fragments
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,9 +14,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.final_android_quizlet.R
 import com.example.final_android_quizlet.activity.DetailTopic
-import com.example.final_android_quizlet.adapter.LibraryTopicAdapter
+import com.example.final_android_quizlet.adapter.TopicAdapter
 import com.example.final_android_quizlet.adapter.data.LibraryTopicAdapterItem
 import com.example.final_android_quizlet.auth.Login
+import com.example.final_android_quizlet.common.EOrientationRecyclerView
 import com.example.final_android_quizlet.common.GetBackAdapterFromViewPager
 import com.example.final_android_quizlet.mapper.TopicMapper
 import com.example.final_android_quizlet.service.AuthService
@@ -44,7 +44,7 @@ class FragmentTopicLibrary(private val getBackAdapterFromViewPager: GetBackAdapt
             startActivity(Intent(context, Login::class.java))
         }
 
-        val adapter = LibraryTopicAdapter(items)
+        val adapter = TopicAdapter(EOrientationRecyclerView.VERTICAL, items)
         val view = inflater.inflate(R.layout.fragment__hoc_phan, container, false)
         etSearchTopic = view.findViewById(R.id.etFilterTopic_library)
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView_library)
