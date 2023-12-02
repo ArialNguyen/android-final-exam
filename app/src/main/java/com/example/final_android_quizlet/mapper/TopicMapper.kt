@@ -8,12 +8,14 @@ import org.modelmapper.ModelMapper
 class TopicMapper {
     private val mapper = ModelMapper()
 
-    fun convertToTopic(topic: Any): Topic {
+    fun convertToTopic(topic: MutableMap<String, Any>): Topic {
         return mapper.map(topic, Topic::class.java)
     }
     fun convertToTopics(topics: List<DocumentSnapshot>): List<Topic> {
         return topics.map {
-            return@map convertToTopic(it.data!!)
+            val topic = convertToTopic(it.data!!)
+            topic.createdAt = it.getTimestamp("createdAt")?.toDate() // !!
+            return@map topic
         }
     }
 }

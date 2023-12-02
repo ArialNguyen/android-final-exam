@@ -15,7 +15,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isGone
 import androidx.lifecycle.lifecycleScope
-import com.example.final_android_quizlet.MainActivity
 import com.example.final_android_quizlet.R
 import com.example.final_android_quizlet.adapter.TermAdapter
 import com.example.final_android_quizlet.auth.Login
@@ -24,12 +23,14 @@ import com.example.final_android_quizlet.common.FileAction
 import com.example.final_android_quizlet.common.ManageScopeApi
 import com.example.final_android_quizlet.dao.ResponseObject
 import com.example.final_android_quizlet.db.CallbackInterface
+import com.example.final_android_quizlet.models.ELearnTopicStatus
+import com.example.final_android_quizlet.models.EModeTopic
 import com.example.final_android_quizlet.models.Term
 import com.example.final_android_quizlet.models.Topic
 import com.example.final_android_quizlet.service.AuthService
 import com.example.final_android_quizlet.service.TopicService
-import com.example.final_android_quizlet.service.UserService
 import com.github.ybq.android.spinkit.SpinKitView
+import com.google.firebase.firestore.FieldValue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -143,7 +144,13 @@ class CreateTermActivity : AppCompatActivity() {
             val title = etTitle.text.toString()
             val description = etDescription.text.toString()
             manageScopeApi.getResponseWithCallback(lifecycleScope,
-                {(topicService::createTopic)(Topic(UUID.randomUUID().toString(), title, description, getUsefulTerm(), currentUser.uid))},
+                {(topicService::createTopic)(Topic(
+                    UUID.randomUUID().toString(),
+                    title, description, getUsefulTerm(),
+                    currentUser.uid,
+//                    mutableListOf(),
+                    EModeTopic.PRIVATE, ELearnTopicStatus.NOT_LEARN
+                ))},
                 object : CallbackInterface{
                     override fun onBegin() {
                         loaderFull.visibility = View.VISIBLE

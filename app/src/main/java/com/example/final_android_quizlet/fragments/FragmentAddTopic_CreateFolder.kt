@@ -77,7 +77,7 @@ class FragmentAddTopic_CreateFolder(private val getBackAdapterFromViewPager: Get
                 }
             }
         }
-        getBackAdapterFromViewPager.onResult(items, itemsChosen, adapter)
+        getBackAdapterFromViewPager.onResult(view, items, itemsChosen, adapter)
         return view
     }
 }

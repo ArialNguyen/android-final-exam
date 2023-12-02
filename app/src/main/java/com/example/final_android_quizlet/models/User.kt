@@ -1,20 +1,27 @@
 package com.example.final_android_quizlet.models
 
-class User(
-    val uid: String,
-    val name: String?,
-    val email: String,
-    val avatar: String?,
-    val passwordAuth: String,
-    val password: String,
-    val passcodeFGP: Int? = null
-    // topicSaved: TopicId???
-) {
+import java.io.Serializable
+import java.util.*
+
+data class User(
+    var uid: String,
+    var name: String,
+    var email: String,
+    var avatar: String,
+    var passwordAuth: String,
+    var password: String,
+    var passcodeFGP: Int,
+    var topicSaved: MutableList<String>
+) : Serializable {
+    var createdAt: Date? = null
+
     constructor() : this(
-        "", "", "", "", "", "", null
+        UUID.randomUUID().toString(), "", "", "", "", "", 0, mutableListOf()
     )
 
     override fun toString(): String {
-        return "MoshiUser(uid = '$uid', name='$name', email='$email', avatar='$avatar', passwordAuth='$passwordAuth', password='$password', passcodeFGP='$password')"
+        return "User(uid='$uid', name=$name, email='$email', avatar=$avatar, passwordAuth='$passwordAuth', password='$password', passcodeFGP=$passcodeFGP, topicSaved=$topicSaved)"
     }
+
+
 }

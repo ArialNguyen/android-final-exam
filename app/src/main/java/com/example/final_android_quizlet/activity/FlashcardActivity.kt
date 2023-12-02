@@ -404,8 +404,4 @@ class FlashcardActivity : AppCompatActivity() {
             isFront = true
         }
     }
-
-//    override fun onStop() {
-//        db.save(flashCard)
-//    }
 }

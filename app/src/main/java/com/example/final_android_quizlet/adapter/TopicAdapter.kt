@@ -1,5 +1,6 @@
 package com.example.final_android_quizlet.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,10 +22,11 @@ class TopicAdapter(private val flow: EOrientationRecyclerView, private val items
         val tvUserName: TextView = if (flow.name == EOrientationRecyclerView.VERTICAL.name) itemView.findViewById(R.id.tvUserName_library) else itemView.findViewById(R.id.tvUserName_itemTopicHorizon)
         val imgAvatar: CircleImageView =  if (flow.name == EOrientationRecyclerView.VERTICAL.name) itemView.findViewById(R.id.imgAvatarIcon_library) else itemView.findViewById(R.id.imgAvatarIcon_itemTopicHorizon)
         fun bind(item: LibraryTopicAdapterItem) {
+            Log.i("TAG", "bind: $item")
             tvTopicTitle.text = item.topic.title
             tvTotalTerm.text = "${item.topic.terms.size} thuật ngữ"
-            tvUserName.text = item.user.name
-            if (item.user.avatar!!.isNotEmpty()) {
+            tvUserName.text = item.user?.name
+            if (item.user?.avatar!!.isNotEmpty()) {
                 Picasso.get().load(item.user.avatar).into(imgAvatar)
             }
             itemView.setOnClickListener {

@@ -2,7 +2,7 @@ package com.example.final_android_quizlet.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -77,31 +77,50 @@ class AddTopicFolderActivity : AppCompatActivity() {
 
         imgYes!!.setOnClickListener {
             lifecycleScope.launch {
-                withContext(Dispatchers.IO){
+                withContext(Dispatchers.IO) {
                     if (optionsCurrentTab == 0) { // Folder Created
-                        val items = addTopicToFolderAdapter.getAdapter(optionsCurrentTab).items as MutableList<LibraryTopicAdapterItem>
-                        val itemsChosen = addTopicToFolderAdapter.getAdapter(optionsCurrentTab).secondItems as MutableList<Int>
-                        val adapter = addTopicToFolderAdapter.getAdapter(optionsCurrentTab).adapter as AddTopicToFolderApdater_CreatedAndLearned
-                        val chosenItems = items.filterIndexed { index, libraryTopicAdapterItem -> itemsChosen.contains(index) }.map { it.topic }
-                        val addTopics = folderService.FolderForUserLogged().addTopicsToFolder(folder!!.uid, chosenItems.toMutableList())
-                        if (addTopics.status){
-                            runOnUiThread { Toast.makeText(this@AddTopicFolderActivity, "Add topics successfully", Toast.LENGTH_LONG).show() }
+                        val items =
+                            addTopicToFolderAdapter.getAdapter(optionsCurrentTab).items as MutableList<LibraryTopicAdapterItem>
+                        val itemsChosen =
+                            addTopicToFolderAdapter.getAdapter(optionsCurrentTab).secondItems as MutableList<Int>
+                        val adapter =
+                            addTopicToFolderAdapter.getAdapter(optionsCurrentTab).adapter as AddTopicToFolderApdater_CreatedAndLearned
+                        val chosenItems =
+                            items.filterIndexed { index, libraryTopicAdapterItem -> itemsChosen.contains(index) }
+                                .map { it.topic }
+                        val addTopics = folderService.FolderForUserLogged()
+                            .addTopicsToFolder(folder!!.uid, chosenItems.toMutableList())
+                        if (addTopics.status) {
+                            runOnUiThread {
+                                Toast.makeText(
+                                    this@AddTopicFolderActivity,
+                                    "Add topics successfully",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
                             finish()
                             actionTransition.rollBackTransition()
-                        }else{
-                            runOnUiThread { Toast.makeText(this@AddTopicFolderActivity, addTopics.data.toString(), Toast.LENGTH_LONG).show() }
+                        } else {
+                            runOnUiThread {
+                                Toast.makeText(
+                                    this@AddTopicFolderActivity,
+                                    addTopics.data.toString(),
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
                         }
                     }
                 }
             }
         }
-
+        val view = window.decorView.rootView
         // Adapter
         addTopicToFolderAdapter = AddTopicToFolderAdapter(this)
 
         addTopicToFolderAdapter.addFragment(FragmentAddTopic_CreateFolder(object :
             GetBackAdapterFromViewPager {
             override fun onResult(
+                view: View,
                 items: MutableList<LibraryTopicAdapterItem>,
                 itemsChosen: MutableList<Int>,
                 adapter: AddTopicToFolderApdater_CreatedAndLearned
@@ -128,11 +147,6 @@ class AddTopicFolderActivity : AppCompatActivity() {
 
 
     }
-//    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-//        menuInflater.inflate(R.menu., menu)
-//        return true
-//    }
-
 
     override fun onBackPressed() {
         super.onBackPressed()

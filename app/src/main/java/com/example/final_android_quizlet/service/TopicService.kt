@@ -5,22 +5,32 @@ import com.example.final_android_quizlet.common.MyFBQuery
 import com.example.final_android_quizlet.common.MyFBQueryMethod
 import com.example.final_android_quizlet.dao.ResponseObject
 import com.example.final_android_quizlet.mapper.TopicMapper
+import com.example.final_android_quizlet.models.EModeTopic
 import com.example.final_android_quizlet.models.Topic
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
+import kotlin.reflect.full.memberProperties
 
 class TopicService {
     private val db = Firebase.firestore
     private val topicMapper: TopicMapper = TopicMapper()
+    inline fun <reified T : Any> T.asMap() : MutableMap<String, Any?> {
+        val props = T::class.memberProperties.associateBy { it.name }
+        return props.keys.associateWith { props[it]?.get(this) } as MutableMap<String, Any?>
+    }
     suspend fun createTopic(topic: Topic): ResponseObject {
         val res = ResponseObject()
         try {
+            val map = topic.asMap()
+            map["createdAt"] = FieldValue.serverTimestamp()
             val fetch1 =  db.collection("topics")
-                .add(topic).await()
+                .add(map).await()
 
             val fetch2 = fetch1.get().await()
             if (!fetch2.exists()){
@@ -29,6 +39,7 @@ class TopicService {
             res.topic = topicMapper.convertToTopic(fetch2.data!!)
             res.status = true
         }catch (e: Exception){
+            Log.i("TAG", "ERROR: ${e.message}")
             res.data = e.message.toString()
             res.status = false
         }
@@ -75,6 +86,33 @@ class TopicService {
         return query!!.get().await().documents.toList()
     }
 
+    suspend fun getPublicTopic(): ResponseObject {
+        val res: ResponseObject = ResponseObject()
+        try {
+            val data = db.collection("topics")
+                .where(Filter.and(
+                    Filter.equalTo("mode", EModeTopic.PUBLIC.name),
+//                    Filter.lessThanOrEqualTo("title", text + "\uf8ff"),
+//                    Filter.greaterThanOrEqualTo("title",  text)
+                )).get().await()
+            res.status = true
+            Log.i("TAG", "getPublicTopic: ${data.documents}")
+            if (data.documents.size == 0) {
+                res.topics = listOf()
+            } else {
+                res.topics = topicMapper.convertToTopics(data.documents)
+            }
+        } catch (e: Exception) {
+            Log.i("TAG", "ERROR: ${e.message}")
+            res.data = e.message.toString()
+            res.status = false
+        }
+        return res
+    }
+
+
+
+
     inner class TopicForUserLogged{
         private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
         suspend fun getTopicById(id: String): ResponseObject {
@@ -104,7 +142,9 @@ class TopicService {
                 val batch = db.batch()
                 val docRef = db.collection("topics")
                 topics.forEach {
-                    batch.set(docRef.document(), it)
+                    val map = it.asMap()
+                    map["createdAt"] = FieldValue.serverTimestamp()
+                    batch.set(docRef.document(), map)
                 }
                 batch.commit()
 

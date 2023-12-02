@@ -23,6 +23,7 @@ import com.example.final_android_quizlet.adapter.TopicAdapter
 import com.example.final_android_quizlet.adapter.data.LibraryTopicAdapterItem
 import com.example.final_android_quizlet.auth.Login
 import com.example.final_android_quizlet.common.ActionDialog
+import com.example.final_android_quizlet.common.ActionTransition
 import com.example.final_android_quizlet.common.EOrientationRecyclerView
 import com.example.final_android_quizlet.service.AuthService
 import com.example.final_android_quizlet.service.FolderService
@@ -38,6 +39,7 @@ class MainActivity : AppCompatActivity() {
     private val topicService: TopicService = TopicService()
     private val folderService: FolderService = FolderService()
     private val actionDialog: ActionDialog = ActionDialog(this, lifecycleScope)
+    private val actionTransition: ActionTransition = ActionTransition(this)
 
     // View
     private lateinit var etSearchTopic: EditText
@@ -74,6 +76,12 @@ class MainActivity : AppCompatActivity() {
 
         // Adapter
         topicAdapter = TopicAdapter(EOrientationRecyclerView.HORIZONTAL, topicsItem)
+        topicAdapter.setOnItemClickListener {
+            val intent = Intent(this, DetailTopic::class.java)
+            intent.putExtra("topicId", it.topic.uid)
+            startActivity(intent)
+            actionTransition.moveNextTransition()
+        }
         topicRV.adapter = topicAdapter
 
         // Handle event

@@ -43,26 +43,27 @@ class FragmentFolderLibrary(private val getBackAdapterFromViewPager: GetBackAdap
         recyclerView.adapter = adapter
 
         lifecycleScope.launch {
-            withContext(Dispatchers.IO){}
-            val user = authService.getUserLogin().user!!
-            val fetch1 = folderService.FolderForUserLogged().getFolders()
-            val folders = mutableListOf<Folder>()
-            if(fetch1.status) {
-                folders.addAll(fetch1.folders!!)
-            }else{
-                (context as Activity).runOnUiThread {
-                    Toast.makeText(activity, fetch1.data.toString(), Toast.LENGTH_LONG).show()
+            withContext(Dispatchers.IO){
+                val user = authService.getUserLogin().user!!
+                val fetch1 = folderService.FolderForUserLogged().getFolders()
+                val folders = mutableListOf<Folder>()
+                if(fetch1.status) {
+                    folders.addAll(fetch1.folders!!)
+                }else{
+                    (context as Activity).runOnUiThread {
+                        Toast.makeText(activity, fetch1.data.toString(), Toast.LENGTH_LONG).show()
+                    }
                 }
-            }
-            Log.i("TAG", "folders: $folders")
-            if(folders.isNotEmpty()){
-                val list =  folders.map {
-                    LibraryFolderAdapterItem(it, it.topics.size, user)
-                }.toMutableList()
-                items.addAll(list)
+                Log.i("TAG", "folders: $folders")
+                if(folders.isNotEmpty()){
+                    val list =  folders.map {
+                        LibraryFolderAdapterItem(it, it.topics.size, user)
+                    }.toMutableList()
+                    items.addAll(list)
 //            getBackAdapterFromViewPager.onResult(items, adapter::class.java)
-                (context as Activity).runOnUiThread {
-                    adapter.notifyDataSetChanged()
+                    (context as Activity).runOnUiThread {
+                        adapter.notifyDataSetChanged()
+                    }
                 }
             }
         }
@@ -73,7 +74,7 @@ class FragmentFolderLibrary(private val getBackAdapterFromViewPager: GetBackAdap
             Log.i("TAG", "SEND INTENT: ${item.folder}")
             startActivity(intent)
         }
-        getBackAdapterFromViewPager.onResult(items, adapter)
+        getBackAdapterFromViewPager.onResult(view, items, adapter)
         return view
     }
 }

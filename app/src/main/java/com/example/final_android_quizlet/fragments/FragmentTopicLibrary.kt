@@ -78,7 +78,7 @@ class FragmentTopicLibrary(private val getBackAdapterFromViewPager: GetBackAdapt
             items.addAll(itemsTemp.filter { it.topic.title.contains(text!!, ignoreCase = true) }.toMutableList())
             adapter.notifyDataSetChanged()
         }
-        getBackAdapterFromViewPager.onResult(items, adapter)
+        getBackAdapterFromViewPager.onResult(view, items, adapter)
         return view
     }
 }

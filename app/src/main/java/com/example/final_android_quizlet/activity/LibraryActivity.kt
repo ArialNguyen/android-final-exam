@@ -6,6 +6,9 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.EditText
+import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -26,6 +29,7 @@ import com.example.final_android_quizlet.models.Topic
 import com.example.final_android_quizlet.service.AuthService
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.launch
 
 
@@ -58,12 +62,14 @@ class LibraryActivity() : AppCompatActivity() {
 
         libraryAdapter = LibraryAdapter(this)
         libraryAdapter.addFragment(FragmentTopicLibrary( object : GetBackAdapterFromViewPager{
-            override fun onResult(items: MutableList<LibraryTopicAdapterItem>, adapter: TopicAdapter) {
+            override fun onResult(view: View, items: MutableList<LibraryTopicAdapterItem>, adapter: TopicAdapter) {
+                view.findViewById<TextInputLayout>(R.id.llFilterTopic_TopicFG).visibility = View.VISIBLE
+                view.findViewById<TextView>(R.id.text_tien_trinh).visibility = View.VISIBLE
                 libraryAdapter.addAdapterForChild(items, adapter)
             }
         }), "Học Phần")
         libraryAdapter.addFragment(FragmentFolderLibrary( object : GetBackAdapterFromViewPager{
-            override fun onResult(items: MutableList<LibraryFolderAdapterItem>, adapter: LibraryFolderAdapter) {
+            override fun onResult(view: View, items: MutableList<LibraryFolderAdapterItem>, adapter: LibraryFolderAdapter) {
                 libraryAdapter.addAdapterForChild(items, adapter)
             }
         }), "Thư Mục")

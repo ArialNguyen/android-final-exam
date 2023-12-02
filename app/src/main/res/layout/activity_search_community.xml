@@ -6,5 +6,50 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".activity.SearchCommunity">
+    <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
+                                                       android:layout_height="wrap_content"
+                                                       app:layout_constraintTop_toTopOf="parent"
+                                                       app:layout_constraintStart_toStartOf="parent"
+                                                       android:padding="15dp"
+                                                       app:layout_constraintEnd_toEndOf="parent"
+                                                       android:id="@+id/constraintLayout9">
+        <androidx.appcompat.widget.SearchView android:layout_width="0dp" android:layout_height="match_parent"
+                                              app:layout_constraintEnd_toStartOf="@+id/tvCancel_community"
+                                              android:id="@+id/searchView_community"
+                                              android:background="@drawable/search_view_bg"
+                                              app:iconifiedByDefault="false"
+                                              app:queryHint="Search Here..."
+                                              app:layout_constraintHorizontal_bias="0."
+                                              app:layout_constraintStart_toStartOf="parent"
+                                              app:layout_constraintTop_toTopOf="parent"
+                                              app:layout_constraintBottom_toBottomOf="parent"/>
+        <TextView android:layout_width="wrap_content" android:text="Hủy" android:id="@+id/tvCancel_community"
+                  android:paddingStart="10dp"
+                  android:textStyle="bold"
+                  android:layout_height="0dp" app:layout_constraintEnd_toEndOf="parent"
+                  android:gravity="center"
+                  app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="0dp"
+                                                       android:layout_height="0dp"
+                                                       app:layout_constraintBottom_toBottomOf="parent"
+                                                       app:layout_constraintTop_toBottomOf="@+id/constraintLayout9"
+                                                       app:layout_constraintEnd_toEndOf="parent"
+                                                       app:layout_constraintStart_toStartOf="parent">
+        <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tab_community"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:background="@color/colorBackground"
+                app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent">
 
+        </com.google.android.material.tabs.TabLayout>
+        <androidx.viewpager2.widget.ViewPager2 android:layout_width="match_parent" android:layout_height="0dp"
+                                               app:layout_constraintStart_toStartOf="parent"
+                                               android:id="@+id/viewPager_community"
+                                               app:layout_constraintBottom_toBottomOf="parent"
+                                               app:layout_constraintEnd_toEndOf="parent"
+                                               app:layout_constraintTop_toBottomOf="@+id/tab_community"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

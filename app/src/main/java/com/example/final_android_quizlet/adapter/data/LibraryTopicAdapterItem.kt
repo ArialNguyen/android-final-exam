@@ -5,5 +5,5 @@ import com.example.final_android_quizlet.models.User
 
 data class LibraryTopicAdapterItem(
     val topic: Topic,
-    val user: User
+    val user: User?
 )

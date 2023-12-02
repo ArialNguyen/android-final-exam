@@ -5,6 +5,7 @@ import android.util.Log
 import com.example.final_android_quizlet.dao.ResponseObject
 import com.example.final_android_quizlet.mapper.UserMapper
 import com.example.final_android_quizlet.models.User
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
@@ -12,44 +13,49 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.rpc.context.AttributeContext.Auth
 import kotlinx.coroutines.tasks.await
+import kotlin.reflect.full.memberProperties
 
 
 class UserService {
     private val db = Firebase.firestore
     private val userAvatarRef: StorageReference = FirebaseStorage.getInstance().reference.child("user")
     private val userMapper: UserMapper = UserMapper()
-
-    suspend fun getUsers(): MutableList<User> {
-        val users = mutableListOf<User>()
-
-        db.collection("users")
-            .get()
-            .addOnCompleteListener {
-                if (it.isSuccessful) {
-                    for (document in it.result.documents) {
-                        Log.i("TAG", "NEED to Update: Document $document")
-                        val user = document.toObject<User>()
-                        if (user != null) {
-                            users.add(user)
-                        }
-                    }
-                } else if (it.isCanceled) {
-                    Log.i("Cancel GET Users: ", "")
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.w("GET Users: ", "Error getting documents $exception")
-            }
-            .await()
-        return users
+    inline fun <reified T : Any> T.asMap() : MutableMap<String, Any?> {
+        val props = T::class.memberProperties.associateBy { it.name }
+        return props.keys.associateWith { props[it]?.get(this) } as MutableMap<String, Any?>
     }
+    suspend fun getUsers(): ResponseObject {
+        val res: ResponseObject = ResponseObject()
+        try {
+            val data = db.collection("users")
+                .get().await()
+            res.status = true
+            if (data.documents.size == 0) {
+                res.users = mutableListOf()
+            } else {
+                res.users =  userMapper.convertToUsers(data.documents)
+                res.status = true
+            }
+        } catch (e: Exception) {
+            Log.i("TAG", "ERROR: ${e.message}")
+            res.data = e.message.toString()
+            res.status = false
+        }
+        return res
+    }
+
 
     suspend fun addUser(user: User): ResponseObject {
         val res = ResponseObject()
         try {
+            val map = user.asMap()
+            map["createdAt"] = FieldValue.serverTimestamp()
+
             val fetch1 =  db.collection("users")
-                .add(user).await()
+                .add(map).await()
+
             val fetch2 = fetch1.get().await()
+
             if (!fetch2.exists()){
                 throw Exception("Some thing wrong when add User --Unknown_Reason")
             }
@@ -62,10 +68,30 @@ class UserService {
         }
         return res
     }
+    suspend fun getUserByName(name: String): ResponseObject {
+        val res: ResponseObject = ResponseObject()
+        try {
+            val data = db.collection("users")
+                .whereLessThanOrEqualTo("name", name + "\uf8ff")
+                .whereGreaterThanOrEqualTo("name", name)
+                .get().await()
+            res.status = true
+            if (data.documents.size == 0) {
+                res.users = mutableListOf()
+            } else {
+                res.users =  userMapper.convertToUsers(data.documents)
+                res.status = true
+            }
+        } catch (e: Exception) {
+            Log.i("TAG", "ERROR: ${e.message}")
+            res.data = e.message.toString()
+            res.status = false
+        }
+        return res
+    }
 
     suspend fun getUserByEmail(email: String): ResponseObject {
         val res: ResponseObject = ResponseObject()
-        Log.i("EMAIL", email)
         try {
             val data = db.collection("users")
                 .whereEqualTo("email", email)
@@ -144,5 +170,7 @@ class UserService {
         }
         return res
     }
+
+
 
 }

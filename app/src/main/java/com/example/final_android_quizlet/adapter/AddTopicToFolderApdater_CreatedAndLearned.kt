@@ -37,8 +37,8 @@ class AddTopicToFolderApdater_CreatedAndLearned(
         fun bind(item: LibraryTopicAdapterItem, ctx: Context, itemsChosen: MutableList<Int>) {
             tvTopicTitle.text = item.topic.title
             tvTotalTerm.text = "${item.topic.terms.size} thuật ngữ"
-            tvUserName.text = item.user.name
-            if(item.user.avatar!!.isNotEmpty()){
+            tvUserName.text = item.user?.name
+            if(item.user?.avatar!!.isNotEmpty()){
                 Picasso.get().load(item.user.avatar).into(imgAvatar)
             }
             layout.foreground = if(itemsChosen.firstOrNull { it == adapterPosition } != null)

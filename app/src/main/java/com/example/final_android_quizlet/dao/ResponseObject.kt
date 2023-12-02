@@ -6,6 +6,7 @@ class ResponseObject(
     public var status: Boolean = false,
     public var data: Any? = null,
     public var user: User? = null,
+    public var users: MutableList<User>? = null,
     public var topic: Topic? = null,
     public var topics: List<Topic>? = null,
     public var folder: Folder? = null,
@@ -18,7 +19,7 @@ class ResponseObject(
 
 ){
     override fun toString(): String {
-        return "ResponseObject(status=$status, data=$data, user=$user, topic=$topic, topics=$topics, folder=$folder, folders=$folders, quizWrite=$quizWrite, testChoice=$testChoice, testChoices=$testChoices,)"
+        return "ResponseObject(status=$status, data=$data, user=$user, users=$users, topic=$topic, topics=$topics, folder=$folder, folders=$folders, quizWrite=$quizWrite, testChoice=$testChoice, testChoices=$testChoices,)"
     }
 }
 
@@ -27,6 +28,7 @@ fun ResponseObject.clone(): ResponseObject {
     res.data = this.data
     res.status = this.status
     res.user = this.user
+    res.users = this.users
     res.topic = this.topic
     res.topics = this.topics
     res.folder = this.folder

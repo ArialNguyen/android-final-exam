@@ -1,14 +1,17 @@
 package com.example.final_android_quizlet.models
 
 import java.io.Serializable
+import java.util.*
 
 data class MultipleChoice(
     var uid: String,
     var answers: MutableList<AnswerChoice>,
     var overall: Number,
     var topicId: String,
-    var userId: String
+    var userId: String,
 ) : Serializable {
+    var createdAt: Date?= null
+
     constructor() : this(
         "", mutableListOf(), 0, "", ""
     )

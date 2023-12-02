@@ -28,7 +28,7 @@ class AuthService() {
                 res.status = true
                 res.data = email
                 Log.i("CURRENT USER ID IN REGISTER ", firebaseAuth.currentUser!!.uid)
-                val data = userService.addUser(User(firebaseAuth.currentUser!!.uid, name, email, "", password, password, null))
+                val data = userService.addUser(User(firebaseAuth.currentUser!!.uid, name, email, "", password, password, 0, mutableListOf()))
                 Log.i(data.user.toString(), "register: ")
                 Log.i("AUTH", authResult.additionalUserInfo!!.username.toString())
             } catch (e: Exception) {
