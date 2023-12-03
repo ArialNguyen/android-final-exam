@@ -19,14 +19,13 @@ class UserAdapter(private val users: MutableList<User>) : RecyclerView.Adapter<U
 
         fun bind(item: User) {
             tvName.text = item.name
-            if (item.avatar!!.isNotEmpty()) {
+            if (item.avatar.isNotEmpty()) {
                 Picasso.get().load(item.avatar).into(avatar)
             }
             itemView.setOnClickListener {
                 itemClickListener?.invoke(item)
             }
         }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

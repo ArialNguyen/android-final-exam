@@ -63,6 +63,7 @@ class LibraryActivity() : AppCompatActivity() {
         libraryAdapter = LibraryAdapter(this)
         libraryAdapter.addFragment(FragmentTopicLibrary( object : GetBackAdapterFromViewPager{
             override fun onResult(view: View, items: MutableList<LibraryTopicAdapterItem>, adapter: TopicAdapter) {
+                Log.i("TAG", "onResult: FragmentTopicLibrary")
                 view.findViewById<TextInputLayout>(R.id.llFilterTopic_TopicFG).visibility = View.VISIBLE
                 view.findViewById<TextView>(R.id.text_tien_trinh).visibility = View.VISIBLE
                 libraryAdapter.addAdapterForChild(items, adapter)
@@ -70,6 +71,7 @@ class LibraryActivity() : AppCompatActivity() {
         }), "Học Phần")
         libraryAdapter.addFragment(FragmentFolderLibrary( object : GetBackAdapterFromViewPager{
             override fun onResult(view: View, items: MutableList<LibraryFolderAdapterItem>, adapter: LibraryFolderAdapter) {
+                Log.i("TAG", "onResult: FragmentFolderLibrary")
                 libraryAdapter.addAdapterForChild(items, adapter)
             }
         }), "Thư Mục")
@@ -80,6 +82,7 @@ class LibraryActivity() : AppCompatActivity() {
             tab.view.setOnClickListener {
                 optionsAddInMenu = position
             }
+
         }.attach() // Connect viewPager and Tab
     }
 
