@@ -1,10 +1,10 @@
 package com.example.final_android_quizlet.activity
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
@@ -59,7 +59,7 @@ class SearchCommunity : AppCompatActivity() {
         setContentView(R.layout.activity_search_community)
 
         // Hand postData
-        if(intent.getStringExtra("keyword") == null){
+        if (intent.getStringExtra("keyword") == null) {
             Toast.makeText(this, "Oops something wrong, try again!!!", Toast.LENGTH_LONG).show()
             finish()
             actionTransition.rollBackTransition()
@@ -73,43 +73,68 @@ class SearchCommunity : AppCompatActivity() {
 
         // LoadView
         searchView.clearFocus()
-
-
+        // TabLayout
+        val tab1 = tabLayout.newTab()
+        tab1.setText("Học phần")
+        val tab2 = tabLayout.newTab()
+        tab2.setText("Người dùng")
+        tabLayout.addTab(tab1)
+        tabLayout.addTab(tab2)
         // Adapter
         adapterVP = VPCommunityAdapter(this)
+        userAdapter = UserAdapter(userItems)
+        topicAdapter = TopicAdapter(EOrientationRecyclerView.VERTICAL, topicItems)
 
-        val topicFragment = DefaultFragmentRv(object : GetBackAdapterFromViewPager{
+        val topicFragment = DefaultFragmentRv(object : GetBackAdapterFromViewPager {
             override fun onActionBack(view: View) {
-                Log.i("TAG", "onActionBack topicFragment: ")
                 actionOnTopicFM(view)
             }
         })
-        val userFragment = DefaultFragmentRv(object : GetBackAdapterFromViewPager{
+        val userFragment = DefaultFragmentRv(object : GetBackAdapterFromViewPager {
             override fun onActionBack(view: View) {
-                Log.i("TAG", "onActionBack: ")
                 actionOnUserFM(view)
             }
         })
-        adapterVP.addFragment(topicFragment , "Học phần")
+        adapterVP.addFragment(topicFragment, "Học phần")
 
         adapterVP.addFragment(userFragment, "Người dùng")
 
         viewPager.adapter = adapterVP
 
-        TabLayoutMediator(tabLayout, viewPager){tab, position ->
+        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             tab.text = adapterVP.getTabTitle(position)
         }.attach() // Connect viewPager and Tab
 
         // Handle Event
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+        searchView.setOnCloseListener {
+            Log.i("TAG", "setOnCloseListener: ")
+            topicItems.clear()
+            userItems.clear()
+            topicItems.addAll(
+                allTopic.map { topic ->
+                    LibraryTopicAdapterItem(
+                        topic, allUser.firstOrNull { topic.userId == it.uid }
+                    )
+                }
+            )
+            userItems.addAll(allUser)
+            topicAdapter.notifyDataSetChanged()
+            userAdapter.notifyDataSetChanged()
+            searchView.clearFocus()
+            false
+        }
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                if(query!!.isNotEmpty()){
+                if (query!!.isNotEmpty()) {
                     // Topic
                     topicItems.clear()
                     userItems.clear()
-                    topicItems.addAll(allTopic.filter { it.title.contains(query, ignoreCase = true) }.map { topic -> LibraryTopicAdapterItem(
-                        topic, allUser.firstOrNull { topic.userId == it.uid }
-                    ) })
+                    topicItems.addAll(allTopic.filter { it.title.contains(query, ignoreCase = true) }.map { topic ->
+                        LibraryTopicAdapterItem(
+                            topic, allUser.firstOrNull { topic.userId == it.uid }
+                        )
+                    })
                     userItems.addAll(allUser.filter { it.name!!.contains(query, ignoreCase = true) })
                     topicAdapter.notifyDataSetChanged()
                     userAdapter.notifyDataSetChanged()
@@ -124,21 +149,24 @@ class SearchCommunity : AppCompatActivity() {
         })
     }
 
-    fun actionOnTopicFM(view: View){
+    fun actionOnTopicFM(view: View) {
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerViewUser_defaultFG)
-        topicAdapter = TopicAdapter(EOrientationRecyclerView.VERTICAL, topicItems)
         recyclerView.adapter = topicAdapter
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
                 val fetchTopics = topicService.getPublicTopic()
-                if(allUser.isEmpty()){
+                if (allUser.isEmpty()) {
                     allUser.addAll(userService.getUsers().users!!)
                 }
-                if(fetchTopics.status ){
+                if (fetchTopics.status) {
+                    Log.i("TAG", "fetchTopics: ${fetchTopics.topics!!.size}")
                     allTopic.addAll(fetchTopics.topics!!)
-                    topicItems.addAll(allTopic.filter { it.title.contains(keywordIntent, ignoreCase = true) }.map { topic -> LibraryTopicAdapterItem(
-                        topic, allUser.firstOrNull { topic.userId == it.uid }
-                    ) })
+                    topicItems.addAll(allTopic.filter { it.title.contains(keywordIntent, ignoreCase = true) }
+                        .map { topic ->
+                            LibraryTopicAdapterItem(
+                                topic, allUser.firstOrNull { topic.userId == it.uid }
+                            )
+                        })
                     runOnUiThread {
                         topicAdapter.notifyDataSetChanged()
                     }
@@ -146,15 +174,17 @@ class SearchCommunity : AppCompatActivity() {
             }
         }
     }
-    fun actionOnUserFM(view: View){
+
+    fun actionOnUserFM(view: View) {
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerViewUser_defaultFG)
         userAdapter = UserAdapter(userItems, allTopic)
         recyclerView.adapter = userAdapter
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                if(allUser.isEmpty()){
+                if (allUser.isEmpty()) {
                     allUser.addAll(userService.getUsers().users!!)
                 }
+                userItems.clear()
                 userItems.addAll(allUser)
                 runOnUiThread {
                     userAdapter.notifyDataSetChanged()
