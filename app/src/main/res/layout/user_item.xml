@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:padding="8dp"
+    android:padding="10dp"
     android:background="@drawable/white_background_algorithm"
     android:layout_marginBottom="18dp"
     android:elevation="3dp">
@@ -41,23 +41,28 @@
 <!--            android:textSize="16sp" />-->
 <!--    </RelativeLayout>-->
 
-    <RelativeLayout
-        android:id="@+id/relative_userItem"
-        android:layout_width="368dp" android:layout_height="33dp"
-        app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp" app:layout_constraintHorizontal_bias="0.627"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
         tools:ignore="MissingConstraints">
+
+    <LinearLayout
+        android:id="@+id/relative_userItem"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintHorizontal_bias="0.627"
+        tools:ignore="MissingConstraints"
+        android:orientation="vertical">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/imgAvatarIcon_userItem"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_marginTop="2dp"
             android:src="@drawable/person"
             app:layout_constraintStart_toStartOf="parent" tools:ignore="NotSibling"/>
         <TextView
             android:id="@+id/tvUsername_userItem"
-            android:layout_width="223dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="Aria"
             android:textStyle="bold"
@@ -66,16 +71,21 @@
             app:layout_constraintStart_toEndOf="@+id/imgAvatarIcon_userItem"
             android:gravity="center_vertical"
             android:layout_alignParentEnd="true" android:layout_marginEnd="85dp"
-            android:layout_toEndOf="@+id/imgAvatarIcon_userItem" android:layout_marginStart="10dp"
+            android:layout_toEndOf="@+id/imgAvatarIcon_userItem"
             tools:ignore="NotSibling"/>
-    </RelativeLayout>
+    </LinearLayout>
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
 
         <LinearLayout
             android:id="@+id/round_background"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="10dp"
+            android:layout_gravity="center"
             android:orientation="horizontal"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/relative_userItem">
@@ -97,5 +107,6 @@
                 android:layout_marginStart="@dimen/_10sdp"
                 android:textSize="16sp" />
         </LinearLayout>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
