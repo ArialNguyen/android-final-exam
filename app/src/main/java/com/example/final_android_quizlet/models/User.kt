@@ -11,7 +11,7 @@ data class User(
     var passwordAuth: String,
     var password: String,
     var passcodeFGP: Int,
-    var topicSaved: MutableList<String>
+    var topicSaved: MutableList<String>,
 ) : Serializable {
     var createdAt: Date? = null
 

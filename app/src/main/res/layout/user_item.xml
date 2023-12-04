@@ -1,42 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:padding="15dp"
-    android:layout_height="wrap_content">
-    <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:id="@+id/constraintLayout10">
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="8dp"
+    android:background="@drawable/white_background_algorithm"
+    android:layout_marginBottom="18dp"
+    android:elevation="3dp">
+
+
+<!--    <TextView-->
+<!--        android:id="@+id/tvTitleName_library"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="10dp"-->
+<!--        android:text="Tiếng anh"-->
+<!--        android:textSize="18sp"-->
+<!--        android:textStyle="bold"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
+
+<!--    <RelativeLayout-->
+<!--        android:id="@+id/round_background"-->
+<!--        android:layout_width="110dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="10dp"-->
+<!--        android:layout_marginTop="10dp"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/tvTitleName_library">-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/tvTotalTerm_library"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_alignParentStart="true"-->
+<!--            android:layout_alignParentEnd="true"-->
+<!--            android:text="3 thuật ngữ"-->
+<!--            android:textSize="16sp" />-->
+<!--    </RelativeLayout>-->
+
+    <RelativeLayout
+        android:id="@+id/relative_userItem"
+        android:layout_width="368dp" android:layout_height="33dp"
+        app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp" app:layout_constraintHorizontal_bias="0.627"
+        tools:ignore="MissingConstraints">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/imgAvatarIcon_userItem"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="2dp"
+            android:src="@drawable/person"
+            app:layout_constraintStart_toStartOf="parent" tools:ignore="NotSibling"/>
+        <TextView
+            android:id="@+id/tvUsername_userItem"
+            android:layout_width="223dp"
+            android:layout_height="match_parent"
+            android:text="Aria"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/imgAvatarIcon_userItem"
+            android:gravity="center_vertical"
+            android:layout_alignParentEnd="true" android:layout_marginEnd="85dp"
+            android:layout_toEndOf="@+id/imgAvatarIcon_userItem" android:layout_marginStart="10dp"
+            tools:ignore="NotSibling"/>
+    </RelativeLayout>
+
         <LinearLayout
+            android:id="@+id/round_background"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center"
-            tools:ignore="MissingConstraints">
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/relative_userItem">
+            
+            <ImageView
+                android:id="@+id/imgTopic_userItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_baseline_topic"/>
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/imgAvatarIcon_userItem"
+            <TextView
+                android:id="@+id/tvTotalTopic_userItem"
                 android:layout_width="wrap_content"
-                android:layout_height="80dp"
-                android:src="@drawable/person"
-                app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
-
-            <TextView android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="Ariel"
-                android:textColor="@color/black"
-                android:textSize="26dp"
-                android:gravity="center_vertical"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" android:id="@+id/tvUsername_userItem"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:text="3 học phần"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:textSize="16sp" />
         </LinearLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

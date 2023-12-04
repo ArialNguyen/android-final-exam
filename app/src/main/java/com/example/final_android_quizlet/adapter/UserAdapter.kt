@@ -6,19 +6,27 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.final_android_quizlet.R
+import com.example.final_android_quizlet.models.Topic
 import com.example.final_android_quizlet.models.User
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 
-class UserAdapter(private val users: MutableList<User>) : RecyclerView.Adapter<UserAdapter.ViewHolder>(){
+class UserAdapter(
+    private val users: MutableList<User>, private val topics: MutableList<Topic>
+) : RecyclerView.Adapter<UserAdapter.ViewHolder>() {
     private var itemClickListener: ((User) -> Unit)? = null
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val tvName: TextView = itemView.findViewById(R.id.tvUsername_userItem)
         private val avatar: CircleImageView = itemView.findViewById(R.id.imgAvatarIcon_userItem)
+        private val tvTotalTopic: TextView = itemView.findViewById(R.id.tvTotalTopic_userItem)
 
         fun bind(item: User) {
             tvName.text = item.name
+            val userId = item.uid
+            val topicsCount = topics.count { it.userId == userId }
+            val topicsCountText = "$topicsCount học phần"
+            tvTotalTopic.text = topicsCountText
             if (item.avatar!!.isNotEmpty()) {
                 Picasso.get().load(item.avatar).into(avatar)
             }
@@ -26,7 +34,6 @@ class UserAdapter(private val users: MutableList<User>) : RecyclerView.Adapter<U
                 itemClickListener?.invoke(item)
             }
         }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
