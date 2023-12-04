@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
+import android.media.Image
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
@@ -51,6 +52,7 @@ class DetailTopic : AppCompatActivity() {
 
 
     private var toolbar: Toolbar? = null
+    private lateinit var imgRanking: ImageView
     private lateinit var tvMode: TextView
     private var indicator2: CircleIndicator2? = null
     private var cvFlashCard: CardView? = null
@@ -95,6 +97,7 @@ class DetailTopic : AppCompatActivity() {
 
         toolbar = findViewById(R.id.toolbar_detail_hocphan)
 //        tvTerm = findViewById(R.id.tv_Term_TopicDetail)
+        imgRanking = findViewById(R.id.imgRank_DetailTopic)
         tvMode = findViewById(R.id.tvMode_DetailTopic)
         recyclerViewHorizontal = findViewById(R.id.recyclerView_DetailTopic)
         cvFlashCard = findViewById(R.id.cardview_flashcard)
@@ -109,6 +112,11 @@ class DetailTopic : AppCompatActivity() {
 
         val imgMenuTopic = findViewById<ImageView>(R.id.imgMenuTopic_DetailTopic)
         val imgBack = findViewById<ImageView>(R.id.imgBack_DetailTopic)
+
+        imgRanking.setOnClickListener {
+            startActivity(Intent(this, RankingActivity::class.java).putExtra("topicId", topicId))
+            actionTransition.moveNextTransition()
+        }
 
         imgMenuTopic.setOnClickListener {
             showMenuDetailTopic()
@@ -134,8 +142,9 @@ class DetailTopic : AppCompatActivity() {
         }
 
         cvWriteText!!.setOnClickListener {
-            val intent = Intent(this, WriteQuizActivity::class.java)
-            intent.putExtra("topic", currentTopic)
+            val intent = Intent(this, MainQuizActivity::class.java)
+            intent.putExtra("exercise_type", "writingTest")
+            intent.putExtra("topicId", currentTopic.uid)
             startActivity(intent)
         }
 

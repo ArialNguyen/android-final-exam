@@ -83,10 +83,12 @@ class SearchCommunity : AppCompatActivity() {
         tab2.setText("Người dùng")
         tabLayout.addTab(tab1)
         tabLayout.addTab(tab2)
+
         // Adapter
         adapterVP = VPCommunityAdapter(this)
-        userAdapter = UserAdapter(userItems, allTopic)
+        userAdapter = UserAdapter(userItems, allTopic) // NEED TO FIXXX
         topicAdapter = TopicAdapter(EOrientationRecyclerView.VERTICAL, topicItems)
+
         // Handle Click Adapter
         userAdapter.setOnItemClickListener {
 

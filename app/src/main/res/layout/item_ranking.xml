@@ -8,7 +8,7 @@
     android:padding="8dp"
     android:background="@drawable/white_background_algorithm"
     android:layout_marginBottom="18dp"
-    android:elevation="3dp">
+    android:elevation="5dp">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/caItemRank_RankingActivity"
@@ -22,8 +22,11 @@
         app:layout_constraintHorizontal_bias="0.525"
         app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
-            android:padding="@dimen/_7sdp"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:paddingTop="15dp"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:paddingBottom="15dp"
             android:id="@+id/liItemRank_RankingActivity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -33,59 +36,59 @@
             app:layout_constraintStart_toStartOf="parent">
 
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_gravity="center"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginStart="@dimen/_10sdp">
-
-                <TextView
-                    android:id="@+id/tvUserName_RankingActivity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Chien"
-                    android:textStyle="bold"
-                    android:textSize="@dimen/_18sdp"/>
+                    android:orientation="vertical"
+                    android:layout_gravity="center"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" android:id="@+id/linearLayout4"
+                    app:layout_constraintBottom_toBottomOf="parent">
 
                 <TextView
-                    android:id="@+id/txRight_RankingActivity"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="10/20"
-                    android:gravity="center"
-                    android:textSize="20sp"
-                    android:textStyle="bold"/>
+                        android:id="@+id/tvUserName_RankingActivity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Chien"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:textSize="20dp"/>
+
+                <TextView
+                        android:id="@+id/tvTotalTrue_RankingActivity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/text_Knew"
+                        android:layout_gravity="center_horizontal"
+                        android:text="1"
+                        android:gravity="center"
+                        android:textSize="18dp"
+                        android:textStyle="bold"/>
 
             </LinearLayout>
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/imgAvatarIcon_RankingActivity"
-                android:layout_width="@dimen/_45sdp"
-                android:layout_height="@dimen/_45sdp"
-                android:layout_marginTop="2dp"
-                android:src="@drawable/person"
-                android:layout_marginStart="@dimen/_60sdp"
-                app:layout_constraintStart_toEndOf="@id/tvUserName_RankingActivity"
-                app:layout_constraintEnd_toStartOf="@id/txRight_RankingActivity"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintVertical_bias="0.0" />
+                    android:id="@+id/imgAvatar_RankingActivity"
+                    android:layout_width="@dimen/_45sdp"
+                    android:layout_height="@dimen/_45sdp"
+                    android:layout_marginTop="2dp"
+                    android:src="@drawable/person"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintVertical_bias="0.0" app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"/>
 
             <TextView
-                android:id="@+id/tvRank_RankingActivity"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="1"
-                android:textStyle="bold"
-                android:textSize="@dimen/_35sdp"
-                android:layout_marginStart="@dimen/_80sdp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                    android:id="@+id/tvRank_RankingActivity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/_35sdp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent"/>
 
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

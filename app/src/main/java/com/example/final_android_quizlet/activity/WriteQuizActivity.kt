@@ -1,5 +1,6 @@
 package com.example.final_android_quizlet.activity
 
+//import com.example.final_android_quizlet.activity.SplashActivity.Companion.listOfQ
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -14,16 +15,15 @@ import com.example.final_android_quizlet.auth.Login
 import com.example.final_android_quizlet.common.ActionTransition
 import com.example.final_android_quizlet.models.Answer
 import com.example.final_android_quizlet.models.QuizWrite
-//import com.example.final_android_quizlet.activity.SplashActivity.Companion.listOfQ
 import com.example.final_android_quizlet.models.Term
 import com.example.final_android_quizlet.models.Topic
 import com.example.final_android_quizlet.service.AuthService
-import com.example.final_android_quizlet.service.TopicService
 import com.example.final_android_quizlet.service.QuizWriteService
+import com.example.final_android_quizlet.service.TopicService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.UUID
+import java.util.*
 
 class WriteQuizActivity : AppCompatActivity() {
     private val actionTransition: ActionTransition = ActionTransition(this)
@@ -44,6 +44,9 @@ class WriteQuizActivity : AppCompatActivity() {
     private lateinit var txRightQuiz: TextView
     private lateinit var imBackQuiz: ImageView
     private lateinit var etQuit: TextView
+
+    // hard data
+    private var writingTestDb: QuizWrite? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard_write)
@@ -65,6 +68,12 @@ class WriteQuizActivity : AppCompatActivity() {
             actionTransition.rollBackTransition()
         }
         topicIntent = intent.getSerializableExtra("topic") as Topic
+
+        if (intent.getSerializableExtra("quizWrite") != null) {
+            Log.i("TAG", "quizWrite INtent : $")
+            writingTestDb = intent.getSerializableExtra("quizWrite") as QuizWrite
+        }
+
         items = topicIntent.terms
 
         quizWrite = QuizWrite()
@@ -92,19 +101,21 @@ class WriteQuizActivity : AppCompatActivity() {
         }
 
     }
-    private fun backAction(){
-        if(quizWrite.listAnswer.isNotEmpty()){
-            quizWrite.listAnswer.removeLast()
+
+    private fun backAction() {
+        if (quizWrite.answers.isNotEmpty()) {
+            quizWrite.answers.removeLast()
             currentIndex--
             updateUIWithTerm()
             updatePageNumber()
         }
     }
-    private fun insertData(){
+
+    private fun insertData() {
         val answerText = edWrite.text.toString()
-        quizWrite.listAnswer.add(
+        quizWrite.answers.add(
             Answer(
-                answerText, items[currentIndex], answerText == items[currentIndex].definition
+                items[currentIndex], answerText, answerText == items[currentIndex].definition
             )
         )
         currentIndex++
@@ -122,17 +133,21 @@ class WriteQuizActivity : AppCompatActivity() {
             txNext.setOnClickListener {
 
                 val answerText = edWrite.text.toString()
-                quizWrite.listAnswer.add(
+                quizWrite.answers.add(
                     Answer(
-                        answerText, items[currentIndex], answerText == items[currentIndex].definition
+                        items[currentIndex], answerText, answerText == items[currentIndex].definition
                     )
                 )
-    //                val intent = Intent(this, ResultQuizActivity::class.java)
+                //                val intent = Intent(this, ResultQuizActivity::class.java)
 
                 lifecycleScope.launch {
-                    withContext(Dispatchers.IO){
+                    withContext(Dispatchers.IO) {
+                        if (writingTestDb != null) {
+                            Log.i("TAG", "writingTestDb: $writingTestDb")
+                            quizWriteService.WTForUserLogged().deleteWritingTestById(writingTestDb!!.uid)
+                        }
                         val createQuiz = quizWriteService.saveUserAnswer(quizWrite)
-                        if(createQuiz.status){
+                        if (createQuiz.status) {
                             intent.putExtra("result", quizWrite)
                             startActivity(intent)
                         }
@@ -146,10 +161,10 @@ class WriteQuizActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun updatePageNumber() {
         txRightQuiz.text = "${currentIndex + 1} / ${items.size}"
     }
-
 
 
     override fun onBackPressed() {

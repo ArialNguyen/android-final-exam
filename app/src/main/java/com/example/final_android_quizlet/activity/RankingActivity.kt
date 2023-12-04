@@ -2,6 +2,7 @@ package com.example.final_android_quizlet.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
@@ -54,6 +55,12 @@ class RankingActivity: AppCompatActivity() {
         setContentView(R.layout.activity_ranking)
 
         // Handle Intent
+        if(intent.getStringExtra("topicId") == null){
+            Toast.makeText(this, "Oops, something wrong. Try again!!!", Toast.LENGTH_LONG).show()
+            finish()
+            actionTransition.rollBackTransition()
+        }
+        topicId = intent.getStringExtra("topicId")!!
 
         // Get View
         tabLayout = findViewById(R.id.tab_ranking)
@@ -110,7 +117,14 @@ class RankingActivity: AppCompatActivity() {
                 if(fetchMp.status){
                     val fetchUsers = userService.getUsersInListUserId(fetchMp.testChoices!!.map { it.userId })
                     if(fetchUsers.status){
-
+                        mpRankingItem.addAll(
+                            fetchMp.testChoices!!.map {
+                                RankingItem(fetchUsers.users!!.first { user -> user.uid == it.userId }, it, null)
+                            }
+                        )
+                        runOnUiThread {
+                            mpRankingAdapter.notifyDataSetChanged()
+                        }
                     }else{
                         runOnUiThread {
                             Toast.makeText(this@RankingActivity, fetchUsers.data.toString(), Toast.LENGTH_LONG).show()
@@ -128,7 +142,33 @@ class RankingActivity: AppCompatActivity() {
     fun actionOnWtFG(view: View){
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView_ranking)
         recyclerView.adapter = wTRankingAdapter
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                val fetchWrite = wTService.findWritingTestByTopicId(topicId)
+                if(fetchWrite.status){
+                    val fetchUsers = userService.getUsersInListUserId(fetchWrite.quizWrites!!.map { it.userId })
+                    if(fetchUsers.status){
+                        wtRankingItem.addAll(
+                            fetchWrite.quizWrites!!.map {
+                                RankingItem(fetchUsers.users!!.first { user -> user.uid == it.userId }, null, it)
+                            }
+                        )
+                        runOnUiThread {
+                            wTRankingAdapter.notifyDataSetChanged()
+                        }
+                    }else{
+                        runOnUiThread {
+                            Toast.makeText(this@RankingActivity, fetchUsers.data.toString(), Toast.LENGTH_LONG).show()
+                        }
+                    }
+                }else{
+                    runOnUiThread {
+                        Toast.makeText(this@RankingActivity, fetchWrite.data.toString(), Toast.LENGTH_LONG).show()
+                    }
+                }
 
+            }
+        }
     }
 
 

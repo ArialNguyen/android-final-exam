@@ -81,6 +81,7 @@ class ChoiceTest : AppCompatActivity() {
         if(intent.getSerializableExtra("choice") != null){
             choiceDB = intent.getSerializableExtra("choice") as MultipleChoice
         }
+
         topicIntent = intent.getSerializableExtra("topic") as Topic
         items.addAll(topicIntent!!.terms)
         choiceTest.uid = UUID.randomUUID().toString()
@@ -99,7 +100,7 @@ class ChoiceTest : AppCompatActivity() {
                 0 -> answersView.add(findViewById(R.id.tvTermDefinition1_choiceTest))
 
 
-                1 -> answersView.add(findViewById<TextView?>(R.id.tvTermDefinition2_choiceTest))
+                1 -> answersView.add(findViewById(R.id.tvTermDefinition2_choiceTest))
 
 
                 2 -> answersView.add(findViewById(R.id.tvTermDefinition3_choiceTest))
@@ -125,7 +126,7 @@ class ChoiceTest : AppCompatActivity() {
         loadExamView()
 
         // Recycler View
-        recyclerView!!.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         resultChoiceAdapter = ChoiceTestResultAdapter(itemsAdapter)
         recyclerView.adapter = resultChoiceAdapter
         // Click Event
@@ -194,7 +195,10 @@ class ChoiceTest : AppCompatActivity() {
             layoutResult.visibility = View.VISIBLE
             lifecycleScope.launch {
                 withContext(Dispatchers.IO){
-                    Log.i("TAG", "choiceTest: $choiceTest")
+                    Log.i("TAG", "choiceDB: $choiceDB")
+                    if(choiceDB != null){
+                        choiceService.MPForUserLogged().deleteChoiceTest(choiceDB!!.uid)
+                    }
                     val createChoice = choiceService.createChoiceTest(choiceTest)
                     if (!createChoice.status) {
                         runOnUiThread {

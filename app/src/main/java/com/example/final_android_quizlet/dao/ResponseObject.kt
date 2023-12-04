@@ -12,6 +12,7 @@ class ResponseObject(
     public var folder: Folder? = null,
     public var folders: List<Folder>? = null,
     public var quizWrite: QuizWrite? = null,
+    public var quizWrites: List<QuizWrite>? = null,
     public var flashCard: FlashCard? = null,
     public var flashCards: List<FlashCard>? = null,
     public var testChoice: MultipleChoice? = null,
@@ -19,7 +20,7 @@ class ResponseObject(
 
 ){
     override fun toString(): String {
-        return "ResponseObject(status=$status, data=$data, user=$user, users=$users, topic=$topic, topics=$topics, folder=$folder, folders=$folders, quizWrite=$quizWrite, testChoice=$testChoice, testChoices=$testChoices,)"
+        return "ResponseObject(status=$status, data=$data, user=$user, users=$users, topic=$topic, topics=$topics, folder=$folder, folders=$folders, quizWrite=$quizWrite, quizWrites=$quizWrites, flashCard=$flashCard, flashCards=$flashCards, testChoice=$testChoice, testChoices=$testChoices)"
     }
 }
 
@@ -34,6 +35,7 @@ fun ResponseObject.clone(): ResponseObject {
     res.folder = this.folder
     res.folders = this.folders
     res.quizWrite = this.quizWrite
+    res.quizWrites = this.quizWrites
     res.flashCard = this.flashCard
     res.flashCards = this.flashCards
     res.testChoice = this.testChoice

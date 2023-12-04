@@ -21,11 +21,9 @@ class MainQuizActivity : AppCompatActivity() {
 
     private val choiceService: MultipleChoiceService = MultipleChoiceService()
     private val topicService: TopicService = TopicService()
-    private val manageScopeApi: ManageScopeApi = ManageScopeApi()
     private val actionTransition: ActionTransition = ActionTransition(this)
-    private val authService: AuthService = AuthService()
     private val flashCardService: FlashCardService = FlashCardService()
-    private val actionDialog: ActionDialog = ActionDialog(this, lifecycleScope)
+    private val writeQuizService: QuizWriteService = QuizWriteService()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,14 +33,40 @@ class MainQuizActivity : AppCompatActivity() {
 
         if (exerciseType == "choice") {
             choiceTest()
-        } else if (exerciseType == "write") {
-//            val intent = Intent(this, QuizActivity::class.java)
-//            intent.putExtra("exercise_type", "write")
-//            startActivity(intent)
+        } else if (exerciseType == "writingTest") {
+            writingTest()
         }else{
             flashCard()
         }
-
+    }
+    private fun writingTest(){
+        val intent = Intent(this, WriteQuizActivity::class.java)
+        val topicId = this.intent.getStringExtra("topicId")
+        if(topicId.isNullOrEmpty()){
+            Toast.makeText(this@MainQuizActivity, "Error for move page, please try again!!!", Toast.LENGTH_LONG).show()
+            finish()
+            actionTransition.rollBackTransition()
+        }
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO){
+                val fetchTopic = topicService.getTopicById(topicId!!)
+                if(!fetchTopic.status){
+                    Toast.makeText(this@MainQuizActivity, "Error for move page, please try again!!!", Toast.LENGTH_LONG).show()
+                    finish()
+                    actionTransition.rollBackTransition()
+                }
+                val fetchWT = writeQuizService.WTForUserLogged().findWritingTestByTopicId(topicId)
+                if(fetchWT.status){
+                    intent.putExtra("quizWrite", fetchWT.quizWrite)
+                }
+                runOnUiThread {
+                    intent.putExtra("topic", fetchTopic.topic!!)
+                    startActivity(intent)
+                    finish()
+                    actionTransition.moveNextTransition()
+                }
+            }
+        }
     }
     private fun choiceTest(){
         val intent = Intent(this, ChoiceTest::class.java)
@@ -63,7 +87,8 @@ class MainQuizActivity : AppCompatActivity() {
                 }
                 val fetchChoice = choiceService.MPForUserLogged().findChoiceTestByTopicId(topicId)
                 if(fetchChoice.status){
-                    intent.putExtra("choice", fetchTopic.testChoice)
+                    Log.i("TAG", "choiceTest: ${fetchChoice.testChoice}")
+                    intent.putExtra("choice", fetchChoice.testChoice)
                 }
                 runOnUiThread {
                     intent.putExtra("topic", fetchTopic.topic!!)

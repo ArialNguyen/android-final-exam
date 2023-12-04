@@ -10,6 +10,7 @@ import com.example.final_android_quizlet.models.MultipleChoice
 import com.example.final_android_quizlet.models.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.squareup.moshi.JsonAdapter
@@ -25,6 +26,9 @@ class MultipleChoiceService {
     inline fun <reified T : Any> T.asMap() : MutableMap<String, Any?> {
         val props = T::class.memberProperties.associateBy { it.name }
         return props.keys.associateWith { props[it]?.get(this) } as MutableMap<String, Any?>
+    }
+    suspend fun getDocumentIdByField(field: String, value: Any): String {
+        return db.collection("choice_test").whereEqualTo(field, value).get().await().documents[0].id
     }
     suspend fun createChoiceTest(multipleChoice: MultipleChoice): ResponseObject {
         val res = ResponseObject()
@@ -53,6 +57,8 @@ class MultipleChoiceService {
         try {
             val data = db.collection("choice_test")
                 .whereEqualTo("topicId", topicId)
+                .orderBy("overall", Query.Direction.DESCENDING)
+                .orderBy("createdAt", Query.Direction.ASCENDING)
                 .get().await()
 
             Log.i("TAG", "data.documents.size: ${data.documents.size}")
@@ -71,6 +77,8 @@ class MultipleChoiceService {
         return res
     }
 
+
+
     inner class MPForUserLogged{
 
         private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
@@ -82,7 +90,6 @@ class MultipleChoiceService {
                     .whereEqualTo("topicId", topicId)
                     .get().await()
 
-                Log.i("TAG", "data.documents.size: ${data.documents.size}")
                 if (data.documents.size == 0) {
                     throw Exception("Not Found ChoiceTest")
                 } else {
@@ -97,5 +104,20 @@ class MultipleChoiceService {
             }
             return res
         }
+
+        suspend fun deleteChoiceTest(uid: String): ResponseObject {
+            val res = ResponseObject()
+            try {
+                val documentId = getDocumentIdByField("uid", uid)
+                db.collection("choice_test").document(documentId).delete().await()
+                res.status = true
+            }catch (e: Exception){
+                Log.i("TAG", "ERROR: ${e.message}")
+                res.data = e.message.toString()
+                res.status = false
+            }
+            return res
+        }
+
     }
 }

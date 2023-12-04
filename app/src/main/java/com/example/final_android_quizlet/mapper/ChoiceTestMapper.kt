@@ -6,7 +6,9 @@ import com.example.final_android_quizlet.models.AnswerChoice
 import com.example.final_android_quizlet.models.FlashCard
 import com.example.final_android_quizlet.models.MultipleChoice
 import com.example.final_android_quizlet.models.Term
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.ServerTimestamp
 import com.google.firebase.firestore.getField
 import org.modelmapper.Converter
 import org.modelmapper.ModelMapper
@@ -22,7 +24,7 @@ class ChoiceTestMapper {
         val uid = choiceTest["uid"] as String
         val answers = mutableListOf<AnswerChoice>()
         val list = choiceTest["answers"] as? List<Map<String, Any>>
-        val createdAt = choiceTest["createdAt"] as Date
+        val createdAt = (choiceTest["createdAt"] as Timestamp).toDate()
         list?.forEach { map ->
             val term = map["term"] as Map<String, Any>
             val answer = map["answer"] as String

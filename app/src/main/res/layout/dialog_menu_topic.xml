@@ -119,6 +119,7 @@
                     android:textSize="20sp"/>
 
         </LinearLayout>
+
     </LinearLayout>
     <LinearLayout android:id="@+id/llForGuest_menuTopic" android:visibility="gone" android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content">
         <LinearLayout
