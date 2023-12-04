@@ -82,7 +82,7 @@ class SearchCommunity : AppCompatActivity() {
         tabLayout.addTab(tab2)
         // Adapter
         adapterVP = VPCommunityAdapter(this)
-        userAdapter = UserAdapter(userItems)
+        userAdapter = UserAdapter(userItems, allTopic)
         topicAdapter = TopicAdapter(EOrientationRecyclerView.VERTICAL, topicItems)
 
         val topicFragment = DefaultFragmentRv(object : GetBackAdapterFromViewPager {
