@@ -112,19 +112,38 @@ class WriteQuizActivity : AppCompatActivity() {
     }
 
     private fun insertData() {
+//        val answerText = edWrite.text.toString()
+//        quizWrite.answers.add(
+//            Answer(
+//                items[currentIndex], answerText, answerText == items[currentIndex].definition
+//            )
+//        )
+//        currentIndex++
+//        updateUIWithTerm()
+//        updatePageNumber()
+
         val answerText = edWrite.text.toString()
-        quizWrite.answers.add(
-            Answer(
-                items[currentIndex], answerText, answerText == items[currentIndex].definition
-            )
+        val result = answerText == items[currentIndex].definition
+
+        val answer = Answer(
+            items[currentIndex],
+            answerText,
+            result
         )
+
+        quizWrite.answers.add(answer)
+
+        if (result) {
+            quizWrite.overall = quizWrite.overall.toInt() + 1
+        }
+
         currentIndex++
         updateUIWithTerm()
         updatePageNumber()
     }
 
     private fun updateUIWithTerm() {
-        txCard.text = items[currentIndex].definition
+        txCard.text = items[currentIndex].term
         edWrite.text.clear()
 
 
@@ -133,12 +152,25 @@ class WriteQuizActivity : AppCompatActivity() {
             txNext.setOnClickListener {
 
                 val answerText = edWrite.text.toString()
-                quizWrite.answers.add(
-                    Answer(
-                        items[currentIndex], answerText, answerText == items[currentIndex].definition
-                    )
+                val result = answerText == items[currentIndex].definition
+
+                val answer = Answer(
+                    items[currentIndex],
+                    answerText,
+                    result
                 )
-                //                val intent = Intent(this, ResultQuizActivity::class.java)
+
+                quizWrite.answers.add(answer)
+
+                if (result) {
+                    quizWrite.overall = quizWrite.overall.toInt() + 1
+                }
+
+                val intent = Intent(this, ResultQuizActivity::class.java)
+                intent.putExtra("overall", quizWrite.overall)
+                intent.putExtra("totalItems", items.size)
+                intent.putExtra("result", quizWrite)
+                startActivity(intent)
 
                 lifecycleScope.launch {
                     withContext(Dispatchers.IO) {

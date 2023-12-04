@@ -107,6 +107,7 @@
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value=".activity.DetailTopic"/>
         </activity>
+        <activity android:name=".activity.ResultQuizActivity" android:exported="false"/>
         <activity
                 android:name=".auth.ForgotPwd"
                 android:exported="true"

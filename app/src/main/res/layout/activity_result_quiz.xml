@@ -55,15 +55,15 @@
             app:cpb_progress_max="20"
             app:cpb_progress="15"
             app:cpb_round_border="false"/>
-        
+
         <TextView
             android:id="@+id/txResult_quiz"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_22sdp"
             android:layout_centerInParent="true"
-            android:text="15/20"/>
+            android:text="15/20"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_22sdp" />
     </RelativeLayout>
     
     <RelativeLayout
