@@ -27,7 +27,7 @@ class UserAdapter(
             val topicsCount = topics.count { it.userId == userId }
             val topicsCountText = "$topicsCount học phần"
             tvTotalTopic.text = topicsCountText
-            if (item.avatar!!.isNotEmpty()) {
+            if (item.avatar.isNotEmpty()) {
                 Picasso.get().load(item.avatar).into(avatar)
             }
             itemView.setOnClickListener {

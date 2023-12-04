@@ -25,6 +25,7 @@ data class AnswerChoice(
     var answer: String,
     var result: Boolean
 ): Serializable {
+
     override fun toString(): String {
         return "AnswerChoice(term=$term, answer='$answer', result=$result)"
     }

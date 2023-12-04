@@ -55,13 +55,13 @@ class MainQuizActivity : AppCompatActivity() {
         Log.i("TAG", "MAIN topicId: $topicId")
         lifecycleScope.launch {
             withContext(Dispatchers.IO){
-                val fetchTopic = topicService.TopicForUserLogged().getTopicById(topicId!!)
+                val fetchTopic = topicService.getTopicById(topicId!!)
                 if(!fetchTopic.status){
                     Toast.makeText(this@MainQuizActivity, "Error for move page, please try again!!!", Toast.LENGTH_LONG).show()
                     finish()
                     actionTransition.rollBackTransition()
                 }
-                val fetchChoice = choiceService.findChoiceTestByTopicId(topicId)
+                val fetchChoice = choiceService.MPForUserLogged().findChoiceTestByTopicId(topicId)
                 if(fetchChoice.status){
                     intent.putExtra("choice", fetchTopic.testChoice)
                 }
@@ -87,7 +87,7 @@ class MainQuizActivity : AppCompatActivity() {
         Log.i("TAG", "MAIN topicId: $topicId")
         lifecycleScope.launch {
             withContext(Dispatchers.IO){
-                val fetchTopic = topicService.TopicForUserLogged().getTopicById(topicId!!)
+                val fetchTopic = topicService.getTopicById(topicId!!)
                 if(!fetchTopic.status){
                     Toast.makeText(this@MainQuizActivity, "Error for move page, please try again!!!", Toast.LENGTH_LONG).show()
                     finish()

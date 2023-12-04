@@ -68,28 +68,6 @@ class UserService {
         }
         return res
     }
-    suspend fun getUserByName(name: String): ResponseObject {
-        val res: ResponseObject = ResponseObject()
-        try {
-            val data = db.collection("users")
-                .whereLessThanOrEqualTo("name", name + "\uf8ff")
-                .whereGreaterThanOrEqualTo("name", name)
-                .get().await()
-            res.status = true
-            if (data.documents.size == 0) {
-                res.users = mutableListOf()
-            } else {
-                res.users =  userMapper.convertToUsers(data.documents)
-                res.status = true
-            }
-        } catch (e: Exception) {
-            Log.i("TAG", "ERROR: ${e.message}")
-            res.data = e.message.toString()
-            res.status = false
-        }
-        return res
-    }
-
     suspend fun getUserByEmail(email: String): ResponseObject {
         val res: ResponseObject = ResponseObject()
         try {
@@ -110,6 +88,44 @@ class UserService {
         }
         return res
     }
+    suspend fun getUserByField(field: String, value: Any): ResponseObject {
+        val res: ResponseObject = ResponseObject()
+        try {
+            val data = db.collection("users")
+                .whereEqualTo(field, value)
+                .get().await()
+            if (data.documents.size == 0) {
+                throw Exception("Not Found!!!")
+            } else {
+                res.user = data.documents[0].toObject(User::class.java)!!
+                res.status = true
+            }
+        } catch (e: Exception) {
+            Log.i("TAG", "ERROR: ${e.message}")
+            res.data = e.message.toString()
+            res.status = false
+        }
+        return res
+    }
+    suspend fun getUsersInListUserId(userIds: List<String>): ResponseObject {
+        val res: ResponseObject = ResponseObject()
+        try {
+            val data = db.collection("users")
+                .whereIn("uid", userIds)
+                .get().await()
+            if (data.documents.size == 0) {
+                res.users = mutableListOf()
+            } else {
+                res.users = userMapper.convertToUsers(data.documents)
+                res.status = true
+            }
+        } catch (e: Exception) {
+            Log.i("TAG", "ERROR: ${e.message}")
+            res.data = e.message.toString()
+            res.status = false
+        }
+        return res
+    }
 
     suspend fun getDocumentIdByField(field: String, value: Any): String {
         return db.collection("users").whereEqualTo(field, value).get().await().documents[0].id
@@ -121,7 +137,6 @@ class UserService {
             val documentId = getDocumentIdByField("uid", uid)
             db.collection("users").document(documentId).update(user).await()
             res.status = true
-            res.data
         }catch (e: Exception){
             res.data = e.message.toString()
             res.status = false

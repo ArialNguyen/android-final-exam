@@ -11,6 +11,7 @@
                                                        app:layout_constraintTop_toTopOf="parent"
                                                        app:layout_constraintStart_toStartOf="parent"
                                                        android:padding="15dp"
+                                                       android:background="@color/colorBackground"
                                                        app:layout_constraintEnd_toEndOf="parent"
                                                        android:id="@+id/constraintLayout9">
         <androidx.appcompat.widget.SearchView android:layout_width="0dp" android:layout_height="match_parent"
@@ -48,6 +49,7 @@
         <androidx.viewpager2.widget.ViewPager2 android:layout_width="match_parent" android:layout_height="0dp"
                                                app:layout_constraintStart_toStartOf="parent"
                                                android:id="@+id/viewPager_community"
+                                               android:background="@color/colorBackground"
                                                app:layout_constraintBottom_toBottomOf="parent"
                                                app:layout_constraintEnd_toEndOf="parent"
                                                app:layout_constraintTop_toBottomOf="@+id/tab_community"/>

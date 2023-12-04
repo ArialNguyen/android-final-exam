@@ -1,5 +1,6 @@
 package com.example.final_android_quizlet.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -20,6 +21,7 @@ import com.example.final_android_quizlet.common.GetBackAdapterFromViewPager
 import com.example.final_android_quizlet.fragments.DefaultFragmentRv
 import com.example.final_android_quizlet.models.Topic
 import com.example.final_android_quizlet.models.User
+import com.example.final_android_quizlet.service.AuthService
 import com.example.final_android_quizlet.service.TopicService
 import com.example.final_android_quizlet.service.UserService
 import com.google.android.material.tabs.TabLayout
@@ -33,7 +35,7 @@ class SearchCommunity : AppCompatActivity() {
     private val userService: UserService = UserService()
     private val topicService: TopicService = TopicService()
     private val actionTransition: ActionTransition = ActionTransition(this)
-
+    private val authService: AuthService = AuthService()
 
     // View
     private lateinit var searchView: SearchView
@@ -54,6 +56,7 @@ class SearchCommunity : AppCompatActivity() {
     private val allTopic: MutableList<Topic> = mutableListOf()
     private val allUser: MutableList<User> = mutableListOf()
     private lateinit var keywordIntent: String
+    private lateinit var userIdAuth: String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search_community)
@@ -65,7 +68,7 @@ class SearchCommunity : AppCompatActivity() {
             actionTransition.rollBackTransition()
         }
         keywordIntent = intent.getStringExtra("keyword").toString()
-
+        userIdAuth = authService.getCurrentUser().uid
         // get View
         searchView = findViewById(R.id.searchView_community)
         tabLayout = findViewById(R.id.tab_community)
@@ -84,6 +87,16 @@ class SearchCommunity : AppCompatActivity() {
         adapterVP = VPCommunityAdapter(this)
         userAdapter = UserAdapter(userItems, allTopic)
         topicAdapter = TopicAdapter(EOrientationRecyclerView.VERTICAL, topicItems)
+        // Handle Click Adapter
+        userAdapter.setOnItemClickListener {
+
+        }
+        topicAdapter.setOnItemClickListener {
+            val intent = Intent(this, DetailTopic::class.java)
+            intent.putExtra("topicId", it.topic.uid)
+            startActivity(intent)
+            actionTransition.moveNextTransition()
+        }
 
         val topicFragment = DefaultFragmentRv(object : GetBackAdapterFromViewPager {
             override fun onActionBack(view: View) {
@@ -156,11 +169,14 @@ class SearchCommunity : AppCompatActivity() {
             withContext(Dispatchers.IO) {
                 val fetchTopics = topicService.getPublicTopic()
                 if (allUser.isEmpty()) {
-                    allUser.addAll(userService.getUsers().users!!)
+                    allUser.addAll(userService.getUsers().users!!.filter {
+                        it.uid != userIdAuth
+                    })
                 }
                 if (fetchTopics.status) {
-                    Log.i("TAG", "fetchTopics: ${fetchTopics.topics!!.size}")
-                    allTopic.addAll(fetchTopics.topics!!)
+                    allTopic.addAll(fetchTopics.topics!!.filter {
+                        it.userId != userIdAuth
+                    })
                     topicItems.addAll(allTopic.filter { it.title.contains(keywordIntent, ignoreCase = true) }
                         .map { topic ->
                             LibraryTopicAdapterItem(
@@ -182,7 +198,9 @@ class SearchCommunity : AppCompatActivity() {
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
                 if (allUser.isEmpty()) {
-                    allUser.addAll(userService.getUsers().users!!)
+                    allUser.addAll(userService.getUsers().users!!.filter {
+                        it.uid != userIdAuth
+                    })
                 }
                 userItems.clear()
                 userItems.addAll(allUser)

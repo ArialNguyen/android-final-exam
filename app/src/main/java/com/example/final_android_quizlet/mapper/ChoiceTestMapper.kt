@@ -12,6 +12,7 @@ import org.modelmapper.Converter
 import org.modelmapper.ModelMapper
 import org.modelmapper.PropertyMap
 import org.modelmapper.spi.MappingContext
+import java.util.Date
 import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
 class ChoiceTestMapper {
@@ -21,6 +22,7 @@ class ChoiceTestMapper {
         val uid = choiceTest["uid"] as String
         val answers = mutableListOf<AnswerChoice>()
         val list = choiceTest["answers"] as? List<Map<String, Any>>
+        val createdAt = choiceTest["createdAt"] as Date
         list?.forEach { map ->
             val term = map["term"] as Map<String, Any>
             val answer = map["answer"] as String
@@ -38,7 +40,9 @@ class ChoiceTestMapper {
         val overall = choiceTest["overall"] as Number
         val topicId = choiceTest["topicId"] as String
         val userId = choiceTest["userId"] as String
-        return MultipleChoice(uid, answers, overall, topicId, userId)
+        val multipleChoice = MultipleChoice(uid, answers, overall, topicId, userId)
+        multipleChoice.createdAt = createdAt
+        return multipleChoice
     }
     fun convertToChoicesTest(choicesTest: List<DocumentSnapshot>): List<MultipleChoice> {
         return choicesTest.map {

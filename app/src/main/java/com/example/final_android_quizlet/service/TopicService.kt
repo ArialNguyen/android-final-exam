@@ -46,6 +46,26 @@ class TopicService {
         return res
     }
 
+    suspend fun getTopicById(id: String): ResponseObject {
+        val res: ResponseObject = ResponseObject()
+        Log.i("id", id)
+        try {
+            val data = db.collection("topics")
+                .whereEqualTo("uid", id)
+                .get().await()
+            if (data.documents.size == 0) {
+                throw Exception("Error... Not Found Topic with id = $id!")
+            } else {
+                res.topic = topicMapper.convertToTopic(data.documents[0].data!!)
+                res.status = true
+            }
+        } catch (e: Exception) {
+            Log.i("TAG", "ERROR: ${e.message}")
+            res.data = e.message.toString()
+            res.status = false
+        }
+        return res
+    }
 
     suspend fun getTopicsByUserId(userId: String): ResponseObject {
         val res: ResponseObject = ResponseObject()
@@ -110,7 +130,9 @@ class TopicService {
         return res
     }
 
-
+    suspend fun getDocumentIdByField(field: String, value: Any): String {
+        return db.collection("topics").whereEqualTo(field, value).get().await().documents[0].id
+    }
 
 
     inner class TopicForUserLogged{
@@ -175,5 +197,19 @@ class TopicService {
             }
             return res
         }
+        suspend fun updateInfo(topicId: String, topic: HashMap<String, Any>): ResponseObject {
+            val res = ResponseObject()
+            try {
+                val documentId = getDocumentIdByField("uid", topicId)
+                db.collection("topics").document(documentId).update(topic).await()
+                res.status = true
+            } catch (e: Exception) {
+                Log.i("TAG", "ERROR: ${e.message}")
+                res.data = e.message.toString()
+                res.status = false
+            }
+            return res
+        }
     }
+
 }

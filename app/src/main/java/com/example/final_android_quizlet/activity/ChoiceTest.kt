@@ -194,6 +194,7 @@ class ChoiceTest : AppCompatActivity() {
             layoutResult.visibility = View.VISIBLE
             lifecycleScope.launch {
                 withContext(Dispatchers.IO){
+                    Log.i("TAG", "choiceTest: $choiceTest")
                     val createChoice = choiceService.createChoiceTest(choiceTest)
                     if (!createChoice.status) {
                         runOnUiThread {
