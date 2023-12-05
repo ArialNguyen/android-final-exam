@@ -10,37 +10,6 @@
     android:layout_marginBottom="18dp"
     android:elevation="3dp">
 
-
-<!--    <TextView-->
-<!--        android:id="@+id/tvTitleName_library"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginStart="10dp"-->
-<!--        android:text="Tiếng anh"-->
-<!--        android:textSize="18sp"-->
-<!--        android:textStyle="bold"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
-
-<!--    <RelativeLayout-->
-<!--        android:id="@+id/round_background"-->
-<!--        android:layout_width="110dp"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginStart="10dp"-->
-<!--        android:layout_marginTop="10dp"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/tvTitleName_library">-->
-
-<!--        <TextView-->
-<!--            android:id="@+id/tvTotalTerm_library"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_alignParentStart="true"-->
-<!--            android:layout_alignParentEnd="true"-->
-<!--            android:text="3 thuật ngữ"-->
-<!--            android:textSize="16sp" />-->
-<!--    </RelativeLayout>-->
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -56,15 +25,17 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/imgAvatarIcon_userItem"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            app:civ_border_width="2dp"
+            app:civ_border_color="@color/text_Knew"
             android:src="@drawable/person"
             app:layout_constraintStart_toStartOf="parent" tools:ignore="NotSibling"/>
         <TextView
             android:id="@+id/tvUsername_userItem"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="Aria"
+            android:text="Arial"
             android:textStyle="bold"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"

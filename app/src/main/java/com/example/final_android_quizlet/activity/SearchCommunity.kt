@@ -15,6 +15,7 @@ import com.example.final_android_quizlet.adapter.TopicAdapter
 import com.example.final_android_quizlet.adapter.UserAdapter
 import com.example.final_android_quizlet.adapter.VPCommunityAdapter
 import com.example.final_android_quizlet.adapter.data.LibraryTopicAdapterItem
+import com.example.final_android_quizlet.adapter.data.UserItem
 import com.example.final_android_quizlet.common.ActionTransition
 import com.example.final_android_quizlet.common.EOrientationRecyclerView
 import com.example.final_android_quizlet.common.GetBackAdapterFromViewPager
@@ -49,11 +50,11 @@ class SearchCommunity : AppCompatActivity() {
     private lateinit var userAdapter: UserAdapter
 
     private val topicItems: MutableList<LibraryTopicAdapterItem> = mutableListOf()
-    private val userItems: MutableList<User> = mutableListOf()
+    private val userItems: MutableList<UserItem> = mutableListOf()
 
 
     // Hard data
-    private val allTopic: MutableList<Topic> = mutableListOf()
+    private val allPublicTopic: MutableList<Topic> = mutableListOf()
     private val allUser: MutableList<User> = mutableListOf()
     private lateinit var keywordIntent: String
     private lateinit var userIdAuth: String
@@ -86,7 +87,7 @@ class SearchCommunity : AppCompatActivity() {
 
         // Adapter
         adapterVP = VPCommunityAdapter(this)
-        userAdapter = UserAdapter(userItems, allTopic) // NEED TO FIXXX
+        userAdapter = UserAdapter(userItems) // NEED TO FIXXX
         topicAdapter = TopicAdapter(EOrientationRecyclerView.VERTICAL, topicItems)
 
         // Handle Click Adapter
@@ -126,13 +127,15 @@ class SearchCommunity : AppCompatActivity() {
             topicItems.clear()
             userItems.clear()
             topicItems.addAll(
-                allTopic.map { topic ->
+                allPublicTopic.map { topic ->
                     LibraryTopicAdapterItem(
                         topic, allUser.firstOrNull { topic.userId == it.uid }
                     )
                 }
             )
-            userItems.addAll(allUser)
+            userItems.addAll(allUser.map { user -> UserItem(
+                user, allPublicTopic.count { user.uid == it.userId }
+            )})
             topicAdapter.notifyDataSetChanged()
             userAdapter.notifyDataSetChanged()
             searchView.clearFocus()
@@ -145,12 +148,14 @@ class SearchCommunity : AppCompatActivity() {
                     // Topic
                     topicItems.clear()
                     userItems.clear()
-                    topicItems.addAll(allTopic.filter { it.title.contains(query, ignoreCase = true) }.map { topic ->
+                    topicItems.addAll(allPublicTopic.filter { it.title.contains(query, ignoreCase = true) }.map { topic ->
                         LibraryTopicAdapterItem(
                             topic, allUser.firstOrNull { topic.userId == it.uid }
                         )
                     })
-                    userItems.addAll(allUser.filter { it.name!!.contains(query, ignoreCase = true) })
+                    userItems.addAll(allUser.map { user -> UserItem(
+                        user, allPublicTopic.count { user.uid == it.userId }
+                    )})
                     topicAdapter.notifyDataSetChanged()
                     userAdapter.notifyDataSetChanged()
                     return true
@@ -176,10 +181,10 @@ class SearchCommunity : AppCompatActivity() {
                     })
                 }
                 if (fetchTopics.status) {
-                    allTopic.addAll(fetchTopics.topics!!.filter {
+                    allPublicTopic.addAll(fetchTopics.topics!!.filter {
                         it.userId != userIdAuth
                     })
-                    topicItems.addAll(allTopic.filter { it.title.contains(keywordIntent, ignoreCase = true) }
+                    topicItems.addAll(allPublicTopic.filter { it.title.contains(keywordIntent, ignoreCase = true) }
                         .map { topic ->
                             LibraryTopicAdapterItem(
                                 topic, allUser.firstOrNull { topic.userId == it.uid }
@@ -195,7 +200,7 @@ class SearchCommunity : AppCompatActivity() {
 
     fun actionOnUserFM(view: View) {
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerViewUser_defaultFG)
-        userAdapter = UserAdapter(userItems, allTopic)
+        userAdapter = UserAdapter(userItems)
         recyclerView.adapter = userAdapter
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
@@ -205,7 +210,9 @@ class SearchCommunity : AppCompatActivity() {
                     })
                 }
                 userItems.clear()
-                userItems.addAll(allUser)
+                userItems.addAll(allUser.map { user -> UserItem(
+                    user, allPublicTopic.count { user.uid == it.userId }
+                )})
                 runOnUiThread {
                     userAdapter.notifyDataSetChanged()
                 }
