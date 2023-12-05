@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.example.final_android_quizlet.R
 import com.example.final_android_quizlet.adapter.data.RankingItem
@@ -27,6 +29,16 @@ class RankingAdapter( private val items: List<RankingItem>) : RecyclerView.Adapt
                 Picasso.get().load(item.user.avatar).into(imgAvatar)
             }
             tvRank.text = (adapterPosition + 1).toString()
+
+            val conRanking = itemView.findViewById<ConstraintLayout>(R.id.conRanking_ranking)
+
+            when (adapterPosition) {
+                0 -> conRanking.setBackgroundResource(R.drawable.drawable_rank_1)
+                1 -> conRanking.setBackgroundResource(R.drawable.drawable_rank_2)
+                2 -> conRanking.setBackgroundResource(R.drawable.drawable_rank_3)
+                else -> conRanking.setBackgroundResource(R.drawable.white_background_algorithm)
+            }
+
         }
     }
 

@@ -46,9 +46,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvName: TextView
     private lateinit var tvViewAllTopic: TextView
     private lateinit var plusIcon: ImageView
-    private lateinit var profileButton: BottomNavigationItemView
+    private lateinit var profileButton: ImageView
     private lateinit var libraryButton: BottomNavigationItemView
-    private lateinit var rankingButton: BottomNavigationItemView
     private lateinit var topicRV: RecyclerView
 
     // Adapter
@@ -72,7 +71,7 @@ class MainActivity : AppCompatActivity() {
         tvName = findViewById(R.id.txName_main)
         profileButton = findViewById(R.id.imageView7)
         libraryButton = findViewById(R.id.imageView6)
-        rankingButton = findViewById(R.id.imgRanking_Main)
+//        rankingButton = findViewById(R.id.imgRanking_Main)
 
         // Adapter
         topicAdapter = TopicAdapter(EOrientationRecyclerView.HORIZONTAL, topicsItem)
@@ -112,10 +111,10 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, LibraryActivity::class.java)
             startActivity(intent)
         }
-        rankingButton.setOnClickListener {
-            val intent = Intent(this, RankingActivity::class.java)
-            startActivity(intent)
-        }
+//        rankingButton.setOnClickListener {
+//            val intent = Intent(this, RankingActivity::class.java)
+//            startActivity(intent)
+//        }
         // Load data
 
         lifecycleScope.launch {
@@ -147,7 +146,6 @@ class MainActivity : AppCompatActivity() {
 
         val createHocPhan: LinearLayout = dialog.findViewById(R.id.create_hoc_phan)
         val createFolder: LinearLayout = dialog.findViewById(R.id.create_folder)
-        val createClass: LinearLayout = dialog.findViewById(R.id.create_class)
         val cancelButton: ImageView = dialog.findViewById(R.id.cancelButton)
 
         createHocPhan.setOnClickListener {
@@ -158,10 +156,6 @@ class MainActivity : AppCompatActivity() {
 
         createFolder.setOnClickListener {
             actionDialog.openCreateFolderDialog(null)
-            dialog.dismiss()
-        }
-
-        createClass.setOnClickListener {
             dialog.dismiss()
         }
 

@@ -24,7 +24,7 @@
             android:textAlignment="viewStart"
             android:text="Tạo"
             android:padding="8dp"
-            android:textColor="@color/lavender"
+            android:textColor="@color/black"
             android:layout_marginStart="12dp"
             android:layout_marginTop="5dp"
             android:textSize="25dp" />
@@ -57,7 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Tạo học phần"
-            android:textColor="@color/lavender"
+            android:textColor="@color/black"
             android:layout_marginLeft="30dp"
             android:textSize="16sp"/>
 
@@ -80,36 +80,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Tạo thư mục"
-            android:textColor="@color/lavender"
+            android:textColor="@color/black"
             android:layout_marginLeft="30dp"
             android:textSize="16sp"/>
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/create_class"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingTop="10dp"
-        android:paddingBottom="30dp">
-
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_baseline_class"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tạo lớp"
-            android:textColor="@color/lavender"
-            android:layout_marginLeft="30dp"
-            android:textSize="16sp"/>
-
-    </LinearLayout>
 
 </LinearLayout>

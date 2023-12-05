@@ -41,4 +41,9 @@
 <!--    Flash Card-->
     <color name="text_Learning">#fb923c</color>
     <color name="text_Knew">#59e8b5</color>
+
+    <!-- Ranking -->
+    <color name="rank_1">#FFC107</color>
+    <color name="rank_2">#A3A2A2</color>
+    <color name="rank_3">#fb923c</color>
 </resources>

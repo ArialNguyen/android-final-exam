@@ -54,39 +54,17 @@
                         app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent"/>
 
                 <ImageView
-                        android:id="@+id/imageView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:id="@+id/imageView7"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="20dp"
-                        android:src="@drawable/bell"
+                        android:src="@drawable/ic_username"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintVertical_bias="0.0"/>
 
-                <ImageView
-                        android:id="@+id/imageView2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="12dp"
-                        android:src="@drawable/red_circle"
-                        app:layout_constraintBottom_toTopOf="@id/imageView"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/imageView"
-                        app:layout_constraintTop_toTopOf="@id/imageView"
-                        app:layout_constraintVertical_bias="0.0"/>
-
-                <TextView
-                        android:id="@+id/textView3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="1"
-                        android:textColor="@color/white"
-                        app:layout_constraintBottom_toBottomOf="@id/imageView2"
-                        app:layout_constraintEnd_toEndOf="@id/imageView2"
-                        app:layout_constraintStart_toStartOf="@id/imageView2"
-                        app:layout_constraintTop_toTopOf="@id/imageView2"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -258,7 +236,6 @@
                                 android:layout_marginTop="2dp"
                                 android:src="@drawable/person"
                                 app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toBottomOf="@+id/round_background"
                                 android:layout_marginLeft="12dp" tools:ignore="NotSibling"/>
                         <TextView
                                 android:id="@+id/tvUserNamePublic_main"
@@ -267,7 +244,6 @@
                                 android:text="quizlette23254363"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintStart_toEndOf="@+id/imgAvatarIconPublic_main"
-                                app:layout_constraintTop_toBottomOf="@+id/round_background"
                                 android:gravity="center_vertical"
                                 android:layout_alignParentEnd="true" android:layout_marginEnd="85dp"
                                 android:layout_toEndOf="@+id/imgAvatarIconPublic_main" android:layout_marginStart="8dp"
