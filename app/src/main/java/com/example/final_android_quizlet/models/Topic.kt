@@ -1,8 +1,7 @@
 package com.example.final_android_quizlet.models
 
 import java.io.Serializable
-import java.util.Date
-import java.util.UUID
+import java.util.*
 
 enum class ELearnTopicStatus{
     NOT_LEARN, LEARNED
@@ -19,16 +18,19 @@ data class Topic(
     var terms: List<Term>,
     var userId: String,
     var mode: EModeTopic,
-    var learnStatus: ELearnTopicStatus
+    var learnStatus: ELearnTopicStatus,
+    var termLanguage: String?,
+    var definitionLanguage: String?
 ): Serializable{
     var createdAt: Date? = null
     constructor() : this(
          UUID.randomUUID().toString(),"", "", listOf(), "",
-        EModeTopic.PRIVATE, ELearnTopicStatus.NOT_LEARN
+        EModeTopic.PRIVATE, ELearnTopicStatus.NOT_LEARN, null, null
      )
 
     override fun toString(): String {
-        return "Topic(uid='$uid', title='$title', description='$description', terms=$terms, userId='$userId', createdAt='$createdAt', mode=$mode, learnStatus=$learnStatus)"
+        return "Topic(uid='$uid', title='$title', description='$description', terms=$terms, userId='$userId', mode=$mode, learnStatus=$learnStatus, termLanguage=$termLanguage, definitionLanguage=$definitionLanguage, createdAt=$createdAt)"
     }
+
 
 }

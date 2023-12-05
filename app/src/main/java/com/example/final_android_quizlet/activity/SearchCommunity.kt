@@ -87,7 +87,7 @@ class SearchCommunity : AppCompatActivity() {
 
         // Adapter
         adapterVP = VPCommunityAdapter(this)
-        userAdapter = UserAdapter(userItems) // NEED TO FIXXX
+        userAdapter = UserAdapter(userItems)
         topicAdapter = TopicAdapter(EOrientationRecyclerView.VERTICAL, topicItems)
 
         // Handle Click Adapter

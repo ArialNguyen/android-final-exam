@@ -17,6 +17,12 @@
             android:usesCleartextTraffic="true"
             tools:targetApi="31">
         <activity
+                android:name=".activity.ChooseLanguageForTerm"
+                android:exported="false"/>
+        <activity
+                android:name=".activity.SettingCreateTopic"
+                android:exported="false"/>
+        <activity
                 android:name=".activity.SearchCommunity"
                 android:exported="false">
         </activity>
@@ -107,7 +113,9 @@
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value=".activity.DetailTopic"/>
         </activity>
-        <activity android:name=".activity.ResultQuizActivity" android:exported="false"/>
+        <activity
+                android:name=".activity.ResultQuizActivity"
+                android:exported="false"/>
         <activity
                 android:name=".auth.ForgotPwd"
                 android:exported="true"

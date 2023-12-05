@@ -1,21 +1,11 @@
 package com.example.final_android_quizlet.mapper
 
-import android.util.Log
-import com.example.final_android_quizlet.activity.ChoiceTest
 import com.example.final_android_quizlet.models.AnswerChoice
-import com.example.final_android_quizlet.models.FlashCard
 import com.example.final_android_quizlet.models.MultipleChoice
 import com.example.final_android_quizlet.models.Term
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.ServerTimestamp
-import com.google.firebase.firestore.getField
-import org.modelmapper.Converter
 import org.modelmapper.ModelMapper
-import org.modelmapper.PropertyMap
-import org.modelmapper.spi.MappingContext
-import java.util.Date
-import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
 class ChoiceTestMapper {
     private val mapper = ModelMapper()

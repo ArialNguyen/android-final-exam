@@ -1,5 +1,6 @@
 import android.graphics.Canvas
 import android.graphics.Point
+import android.util.Log
 import android.view.View
 import android.view.View.DragShadowBuilder
 import android.view.ViewGroup
@@ -81,6 +82,7 @@ class CustomDragShadowBuilder(private val view: View) : DragShadowBuilder(view) 
         tvBack.text = term.definition
         tvBackground.text = term.term
         view.updateDragShadow(DragShadowBuilder(view))
+        Log.i("TAG", "updateNewItem: $term")
     }
 
     override fun onProvideShadowMetrics(outShadowSize: Point?, outShadowTouchPoint: Point?) {

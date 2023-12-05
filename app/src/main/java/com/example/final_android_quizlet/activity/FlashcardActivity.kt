@@ -7,6 +7,7 @@ import android.animation.AnimatorSet
 import android.content.Intent
 import android.media.Image
 import android.os.Bundle
+import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.DragEvent
 import android.view.View
@@ -43,6 +44,7 @@ class FlashcardActivity : AppCompatActivity() {
     private val actionTransition: ActionTransition = ActionTransition(this)
     private val authService: AuthService = AuthService()
     private val flashCardService: FlashCardService = FlashCardService()
+    private lateinit var textToSpeech: TextToSpeech
 
     // Layout Learning
     private lateinit var imgExit: ImageView
@@ -61,6 +63,8 @@ class FlashcardActivity : AppCompatActivity() {
     private lateinit var areaLearning: ConstraintLayout
     private lateinit var areaKnew: ConstraintLayout
     private lateinit var progressTerm: ProgressBar
+    private lateinit var imgSpeakerBack: ImageView
+    private lateinit var imgSpeakerFront: ImageView
 
     // Layout Result
     private lateinit var layoutResult: ConstraintLayout
@@ -326,6 +330,9 @@ class FlashcardActivity : AppCompatActivity() {
         areaLearning = findViewById(R.id.areaLearning)
         areaKnew = findViewById(R.id.areaKnew)
         progressTerm = findViewById(R.id.progressBarTerm_flashcard)
+        imgSpeakerFront = findViewById(R.id.imgSpeakerFront_flashCard)
+        imgSpeakerBack = findViewById(R.id.imgSpeakerBack_flashCard)
+
 
         // Result layout
         layoutResult = findViewById(R.id.layoutResult_flashcard)
@@ -336,8 +343,23 @@ class FlashcardActivity : AppCompatActivity() {
         btnExamResult = findViewById(R.id.btn_examResult_flashcard)
         btnLearningResult = findViewById(R.id.btn_LearningResult_flashcard)
         // Load data
-
         dragShadowBuilder = CustomDragShadowBuilder(cardBackground)
+
+        // TextToSpeech
+        textToSpeech = TextToSpeech(this){ status ->
+            if (status == TextToSpeech.SUCCESS){
+                val result = textToSpeech.setLanguage(Locale.forLanguageTag(topicIntent.termLanguage!!))
+                if(result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED){
+                    Toast.makeText(this, "Oops language not Supported!!!", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+        imgSpeakerFront.setOnClickListener {
+            speak()
+        }
+        imgSpeakerBack.setOnClickListener {
+            speak()
+        }
 
         topicIntent = intent.getSerializableExtra("topic") as Topic
         items = intent.getSerializableExtra("remainTerms") as List<Term>
@@ -386,6 +408,15 @@ class FlashcardActivity : AppCompatActivity() {
             actionTransition.rollBackTransition()
         }
         // Call Back
+    }
+    fun speak(){
+        if(isFront){
+            textToSpeech.setLanguage(Locale.forLanguageTag(topicIntent.termLanguage!!))
+            textToSpeech.speak(tvFront.text.trim().toString(), TextToSpeech.QUEUE_FLUSH, null)
+        }else{
+            textToSpeech.setLanguage(Locale.forLanguageTag(topicIntent.definitionLanguage!!))
+            textToSpeech.speak(tvBack.text.trim().toString(), TextToSpeech.QUEUE_FLUSH, null)
+        }
     }
 
     private fun flipCard(frontAnimation: AnimatorSet, backAnimation: AnimatorSet) {

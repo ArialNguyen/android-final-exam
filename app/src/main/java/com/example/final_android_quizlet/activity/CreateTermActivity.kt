@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
+import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.View
 import android.widget.EditText
@@ -30,10 +31,10 @@ import com.example.final_android_quizlet.models.Topic
 import com.example.final_android_quizlet.service.AuthService
 import com.example.final_android_quizlet.service.TopicService
 import com.github.ybq.android.spinkit.SpinKitView
-import com.google.firebase.firestore.FieldValue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Locale
 import java.util.UUID
 
 class CreateTermActivity : AppCompatActivity() {
@@ -56,11 +57,17 @@ class CreateTermActivity : AppCompatActivity() {
     private lateinit var layoutDescription: ConstraintLayout
     private lateinit var etDescription: EditText
     private lateinit var etTitle: EditText
-    private lateinit var btnBack: ImageView
+    private lateinit var settingButton: ImageView
     private lateinit var imgFinish: ImageView
     private lateinit var loaderFull: SpinKitView
 
+    // Hard data
+    private var termLang: Locale? = null
+    private var definitionLang: Locale? = null
+    private var accessMode: EModeTopic = EModeTopic.PRIVATE
 
+    // Intent Request
+    private val INTENT_SETTING = 2
     // Intent
     private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
@@ -72,6 +79,7 @@ class CreateTermActivity : AppCompatActivity() {
                 withContext(Dispatchers.IO) {
                     val topics = fileAction.readFileCsvToTopics(result.data!!.data!!)
                     val res = topicService.TopicForUserLogged().createTopics(topics)
+
                     this@CreateTermActivity.runOnUiThread {
                         if (res.status) {
                             Toast.makeText(this@CreateTermActivity, "Import Successfully", Toast.LENGTH_LONG).show()
@@ -85,9 +93,14 @@ class CreateTermActivity : AppCompatActivity() {
                     }
                 }
             }
+        }else if (INTENT_SETTING == result.resultCode){
+            val intent = result.data!!
+            termLang = if (intent.getSerializableExtra("termLang") != null) intent.getSerializableExtra("termLang") as Locale else termLang
+            definitionLang = if (intent.getSerializableExtra("definitionLang") != null) intent.getSerializableExtra("definitionLang") as Locale else definitionLang
+            accessMode = if (intent.getSerializableExtra("accessMode") != null) intent.getSerializableExtra("accessMode") as EModeTopic else accessMode
+            Log.i("TAG", "CreateTerm: $termLang & $definitionLang & $accessMode")
         }
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,20 +109,24 @@ class CreateTermActivity : AppCompatActivity() {
         if(!authService.isLogin()){
             startActivity(Intent(this, Login::class.java))
         }
+        Locale.getAvailableLocales()[0].displayName
         val currentUser = authService.getCurrentUser()
-
         // Get View
         llImportFromCSV = findViewById(R.id.llImportFromCSV_createTopic)
         layoutDescription = findViewById(R.id.expandDescriptionLayout)
         etDescription = findViewById(R.id.etDescription_createTopic)
         etTitle = findViewById(R.id.etTitle_createTopic)
-        btnBack = findViewById(R.id.backButton)
+        settingButton = findViewById(R.id.settingTopic_createTopic)
         imgFinish = findViewById(R.id.btnFinish_createTopic)
         loaderFull = findViewById(R.id.spin_kit)
-
         // Handle Event
-        btnBack.setOnClickListener {
-            onBackPressed()
+        settingButton.setOnClickListener {
+            val intent = Intent(this, SettingCreateTopic::class.java)
+            if(termLang != null) intent.putExtra("langTerm", termLang)
+            if (definitionLang != null) intent.putExtra("langDefinition", definitionLang)
+            if (accessMode != null) intent.putExtra("accessMode", accessMode)
+            resultLauncher.launch(intent)
+            actionTransition.moveNextTransition()
         }
 
         llImportFromCSV.setOnClickListener {
@@ -143,30 +160,25 @@ class CreateTermActivity : AppCompatActivity() {
         imgFinish.setOnClickListener {
             val title = etTitle.text.toString()
             val description = etDescription.text.toString()
-            manageScopeApi.getResponseWithCallback(lifecycleScope,
-                {(topicService::createTopic)(Topic(
-                    UUID.randomUUID().toString(),
-                    title, description, getUsefulTerm(),
-                    currentUser.uid,
-//                    mutableListOf(),
-                    EModeTopic.PRIVATE, ELearnTopicStatus.NOT_LEARN
-                ))},
-                object : CallbackInterface{
-                    override fun onBegin() {
-                        loaderFull.visibility = View.VISIBLE
-                    }
-
-                    override fun onValidate(): Boolean {
-                        if(title.isEmpty()){
-                            Toast.makeText(this@CreateTermActivity, "Title must be required", Toast.LENGTH_LONG).show()
-                            return false
-                        }else if (termList.size < 2){
-                            Toast.makeText(this@CreateTermActivity, "Must provide at least 2 Term", Toast.LENGTH_LONG).show()
-                            return false
-                        }
-                        return true
-                    }
-                    override fun onCallback(res: ResponseObject) {
+            loaderFull.visibility = View.VISIBLE
+            if(title.isEmpty()){
+                Toast.makeText(this@CreateTermActivity, "Title must be required", Toast.LENGTH_LONG).show()
+            }else if (getUsefulTerm().size < 2){
+                Toast.makeText(this@CreateTermActivity, "Must provide at least 2 Term", Toast.LENGTH_LONG).show()
+            }else if (termLang == null || definitionLang == null){
+                Toast.makeText(this@CreateTermActivity, "Must provide Language For Term", Toast.LENGTH_LONG).show()
+            }else{
+                lifecycleScope.launch {
+                    withContext(Dispatchers.IO){
+                        val res = topicService.createTopic(
+                            Topic(
+                                UUID.randomUUID().toString(),
+                                title, description, getUsefulTerm(),
+                                currentUser.uid,
+                                accessMode, ELearnTopicStatus.NOT_LEARN,
+                                termLang!!.toLanguageTag(), definitionLang!!.toLanguageTag()
+                            )
+                        )
                         if(res.status){
                             if(intent.getStringExtra("className") != null && intent.getStringExtra("className")!!.isNotEmpty()){
                                 Log.i("TAG", "COME TO create Term check intent")
@@ -174,19 +186,21 @@ class CreateTermActivity : AppCompatActivity() {
                                 resIntent.putExtra("extra_topic", res.topic!!)
                                 setResult(Activity.RESULT_OK, resIntent)
                             }
+                            runOnUiThread {
+                                Toast.makeText(this@CreateTermActivity, "Success!!", Toast.LENGTH_LONG).show()
+                            }
                             finish()
                             actionTransition.rollBackTransition()
                         }else{
-                            Toast.makeText(this@CreateTermActivity, res.data.toString(), Toast.LENGTH_LONG).show()
+                            runOnUiThread {
+                                Toast.makeText(this@CreateTermActivity, res.data.toString(), Toast.LENGTH_LONG).show()
+                            }
                         }
                     }
-
-                    override fun onFinally() {
-                        loaderFull.visibility = View.GONE
-                    }
-                })
+                }
+            }
+            loaderFull.visibility = View.GONE
         }
-
     }
 
     private fun getUsefulTerm(): ArrayList<Term>{

@@ -11,6 +11,7 @@ import com.google.firebase.auth.FirebaseAuth
 import org.apache.commons.csv.CSVFormat
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import java.lang.IllegalArgumentException
 import java.util.*
 
 class FileAction(private val ctx: Context) {
@@ -18,10 +19,10 @@ class FileAction(private val ctx: Context) {
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 
     val fieldsTopicImport: List<String> = listOf(
-        "title", "description", ""
+        "title", "description", "termLanguage", "definitionLanguage", ""
     )
     val fieldsTopicExport: List<String> = listOf(
-        "title", "description", "terms"
+        "title", "description", "termLanguage", "definitionLanguage", "terms"
     )
 
     val fieldsFromFile: MutableList<Int> = mutableListOf()
@@ -50,7 +51,7 @@ class FileAction(private val ctx: Context) {
                     return@forEachIndexed
                 }
             } else {
-                Log.i("TAG", "readFileCsvToTopics: $fieldsFromFile")
+                Locale.getAvailableLocales()[0].toLanguageTag()
                 val hashMapUser = hashMapOf<String, Any>()
                 var isValidRow = true
                 val terms = mutableListOf<Term>()
@@ -62,15 +63,34 @@ class FileAction(private val ctx: Context) {
                             terms.add(Term(UUID.randomUUID().toString(), value[0].trim(), value[1].trim()))
                         }
                     } else {
-                        if (removeUTF8BOM(it1).isEmpty() && fieldValue == fieldsTopicImport[0]) { // check if fieldInFile == title
+                        try {
+                            if (removeUTF8BOM(it1).isEmpty() && fieldValue == fieldsTopicImport[0]) { // check if fieldInFile == title
+                                isValidRow = false
+                                return@forEachIndexed
+                            }
+                            if (removeUTF8BOM(it1).isEmpty() && fieldValue == fieldsTopicImport[2]) { // check if fieldInFile == title
+                                isValidRow = false
+                                return@forEachIndexed
+                            }
+                            if (removeUTF8BOM(it1).isEmpty() && fieldValue == fieldsTopicImport[3]) { // check if fieldInFile == title
+                                isValidRow = false
+                                return@forEachIndexed
+                            }
+                            if(fieldValue == fieldsTopicImport[3] || fieldValue == fieldsTopicImport[2]){
+                                val locale = Locale.getAvailableLocales().firstOrNull { it.toLanguageTag() == removeUTF8BOM(it1) }
+                                if(locale == null){
+                                    isValidRow = false
+                                    return@forEachIndexed
+                                }
+                            }
+                        }catch (e: IllegalArgumentException){
                             isValidRow = false
                             return@forEachIndexed
                         }
                         hashMapUser[fieldValue] = removeUTF8BOM(it1)
                     }
                 }
-                Log.i("TAG", "isValidRow: $isValidRow")
-                if (!isValidRow && (topicsSuccess.size > 1)) {
+                if (!isValidRow) {
                     listIndexRowFailure.add(i)
                 } else {
                     hashMapUser["term"] = terms
@@ -92,6 +112,8 @@ class FileAction(private val ctx: Context) {
             when (key) {
                 "title" -> topic.title = value as String
                 "description" -> topic.description = value as String
+                "termLanguage" -> topic.termLanguage = value as String
+                "definitionLanguage" -> topic.definitionLanguage = value as String
                 "term" -> {
                     Log.i("TAG", "mapToTopic: $value")
                     val terms = value as List<Term>
@@ -99,7 +121,6 @@ class FileAction(private val ctx: Context) {
                 }
             }
         }
-        Log.i("TAG", "mapToTopic: $topic")
         return topic
     }
 

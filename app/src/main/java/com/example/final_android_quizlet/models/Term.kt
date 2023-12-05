@@ -1,17 +1,16 @@
 package com.example.final_android_quizlet.models
 
-import android.content.ClipData
-import android.content.Intent
 import java.io.Serializable
+import java.util.Locale
 import java.util.UUID
 
 data class Term(
     var uid: String,
     var term: String,
-    var definition: String
+    var definition: String,
 ): Serializable {
     constructor() : this(
-        UUID.randomUUID().toString(),"",""
+        UUID.randomUUID().toString(),"", ""
     )
     override fun toString(): String {
         return "Term(uid='$uid', term='$term', definition='$definition')"
