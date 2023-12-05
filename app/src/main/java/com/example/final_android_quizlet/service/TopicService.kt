@@ -102,7 +102,6 @@ class TopicService {
                 }
             }
         }
-        Log.i("TAG", "getDocumentIdsByFields: ")
         return query!!.get().await().documents.toList()
     }
 
@@ -111,19 +110,15 @@ class TopicService {
         try {
             val data = db.collection("topics")
                 .where(Filter.and(
-                    Filter.equalTo("mode", EModeTopic.PUBLIC.name),
-//                    Filter.lessThanOrEqualTo("title", text + "\uf8ff"),
-//                    Filter.greaterThanOrEqualTo("title",  text)
+                    Filter.equalTo("mode", EModeTopic.PUBLIC.name)
                 )).get().await()
             res.status = true
-            Log.i("TAG", "getPublicTopic: ${data.documents}")
             if (data.documents.size == 0) {
                 res.topics = listOf()
             } else {
                 res.topics = topicMapper.convertToTopics(data.documents)
             }
         } catch (e: Exception) {
-            Log.i("TAG", "ERROR: ${e.message}")
             res.data = e.message.toString()
             res.status = false
         }
@@ -134,29 +129,27 @@ class TopicService {
         return db.collection("topics").whereEqualTo(field, value).get().await().documents[0].id
     }
 
+    suspend fun getTopicsByQuerys(myFBQuery: MutableList<MyFBQuery>): ResponseObject {
+        val res: ResponseObject = ResponseObject()
+        try {
+            val data = getDocumentsByFields(myFBQuery)
+            res.status = true
+            if (data.isEmpty()) {
+                res.topics = listOf()
+            } else {
+                res.topics = topicMapper.convertToTopics(data)
+            }
+        } catch (e: Exception) {
+            Log.i("ERROR", "getTopicsByQuerys: ${e.message}")
+            res.data = e.message.toString()
+            res.status = false
+        }
+        return res
+    }
+
 
     inner class TopicForUserLogged{
         private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
-        suspend fun getTopicById(id: String): ResponseObject {
-            val res: ResponseObject = ResponseObject()
-            Log.i("id", id)
-            try {
-                val data = db.collection("topics")
-                    .whereEqualTo("uid", id)
-                    .whereEqualTo("userId", firebaseAuth.currentUser!!.uid)
-                    .get().await()
-                if (data.documents.size == 0) {
-                    throw Exception("Error... Make sure you already logged and had this topic!")
-                } else {
-                    res.topic = topicMapper.convertToTopic(data.documents[0].data!!)
-                    res.status = true
-                }
-            } catch (e: Exception) {
-                res.data = e.message.toString()
-                res.status = false
-            }
-            return res
-        }
 
         fun createTopics(topics: MutableList<Topic>): ResponseObject {
             val res = ResponseObject()

@@ -43,20 +43,43 @@
                 tools:ignore="MissingConstraints" app:layout_constraintStart_toStartOf="parent"/>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView_library"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:cardCornerRadius="8dp"
-            android:layout_marginTop="15dp"
-            app:cardElevation="20dp"
-            app:cardUseCompatPadding="true"
-            tools:listitem="@layout/item_tien_trinh"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_tien_trinh"
-            tools:ignore="MissingConstraints"
-            tools:layout_editor_absoluteX="0dp" />
-
+                android:id="@+id/recyclerView_library"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="8dp"
+                android:layout_marginTop="15dp"
+                app:cardElevation="20dp"
+                app:cardUseCompatPadding="true"
+                tools:listitem="@layout/item_tien_trinh"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintTop_toBottomOf="@+id/text_tien_trinh"
+                tools:ignore="MissingConstraints" app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+        <TextView
+                android:id="@+id/tvSaveTopic_library"
+                android:layout_width="wrap_content"
+                android:visibility="gone"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_weight="1"
+                android:text="Đã lưu"
+                android:textSize="18sp"
+                app:layout_constraintTop_toBottomOf="@+id/recyclerView_library"
+                tools:ignore="MissingConstraints" app:layout_constraintStart_toStartOf="parent"/>
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewSaved_library"
+                android:layout_width="match_parent"
+                android:visibility="gone"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="8dp"
+                android:layout_marginTop="15dp"
+                app:cardElevation="20dp"
+                app:cardUseCompatPadding="true"
+                tools:listitem="@layout/item_tien_trinh"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintTop_toBottomOf="@+id/tvSaveTopic_library"
+                tools:ignore="MissingConstraints"
+                app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

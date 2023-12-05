@@ -13,6 +13,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.example.final_android_quizlet.R
 import com.example.final_android_quizlet.adapter.LibraryAdapter
@@ -66,6 +67,8 @@ class LibraryActivity() : AppCompatActivity() {
                 Log.i("TAG", "onResult: FragmentTopicLibrary")
                 view.findViewById<TextInputLayout>(R.id.llFilterTopic_TopicFG).visibility = View.VISIBLE
                 view.findViewById<TextView>(R.id.text_tien_trinh).visibility = View.VISIBLE
+                view.findViewById<TextView>(R.id.tvSaveTopic_library).visibility = View.VISIBLE
+                view.findViewById<RecyclerView>(R.id.recyclerViewSaved_library).visibility = View.VISIBLE
                 libraryAdapter.addAdapterForChild(items, adapter)
             }
         }), "Học Phần")

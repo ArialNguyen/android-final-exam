@@ -23,6 +23,7 @@ import com.example.final_android_quizlet.models.User
 import com.example.final_android_quizlet.service.*
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -36,7 +37,7 @@ class RankingActivity: AppCompatActivity() {
     private val mpService: MultipleChoiceService = MultipleChoiceService()
     private val wTService: QuizWriteService = QuizWriteService()
     // View
-
+    private lateinit var avatarTop: CircleImageView
     private lateinit var tabLayout: TabLayout
     private lateinit var viewPager: ViewPager2
 
@@ -63,6 +64,7 @@ class RankingActivity: AppCompatActivity() {
         topicId = intent.getStringExtra("topicId")!!
 
         // Get View
+        avatarTop = findViewById(R.id.imgAvatarTop_RankingActivity)
         tabLayout = findViewById(R.id.tab_ranking)
         viewPager = findViewById(R.id.viewPager_ranking)
         val imgBack = findViewById<ImageView>(R.id.imgBack_RankingActivity)
