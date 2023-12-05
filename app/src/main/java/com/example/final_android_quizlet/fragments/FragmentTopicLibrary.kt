@@ -95,21 +95,23 @@ class FragmentTopicLibrary(private val getBackAdapterFromViewPager: GetBackAdapt
                     }
                 }
                 // Fetch Topic Saved
-                val topicsSaved = topicService.getTopicsByQuerys(mutableListOf(
-                    MyFBQuery("uid", user.topicSaved, MyFBQueryMethod.IN)
-                ))
-                Log.i("TAG", "List User Id: ${topicsSaved.topics!!.map { it.userId }.distinct()}")
-                val fetchUserInTopic = userService.getUsersInListUserId(topicsSaved.topics!!.map { it.userId }.distinct())
-                if(topicsSaved.status && fetchUserInTopic.status){
-                    val list =  topicsSaved.topics!!.map {
-                        LibraryTopicAdapterItem(it, fetchUserInTopic.users!!.first { us -> us.uid == it.userId })
-                    }.toMutableList()
-                    itemsSavedTemp.addAll(list)
-                    itemsSaved.addAll(list)
-                    (context as Activity).runOnUiThread {
-                        topicSavedAdapter.notifyDataSetChanged()
+                if(user.topicSaved.isNotEmpty()){
+                    val topicsSaved = topicService.getTopicsByQuerys(mutableListOf(
+                        MyFBQuery("uid", user.topicSaved, MyFBQueryMethod.IN)
+                    ))
+                    val fetchUserInTopic = userService.getUsersInListUserId(topicsSaved.topics!!.map { it.userId }.distinct())
+                    if(topicsSaved.status && fetchUserInTopic.status){
+                        val list =  topicsSaved.topics!!.map {
+                            LibraryTopicAdapterItem(it, fetchUserInTopic.users!!.first { us -> us.uid == it.userId })
+                        }.toMutableList()
+                        itemsSavedTemp.addAll(list)
+                        itemsSaved.addAll(list)
+                        (context as Activity).runOnUiThread {
+                            topicSavedAdapter.notifyDataSetChanged()
+                        }
                     }
                 }
+
             }
         }
 

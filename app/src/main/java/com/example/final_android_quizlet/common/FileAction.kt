@@ -99,7 +99,6 @@ class FileAction(private val ctx: Context) {
                 }
             }
         }
-        Log.i("TAG", "topicsSuccess: $topicsSuccess")
         return topicsSuccess
     }
 
