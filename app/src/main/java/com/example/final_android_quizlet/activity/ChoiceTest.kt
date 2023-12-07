@@ -15,6 +15,9 @@ import com.example.final_android_quizlet.adapter.ChoiceTestResultAdapter
 import com.example.final_android_quizlet.adapter.data.ResultChoiceAdapterItem
 import com.example.final_android_quizlet.auth.Login
 import com.example.final_android_quizlet.common.ActionTransition
+import com.example.final_android_quizlet.common.DialogClickedEvent
+import com.example.final_android_quizlet.common.EAnswer
+import com.example.final_android_quizlet.fragments.dialog.DialogFeedBackChoiceTest
 import com.example.final_android_quizlet.models.AnswerChoice
 import com.example.final_android_quizlet.models.MultipleChoice
 import com.example.final_android_quizlet.models.Term
@@ -56,12 +59,15 @@ class ChoiceTest : AppCompatActivity() {
     private val itemsAdapter: MutableList<ResultChoiceAdapterItem> = mutableListOf()
 
     // Hard Data
+    private lateinit var answerType: EAnswer
+    private var showAnswerIntent: Boolean = false
     private val choiceTest: MultipleChoice = MultipleChoice()
     private var choiceDB: MultipleChoice? = null
     private var topicIntent: Topic? = null
     private var items: MutableList<Term> = mutableListOf()
     private val answers: MutableList<String> = mutableListOf()
     private var currentTermIndex = 0
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,21 +79,28 @@ class ChoiceTest : AppCompatActivity() {
         }
         val userId = authService.getCurrentUser().uid
         // get Intent
-        if (intent.getSerializableExtra("topic") == null || intent.getSerializableExtra("answers") == null) {
+        if (intent.getSerializableExtra("topic") == null ||
+            intent.getSerializableExtra("answers") == null ||
+            intent.getSerializableExtra("terms") == null ||
+            intent.getSerializableExtra("answerType") == null
+        ) {
             finish()
             Toast.makeText(this, "Oops, something wrong. Try again!!!", Toast.LENGTH_LONG).show()
             actionTransition.rollBackTransition()
         }
-        if(intent.getSerializableExtra("choice") != null){
+        if (intent.getSerializableExtra("choice") != null) {
             choiceDB = intent.getSerializableExtra("choice") as MultipleChoice
         }
+        showAnswerIntent = intent.getBooleanExtra("showAnswer", false)
 
         topicIntent = intent.getSerializableExtra("topic") as Topic
-        items.addAll(topicIntent!!.terms)
+        items.addAll(intent.getSerializableExtra("terms") as List<Term>)
+        answers.addAll(intent.getSerializableExtra("answers") as List<String>)
+        answerType = intent.getSerializableExtra("answerType") as EAnswer
+
         choiceTest.uid = UUID.randomUUID().toString()
         choiceTest.userId = userId
         choiceTest.topicId = topicIntent!!.uid
-        answers.addAll(intent.getSerializableExtra("answers") as List<String>)
         // Link view
         imgExit = findViewById(R.id.img_exit_choiceTest)
         tvProgress = findViewById(R.id.tvProgress_choiceTest)
@@ -153,8 +166,11 @@ class ChoiceTest : AppCompatActivity() {
     private fun loadRandomAnswers(): List<String> {
         answers.shuffle()
         val answersRes = (if (items.size > 4) answers.take(4) else answers.take(items.size)).toMutableList()
-        if (!answersRes.contains(items[currentTermIndex].definition)) {
+        if (!answersRes.contains(items[currentTermIndex].definition) && answerType.name == EAnswer.DEFINITION.name) {
             answersRes[0] = items[currentTermIndex].definition
+        }
+        if (!answersRes.contains(items[currentTermIndex].term) && answerType.name == EAnswer.TERM.name) {
+            answersRes[0] = items[currentTermIndex].term
         }
         answersRes.shuffle()
         return answersRes
@@ -164,7 +180,7 @@ class ChoiceTest : AppCompatActivity() {
         if (currentTermIndex == items.size) {
             // Handle Finish Exam
             updateProgress()
-            choiceTest.overall = choiceTest.answers!!.filter { it.result }.size
+            choiceTest.overall = choiceTest.answers.filter { it.result }.size
 
             tvTotalTrue.text = choiceTest.overall.toString()
             tvTotalFalse.text = (items.size - choiceTest.overall as Int).toString()
@@ -198,9 +214,9 @@ class ChoiceTest : AppCompatActivity() {
             layoutExam.visibility = View.GONE
             layoutResult.visibility = View.VISIBLE
             lifecycleScope.launch {
-                withContext(Dispatchers.IO){
+                withContext(Dispatchers.IO) {
                     Log.i("TAG", "choiceDB: $choiceDB")
-                    if(choiceDB != null){
+                    if (choiceDB != null) {
                         choiceService.MPForUserLogged().deleteChoiceTest(choiceDB!!.uid)
                     }
                     val createChoice = choiceService.createChoiceTest(choiceTest)
@@ -212,7 +228,8 @@ class ChoiceTest : AppCompatActivity() {
                 }
             }
         } else {
-            tvTermTitle.text = items[currentTermIndex].term
+            tvTermTitle.text =
+                if (answerType.name == EAnswer.TERM.name) items[currentTermIndex].definition else items[currentTermIndex].term
             // handle random answer
             val randomAnswers = loadRandomAnswers()
             answersView.forEachIndexed { index, view ->
@@ -225,12 +242,28 @@ class ChoiceTest : AppCompatActivity() {
     private fun handleClickOnAnswer(view: View) {
         val answerChosen = (view as TextView).text.toString()
         var result = false
-        if (items[currentTermIndex].definition == answerChosen) {
+        var ques: String = if (answerType.name == EAnswer.DEFINITION.name) items[currentTermIndex].term else items[currentTermIndex].definition
+        var ans: String = if (answerType.name == EAnswer.DEFINITION.name) items[currentTermIndex].definition else items[currentTermIndex].term
+        if (items[currentTermIndex].definition == answerChosen && answerType.name == EAnswer.DEFINITION.name) {
             result = true
+            ques = items[currentTermIndex].term
+            ans = items[currentTermIndex].definition
+        }
+        if (items[currentTermIndex].term == answerChosen && answerType.name == EAnswer.TERM.name) {
+            result = true
+            ques = items[currentTermIndex].definition
+            ans = items[currentTermIndex].term
         }
         val answer = AnswerChoice(items[currentTermIndex], answerChosen, result)
         choiceTest.answers.add(answer)
         currentTermIndex++
-        loadExamView()
+        val dialogFeedBackChoiceTest =
+            DialogFeedBackChoiceTest(result, ques, ans, answerChosen, object : DialogClickedEvent.FeedBackChoiceTest {
+                override fun setSuccessButton() {
+                    loadExamView()
+                }
+            })
+        dialogFeedBackChoiceTest.show(supportFragmentManager, DialogFeedBackChoiceTest::class.simpleName)
+
     }
 }

@@ -7,9 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.final_android_quizlet.R
-import com.example.final_android_quizlet.common.ActionDialog
-import com.example.final_android_quizlet.common.ActionTransition
-import com.example.final_android_quizlet.common.ManageScopeApi
+import com.example.final_android_quizlet.common.*
 import com.example.final_android_quizlet.models.Term
 import com.example.final_android_quizlet.service.*
 import kotlinx.coroutines.Dispatchers
@@ -29,11 +27,11 @@ class MainQuizActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_quiz)
 
-        val exerciseType = intent.getStringExtra("exercise_type")
+        val exerciseType = intent.getStringExtra("classDestination")
 
-        if (exerciseType == "choice") {
+        if (exerciseType == ChoiceTest::class.simpleName) {
             choiceTest()
-        } else if (exerciseType == "writingTest") {
+        } else if (exerciseType == WriteQuizActivity::class.simpleName) {
             writingTest()
         }else{
             flashCard()
@@ -41,15 +39,16 @@ class MainQuizActivity : AppCompatActivity() {
     }
     private fun writingTest(){
         val intent = Intent(this, WriteQuizActivity::class.java)
-        val topicId = this.intent.getStringExtra("topicId")
-        if(topicId.isNullOrEmpty()){
+        if(intent.getStringExtra("topicId").isNullOrEmpty() || intent.getSerializableExtra("data") == null){
             Toast.makeText(this@MainQuizActivity, "Error for move page, please try again!!!", Toast.LENGTH_LONG).show()
             finish()
             actionTransition.rollBackTransition()
         }
+        val topicId = intent.getStringExtra("topicId")!!
+        val optionData = intent.getSerializableExtra("data") as OptionExamData
         lifecycleScope.launch {
             withContext(Dispatchers.IO){
-                val fetchTopic = topicService.getTopicById(topicId!!)
+                val fetchTopic = topicService.getTopicById(topicId)
                 if(!fetchTopic.status){
                     Toast.makeText(this@MainQuizActivity, "Error for move page, please try again!!!", Toast.LENGTH_LONG).show()
                     finish()
@@ -69,17 +68,17 @@ class MainQuizActivity : AppCompatActivity() {
         }
     }
     private fun choiceTest(){
-        val intent = Intent(this, ChoiceTest::class.java)
-        val topicId = this.intent.getStringExtra("topicId")
-        if(topicId.isNullOrEmpty()){
+        if(intent.getStringExtra("topicId").isNullOrEmpty() || intent.getSerializableExtra("data") == null){
             Toast.makeText(this@MainQuizActivity, "Error for move page, please try again!!!", Toast.LENGTH_LONG).show()
             finish()
             actionTransition.rollBackTransition()
         }
-        Log.i("TAG", "MAIN topicId: $topicId")
+        val topicId = intent.getStringExtra("topicId")!!
+        val optionData = intent.getSerializableExtra("data") as OptionExamData
+        val intent = Intent(this, ChoiceTest::class.java)
         lifecycleScope.launch {
             withContext(Dispatchers.IO){
-                val fetchTopic = topicService.getTopicById(topicId!!)
+                val fetchTopic = topicService.getTopicById(topicId)
                 if(!fetchTopic.status){
                     Toast.makeText(this@MainQuizActivity, "Error for move page, please try again!!!", Toast.LENGTH_LONG).show()
                     finish()
@@ -91,8 +90,33 @@ class MainQuizActivity : AppCompatActivity() {
                     intent.putExtra("choice", fetchChoice.testChoice)
                 }
                 runOnUiThread {
+                    // Handle Option Data
+//                    val fetchAnswers = fetchTopic.topic!!.terms.map { it.definition } as Serializable
+                    val question = fetchTopic.topic!!.terms.toMutableList()
+                    val answers = fetchTopic.topic!!.terms.map { it.definition }.toMutableList()
+                    // Answer Type
+                    if (optionData.answer == EAnswer.TERM){
+                        answers.addAll(fetchTopic.topic!!.terms.map { it.term })
+                    }
+                    intent.putExtra("answerType", optionData.answer)
+                    // Get number question
+                    val tmpList = question.take(optionData.numberQues)
+                    question.clear()
+                    question.addAll(tmpList)
+
+                    // shuffle
+                    if (optionData.shuffle){
+                        question.shuffle()
+                    }
+
+                    // Show answer
+                    intent.putExtra("showAnswer", optionData.showAns)
+
                     intent.putExtra("topic", fetchTopic.topic!!)
-                    intent.putExtra("answers", fetchTopic.topic!!.terms.map { it.definition } as Serializable)
+                    intent.putExtra("answers", answers as Serializable)
+                    intent.putExtra("terms", question as Serializable)
+
+
                     startActivity(intent)
                     finish()
                     actionTransition.moveNextTransition()
