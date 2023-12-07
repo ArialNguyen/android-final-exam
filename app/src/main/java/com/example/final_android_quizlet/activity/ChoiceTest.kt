@@ -136,6 +136,10 @@ class ChoiceTest : AppCompatActivity() {
                 handleClickOnAnswer(view)
             }
         }
+
+        imgExit.setOnClickListener {
+            onBackPressed()
+        }
     }
 
     private fun updateProgress() {

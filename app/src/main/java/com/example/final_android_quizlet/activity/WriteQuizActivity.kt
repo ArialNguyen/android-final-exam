@@ -102,6 +102,10 @@ class WriteQuizActivity : AppCompatActivity() {
 
     }
 
+    private fun chooseRandomType(): Boolean {
+        return Random().nextBoolean()
+    }
+
     private fun backAction() {
         if (quizWrite.answers.isNotEmpty()) {
             quizWrite.answers.removeLast()
@@ -112,16 +116,6 @@ class WriteQuizActivity : AppCompatActivity() {
     }
 
     private fun insertData() {
-//        val answerText = edWrite.text.toString()
-//        quizWrite.answers.add(
-//            Answer(
-//                items[currentIndex], answerText, answerText == items[currentIndex].definition
-//            )
-//        )
-//        currentIndex++
-//        updateUIWithTerm()
-//        updatePageNumber()
-
         val answerText = edWrite.text.toString()
         val result = answerText == items[currentIndex].definition
 
@@ -145,6 +139,17 @@ class WriteQuizActivity : AppCompatActivity() {
     private fun updateUIWithTerm() {
         txCard.text = items[currentIndex].term
         edWrite.text.clear()
+
+        val isTermDisplayed = chooseRandomType()
+
+        if (isTermDisplayed) {
+            txCard.text = items[currentIndex].term
+            edWrite.hint = "Enter Definition"
+        } else {
+            txCard.text = items[currentIndex].definition
+            edWrite.hint = "Enter Term"
+        }
+
 
 
         if (currentIndex == items.size - 1) {
