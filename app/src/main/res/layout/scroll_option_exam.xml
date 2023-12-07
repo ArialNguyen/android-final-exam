@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@drawable/dialogbg">
+
+    <TextView android:layout_width="wrap_content"
+              android:text="Hoàn tất"
+              android:textSize="20dp"
+              android:id="@+id/tvDone_ScrollChoice"
+              android:textColor="@color/black"
+              android:layout_marginTop="10dp"
+              android:layout_marginEnd="10dp"
+              android:layout_gravity="end"
+              android:layout_height="wrap_content"/>
+
+    <com.webianks.library.scroll_choice.ScrollChoice android:layout_width="match_parent"
+                                                     android:id="@+id/scroll_choice"
+                                                     app:scroll_item_align="center"
+                                                     app:scroll_item_space="10dp"
+                                                     app:scroll_maximum_width_text="10dp"
+                                                     app:scroll_background_color="@color/white"
+                                                     app:scroll_selected_item_position="@integer/material_motion_duration_long_2"
+                                                     app:scroll_selected_item_text_color="@color/black"
+                                                     app:scroll_selected_item_background="@color/colorBackground"
+                                                     app:scroll_item_text_size="20sp"
+                                                     app:scroll_atmospheric="true"
+                                                     app:scroll_indicator="true"
+                                                     android:layout_height="wrap_content"/>
+</LinearLayout>

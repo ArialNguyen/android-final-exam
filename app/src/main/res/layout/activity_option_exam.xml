@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorBackground"
+        tools:context=".activity.OptionExam">
+    <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
+                                                       android:layout_height="wrap_content"
+                                                       android:padding="5dp"
+                                                       app:layout_constraintStart_toStartOf="parent"
+                                                       app:layout_constraintEnd_toEndOf="parent"
+                                                       app:layout_constraintTop_toTopOf="parent"
+                                                       android:id="@+id/constraintLayout13">
+        <ImageView android:layout_width="wrap_content"
+                   android:id="@+id/imgCancel_OptionExam"
+                   android:src="@drawable/ic_baseline_clear"
+                   android:layout_height="wrap_content"
+                   app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"/>
+        <TextView android:layout_width="match_parent"
+                  android:textSize="18dp"
+                  android:layout_height="wrap_content" android:text="TOpic Name"
+                  app:layout_constraintStart_toStartOf="parent"
+                  android:layout_marginTop="10dp"
+                  app:layout_constraintEnd_toEndOf="parent" android:id="@+id/tvTopicName_OptionExam"
+                  app:layout_constraintTop_toBottomOf="@+id/imgCancel_OptionExam"/>
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                  android:text="Thiết lập bài kiểm tra"
+                  app:layout_constraintTop_toBottomOf="@+id/tvTopicName_OptionExam"
+                  android:textSize="24dp"
+                  android:textStyle="bold"
+                  android:textColor="@color/black"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintEnd_toEndOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
+                                                       android:layout_height="wrap_content"
+                                                       app:layout_constraintTop_toBottomOf="@+id/constraintLayout13"
+                                                       app:layout_constraintStart_toStartOf="parent"
+                                                       app:layout_constraintEnd_toEndOf="parent"
+                                                       android:id="@+id/constraintLayout17">
+        <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
+                                                           android:layout_height="wrap_content"
+                                                           android:padding="15dp"
+                                                           app:layout_constraintStart_toStartOf="parent"
+                                                           app:layout_constraintEnd_toEndOf="parent"
+                                                           app:layout_constraintTop_toTopOf="parent"
+                                                           android:id="@+id/constraintLayout14">
+            <TextView android:layout_width="wrap_content"
+                      android:text="Số câu hỏi"
+                      android:textSize="18dp"
+                      android:textColor="@color/black"
+                      android:layout_height="wrap_content" app:layout_constraintStart_toStartOf="parent"
+                      app:layout_constraintTop_toTopOf="parent"/>
+            <LinearLayout android:layout_width="wrap_content"
+                          android:padding="5dp"
+                          android:gravity="center_vertical"
+                          android:layout_height="wrap_content"
+                          android:id="@+id/llNumberQues_OptionExam"
+                          app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent">
+                <TextView android:layout_width="wrap_content"
+                          android:textSize="18dp"
+                          android:id="@+id/tvTotalQues_OptionExam"
+                          android:textStyle="bold"
+                          android:textColor="@color/blue"
+                          android:layout_marginEnd="5dp" android:text="20" android:layout_height="wrap_content"/>
+                <ImageView android:layout_width="20dp"
+                           android:src="@drawable/down_arrow_svgrepo_com"
+                           android:layout_height="30dp"/>
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
+                                                           android:layout_height="wrap_content"
+                                                           android:padding="15dp"
+                                                           app:layout_constraintTop_toBottomOf="@+id/constraintLayout14"
+                                                           app:layout_constraintStart_toStartOf="parent"
+                                                           app:layout_constraintEnd_toEndOf="parent"
+                                                           android:id="@+id/constraintLayout15">
+            <TextView android:layout_width="wrap_content"
+                      android:text="Hiển thị đáp án ngay"
+                      android:textSize="18dp"
+                      android:textColor="@color/black"
+                      android:layout_height="wrap_content" app:layout_constraintStart_toStartOf="parent"
+                      app:layout_constraintTop_toTopOf="parent"/>
+            <androidx.appcompat.widget.SwitchCompat android:layout_width="wrap_content"
+                                                    android:layout_height="wrap_content"
+                                                    android:id="@+id/swShowAns_OptionExam"
+                                                    app:layout_constraintEnd_toEndOf="parent"
+                                                    app:layout_constraintTop_toTopOf="parent"
+                                                    app:layout_constraintBottom_toBottomOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
+                                                           android:layout_height="wrap_content"
+                                                           android:padding="15dp"
+                                                           app:layout_constraintTop_toBottomOf="@+id/constraintLayout15"
+                                                           app:layout_constraintStart_toStartOf="parent"
+                                                           app:layout_constraintEnd_toEndOf="parent"
+                                                           android:id="@+id/constraintLayout20">
+            <TextView android:layout_width="wrap_content"
+                      android:text="Trộn câu hỏi"
+                      android:textSize="18dp"
+                      android:textColor="@color/black"
+                      android:layout_height="wrap_content" app:layout_constraintStart_toStartOf="parent"
+                      app:layout_constraintTop_toTopOf="parent"/>
+            <androidx.appcompat.widget.SwitchCompat android:layout_width="wrap_content"
+                                                    android:layout_height="wrap_content"
+                                                    android:id="@+id/swShuffle_OptionExam"
+                                                    app:layout_constraintEnd_toEndOf="parent"
+                                                    app:layout_constraintTop_toTopOf="parent"
+                                                    app:layout_constraintBottom_toBottomOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
+                                                           android:layout_height="wrap_content"
+                                                           android:padding="15dp"
+                                                           android:id="@+id/llLanguageAns_OptionExam"
+                                                           app:layout_constraintTop_toBottomOf="@+id/constraintLayout20"
+                                                           app:layout_constraintStart_toStartOf="parent"
+                                                           app:layout_constraintEnd_toEndOf="parent">
+            <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
+                                                               android:layout_height="wrap_content"
+                                                               app:layout_constraintTop_toTopOf="parent"
+                                                               app:layout_constraintStart_toStartOf="parent"
+                                                               app:layout_constraintEnd_toEndOf="parent"
+                                                               android:id="@+id/constraintLayout16">
+                <TextView android:layout_width="wrap_content"
+                          android:text="Trả lời bằng"
+                          android:textSize="18dp"
+                          android:textColor="@color/black"
+                          android:layout_height="wrap_content" app:layout_constraintStart_toStartOf="parent"
+                          app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent"/>
+                <ImageView android:layout_width="20dp"
+                           android:src="@drawable/down_arrow_svgrepo_com"
+                           android:layout_height="30dp" app:layout_constraintEnd_toEndOf="parent"
+                           app:layout_constraintTop_toTopOf="parent"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView android:text="Thuật ngữ, Định nghĩa"
+                      android:textSize="18dp"
+                      android:id="@+id/tvLangAnswer_OptionExam"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content" app:layout_constraintTop_toBottomOf="@+id/constraintLayout16"
+                      app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
+                                                       android:layout_height="wrap_content"
+                                                       android:padding="10dp"
+                                                       app:layout_constraintBottom_toBottomOf="parent"
+                                                       app:layout_constraintStart_toStartOf="parent"
+                                                       app:layout_constraintEnd_toEndOf="parent">
+        <Button android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:text="Bắt đầu làm kiểm tra"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:id="@+id/btn_Done"
+                app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -129,22 +129,28 @@ class DetailTopic : AppCompatActivity() {
 
         cvFlashCard!!.setOnClickListener {
             val intent = Intent(this, MainQuizActivity::class.java)
-            intent.putExtra("exercise_type", "FlashCard")
+            intent.putExtra("classDestination", FlashcardActivity::class.simpleName)
             intent.putExtra("topicId", currentTopic.uid)
             startActivity(intent)
         }
 
         cvChoice!!.setOnClickListener {
-            val intent = Intent(this, MainQuizActivity::class.java)
-            intent.putExtra("exercise_type", "choice")
-            intent.putExtra("topicId", currentTopic.uid)
+//            val intent = Intent(this, MainQuizActivity::class.java)
+//            intent.putExtra("exercise_type", "choice")
+//            intent.putExtra("topicId", currentTopic.uid)
+            val intent = Intent(this, OptionExam::class.java)
+            intent.putExtra("topic", currentTopic)
+            intent.putExtra("exam", ChoiceTest::class.simpleName)
             startActivity(intent)
         }
 
         cvWriteText!!.setOnClickListener {
-            val intent = Intent(this, MainQuizActivity::class.java)
-            intent.putExtra("exercise_type", "writingTest")
-            intent.putExtra("topicId", currentTopic.uid)
+//            val intent = Intent(this, MainQuizActivity::class.java)
+//            intent.putExtra("exercise_type", "writingTest")
+//            intent.putExtra("topicId", currentTopic.uid)
+            val intent = Intent(this, OptionExam::class.java)
+            intent.putExtra("topic", currentTopic)
+            intent.putExtra("exam", WriteQuizActivity::class.simpleName)
             startActivity(intent)
         }
 
