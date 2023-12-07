@@ -22,7 +22,7 @@
 
     <TextView
             android:id="@+id/tvFolderName_FolderLibrary"
-            android:layout_width="78dp"
+            android:layout_width="wrap_content"
             android:layout_height="29dp"
             android:text="Class six"
             android:textSize="18sp"
