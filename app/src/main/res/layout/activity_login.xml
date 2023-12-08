@@ -19,20 +19,21 @@
             android:paddingTop="20dp">
 
         <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="20dp">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
 
             <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
                 <TextView
-                        style="@style/viewParent.headerText.NoMode"
-                        android:layout_alignParentLeft="true"
-                        android:layout_centerVertical="true"
-                        android:text="Already \nhave an \nAccount?" />
+                    style="@style/viewParent.headerText.NoMode"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:text="Already \nhave an \nAccount?"
+                    android:fontFamily="@font/playfairdisplay_black"/>
 
                 <ImageView
                         android:layout_width="wrap_content"
@@ -51,6 +52,7 @@
                         android:id="@+id/et_email_login"
                         style="@style/modifiedEditText"
                         android:hint="Enter email"
+                    android:fontFamily="@font/playfairdisplay_medium"
                         android:inputType="textEmailAddress"
                         android:maxLines="1" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -61,21 +63,23 @@
                     android:layout_marginTop="@dimen/loginViewsMargin">
 
                 <EditText
-                        android:id="@+id/et_password_login"
-                        style="@style/modifiedEditText"
-                        android:hint="Enter password"
-                        android:inputType="textPassword"
-                        android:maxLines="1" />
+                    android:id="@+id/et_password_login"
+                    style="@style/modifiedEditText"
+                    android:hint="Enter password"
+                    android:fontFamily="@font/playfairdisplay_medium"
+                    android:inputType="textPassword"
+                    android:maxLines="1" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
-                    style="@style/viewParent"
-                    android:id="@+id/tvForgotPwd"
-                    android:layout_gravity="end"
-                    android:layout_marginTop="10dp"
-                    android:text="Forgot Password?"
-                    android:textColor="@color/primaryTextColor"
-                    android:textSize="@dimen/newsMoreTextSize" />
+                style="@style/viewParent"
+                android:id="@+id/tvForgotPwd"
+                android:layout_gravity="end"
+                android:layout_marginTop="10dp"
+                android:text="Forgot Password?"
+                android:fontFamily="@font/playfairdisplay_bolditalic"
+                android:textColor="@color/primaryTextColor"
+                android:textSize="@dimen/newsMoreTextSize" />
 
             <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
                     android:id="@+id/btn_login"
@@ -85,6 +89,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Login"
+                android:fontFamily="@font/playfairdisplay_bold"
                     app:initialCornerAngle="27dp"
                     app:spinning_bar_color="#FFF"
                     app:spinning_bar_padding="6dp"
@@ -95,6 +100,7 @@
                     style="@style/parent"
                     android:layout_marginTop="@dimen/loginViewsMargin"
                     android:text="New user? Register Now"
+                android:fontFamily="@font/playfairdisplay_black"
                     android:textAlignment="center"
                     android:textColor="@color/themeColor"
                     android:textSize="17sp"
@@ -120,6 +126,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="6"
                         android:text="Use other Methods"
+                    android:fontFamily="@font/playfairdisplay_italic"
                         android:textAlignment="center"
                         android:textSize="12sp" />
 

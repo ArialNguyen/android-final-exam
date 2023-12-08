@@ -31,6 +31,7 @@
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
                         android:text="Here’s\nyour first\nstep with \nus! "
+                    android:fontFamily="@font/playfairdisplay_black"
                         android:textColor="@color/whiteTextColor" />
 
                 <ImageView
@@ -58,12 +59,14 @@
                             android:id="@+id/tvHelloEmail"
                             style="@style/modifiedEditText"
                             android:text="Hi "
+                        android:fontFamily="@font/playfairdisplay_black"
                             android:textSize="20sp"
                             android:maxLines="1"
                             android:gravity="center_horizontal"/>
                     <TextView
                             style="@style/modifiedEditText"
                             android:text="let's change to new password"
+                        android:fontFamily="@font/playfairdisplay_italic"
                             android:textSize="16sp"
                             android:maxLines="1"
                             android:gravity="center_horizontal"
@@ -77,6 +80,7 @@
                                 android:id="@+id/et_newPWD"
                                 style="@style/modifiedEditText"
                                 android:hint="Enter Password"
+                            android:fontFamily="@font/playfairdisplay_medium"
                                 android:inputType="textPersonName"
                                 android:maxLines="1"/>
                     </com.google.android.material.textfield.TextInputLayout>
@@ -90,6 +94,7 @@
                                 android:id="@+id/et_password2"
                                 style="@style/modifiedEditText"
                                 android:hint="Enter Password again"
+                            android:fontFamily="@font/playfairdisplay_medium"
                                 android:inputType="textEmailAddress"
                                 android:maxLines="1"/>
                     </com.google.android.material.textfield.TextInputLayout>
@@ -101,6 +106,7 @@
                             android:layout_gravity="center_horizontal"
                             android:layout_marginTop="@dimen/loginViewsMargin"
                             android:text="Save"
+                        android:fontFamily="@font/playfairdisplay_bold"
                             app:initialCornerAngle="27dp"
                             app:spinning_bar_color="#FFF"
                             app:spinning_bar_padding="6dp"
@@ -129,6 +135,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="6"
                         android:text="Use other Methods"
+                    android:fontFamily="@font/playfairdisplay_italic"
                         android:textAlignment="center"
                         android:textColor="@color/whiteTextColor"
                         android:textSize="12sp" />

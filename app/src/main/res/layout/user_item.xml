@@ -43,6 +43,7 @@
             android:gravity="center_vertical"
             android:layout_alignParentEnd="true" android:layout_marginEnd="85dp"
             android:layout_toEndOf="@+id/imgAvatarIcon_userItem"
+            android:fontFamily="@font/playfairdisplay_black"
             tools:ignore="NotSibling"/>
     </LinearLayout>
 
@@ -75,6 +76,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
                 android:text="3 học phần"
+                android:fontFamily="@font/playfairdisplay_semibold"
                 android:layout_marginStart="@dimen/_10sdp"
                 android:textSize="16sp" />
         </LinearLayout>

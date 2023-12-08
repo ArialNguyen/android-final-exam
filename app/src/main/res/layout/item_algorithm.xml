@@ -41,6 +41,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="@string/algorithm"
+                android:fontFamily="@font/playfairdisplay_medium"
                 android:inputType="text"
                 android:lines="1" />
 
@@ -66,6 +67,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:hint="@string/definition"
+            android:fontFamily="@font/playfairdisplay_medium"
             android:inputType="text"
             android:lines="1" />
 

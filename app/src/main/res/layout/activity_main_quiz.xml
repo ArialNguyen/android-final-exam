@@ -25,6 +25,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/white"
             android:gravity="center"
+            android:fontFamily="@font/playfairdisplay_bold"
             android:layout_marginTop="@dimen/_10sdp"
             android:textSize="@dimen/_32sdp"
             android:text="@string/app_name"/>

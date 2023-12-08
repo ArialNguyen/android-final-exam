@@ -20,13 +20,15 @@
                    app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"/>
         <TextView android:layout_width="match_parent"
                   android:textSize="18dp"
-                  android:layout_height="wrap_content" android:text="TOpic Name"
+                  android:layout_height="wrap_content" android:text="Topic Name"
+            android:fontFamily="@font/playfairdisplay_semibold"
                   app:layout_constraintStart_toStartOf="parent"
                   android:layout_marginTop="10dp"
                   app:layout_constraintEnd_toEndOf="parent" android:id="@+id/tvTopicName_OptionExam"
                   app:layout_constraintTop_toBottomOf="@+id/imgCancel_OptionExam"/>
         <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
                   android:text="Thiết lập bài kiểm tra"
+            android:fontFamily="@font/playfairdisplay_black"
                   app:layout_constraintTop_toBottomOf="@+id/tvTopicName_OptionExam"
                   android:textSize="24dp"
                   android:textStyle="bold"
@@ -51,6 +53,7 @@
             <TextView android:layout_width="wrap_content"
                       android:text="Số câu hỏi"
                       android:textSize="18dp"
+                android:fontFamily="@font/playfairdisplay_semibold"
                       android:textColor="@color/black"
                       android:layout_height="wrap_content" app:layout_constraintStart_toStartOf="parent"
                       app:layout_constraintTop_toTopOf="parent"/>
@@ -62,6 +65,7 @@
                           app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent">
                 <TextView android:layout_width="wrap_content"
                           android:textSize="18dp"
+                    android:fontFamily="@font/playfairdisplay_extrabold"
                           android:id="@+id/tvTotalQues_OptionExam"
                           android:textStyle="bold"
                           android:textColor="@color/blue"
@@ -80,6 +84,7 @@
                                                            android:id="@+id/constraintLayout15">
             <TextView android:layout_width="wrap_content"
                       android:text="Hiển thị đáp án ngay"
+                android:fontFamily="@font/playfairdisplay_semibold"
                       android:textSize="18dp"
                       android:textColor="@color/black"
                       android:layout_height="wrap_content" app:layout_constraintStart_toStartOf="parent"
@@ -100,6 +105,7 @@
                                                            android:id="@+id/constraintLayout20">
             <TextView android:layout_width="wrap_content"
                       android:text="Trộn câu hỏi"
+                android:fontFamily="@font/playfairdisplay_semibold"
                       android:textSize="18dp"
                       android:textColor="@color/black"
                       android:layout_height="wrap_content" app:layout_constraintStart_toStartOf="parent"
@@ -126,6 +132,7 @@
                                                                android:id="@+id/constraintLayout16">
                 <TextView android:layout_width="wrap_content"
                           android:text="Trả lời bằng"
+                    android:fontFamily="@font/playfairdisplay_semibold"
                           android:textSize="18dp"
                           android:textColor="@color/black"
                           android:layout_height="wrap_content" app:layout_constraintStart_toStartOf="parent"
@@ -136,6 +143,7 @@
                            app:layout_constraintTop_toTopOf="parent"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
             <TextView android:text="Thuật ngữ, Định nghĩa"
+                android:fontFamily="@font/playfairdisplay_medium"
                       android:textSize="18dp"
                       android:id="@+id/tvLangAnswer_OptionExam"
                       android:layout_width="match_parent"
@@ -153,6 +161,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
                 android:text="Bắt đầu làm kiểm tra"
+            android:fontFamily="@font/playfairdisplay_bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:id="@+id/btn_Done"
                 app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"

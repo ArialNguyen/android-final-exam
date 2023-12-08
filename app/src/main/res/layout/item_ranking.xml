@@ -39,6 +39,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Chien"
+                    android:fontFamily="@font/playfairdisplay_semibold"
                         android:textStyle="bold"
                         android:textColor="@color/white"
                         android:textSize="20dp"/>
@@ -50,6 +51,7 @@
                         android:textColor="@color/white"
                         android:layout_gravity="center_horizontal"
                         android:text="1"
+                    android:fontFamily="@font/playfairdisplay_medium"
                         android:gravity="center"
                         android:textSize="18dp"
                         android:textStyle="bold"/>
@@ -74,6 +76,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="1"
+                android:fontFamily="@font/playfairdisplay_regular"
                     android:textStyle="bold"
                     android:textSize="@dimen/_35sdp"
                     android:textColor="@color/white"

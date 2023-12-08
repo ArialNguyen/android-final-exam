@@ -25,6 +25,7 @@
                       android:textStyle="bold"
                       android:layout_gravity="center_vertical"
                       android:text="Sai rồi! đáp án không chính xác"
+                android:fontFamily="@font/playfairdisplay_semibold"
                       android:layout_height="wrap_content"/>
         </LinearLayout>
         <LinearLayout android:layout_width="match_parent"
@@ -43,6 +44,7 @@
                       android:textStyle="bold"
                       android:layout_gravity="center_vertical"
                       android:text="Tốt! đáp án chính xác"
+                android:fontFamily="@font/playfairdisplay_semibold"
                       android:layout_height="wrap_content"/>
         </LinearLayout>
         <LinearLayout android:layout_width="match_parent"
@@ -51,6 +53,7 @@
                       android:layout_height="wrap_content">
             <TextView android:layout_width="match_parent"
                       android:text="Talent"
+                android:fontFamily="@font/playfairdisplay_semibold"
                       android:id="@+id/tvTermQues_FGFeedBack"
                       android:textColor="@color/black"
                       android:layout_marginBottom="10dp"
@@ -63,9 +66,11 @@
                           android:layout_height="wrap_content">
                 <TextView android:layout_width="wrap_content"
                           android:text="Khớp với"
+                    android:fontFamily="@font/playfairdisplay_semibold"
                           android:layout_height="wrap_content"/>
                 <TextView android:layout_width="match_parent"
                           android:text="Tài năng"
+                    android:fontFamily="@font/playfairdisplay_semibold"
                           android:id="@+id/tvTermAnswer_FGFeedBack"
                           android:textColor="@color/black"
                           android:textSize="24dp"
@@ -78,23 +83,27 @@
                           android:layout_height="wrap_content">
                 <TextView android:layout_width="match_parent"
                           android:text="Đáp án đúng"
+                    android:fontFamily="@font/playfairdisplay_semibold"
                           android:textStyle="bold"
                           android:textColor="#34d399"
                           android:layout_height="wrap_content"/>
                 <TextView android:layout_width="match_parent"
                           android:text="Tài năng"
+                    android:fontFamily="@font/playfairdisplay_semibold"
                           android:id="@+id/tvTermAnswerTrue_FGFeedBack"
                           android:textColor="@color/black"
                           android:textSize="24dp"
                           android:layout_height="wrap_content"/>
                 <TextView android:layout_width="match_parent"
                           android:text="Bạn cho rằng"
+                    android:fontFamily="@font/playfairdisplay_semibold"
                           android:layout_marginTop="10dp"
                           android:textStyle="bold"
                           android:textColor="#ef4444"
                           android:layout_height="wrap_content"/>
                 <TextView android:layout_width="match_parent"
                           android:text="Tài năng"
+                    android:fontFamily="@font/playfairdisplay_semibold"
                           android:id="@+id/tvTermAnswerFalse_FGFeedBack"
                           android:textColor="@color/black"
                           android:textSize="24dp"
@@ -102,6 +111,7 @@
             </LinearLayout>
             <Button android:layout_width="match_parent"
                     android:text="Tiếp tục"
+                android:fontFamily="@font/playfairdisplay_bold"
                     android:layout_marginTop="10dp"
                     android:id="@+id/btnOK_FGFeedBack"
                     android:textColor="@color/white"

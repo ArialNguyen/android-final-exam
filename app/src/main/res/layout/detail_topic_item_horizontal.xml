@@ -17,6 +17,7 @@
 
         <TextView
                 android:text="Front"
+            android:fontFamily="@font/playfairdisplay_semibold"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" android:id="@+id/tv_TermFront_TopicDetail" android:gravity="center"
                 android:textSize="34sp"/>

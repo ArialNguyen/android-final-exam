@@ -26,6 +26,7 @@
                                               app:layout_constraintBottom_toBottomOf="parent"/>
         <TextView android:layout_width="wrap_content" android:text="Hủy" android:id="@+id/tvCancel_community"
                   android:paddingStart="10dp"
+            android:fontFamily="@font/playfairdisplay_medium"
                   android:textStyle="bold"
                   android:layout_height="0dp" app:layout_constraintEnd_toEndOf="parent"
                   android:gravity="center"
