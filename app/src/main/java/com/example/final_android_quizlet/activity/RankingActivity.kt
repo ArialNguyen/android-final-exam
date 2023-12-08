@@ -117,19 +117,24 @@ class RankingActivity: AppCompatActivity() {
             withContext(Dispatchers.IO) {
                 val fetchMp = mpService.findChoiceTestByTopicId(topicId)
                 if(fetchMp.status){
-                    val fetchUsers = userService.getUsersInListUserId(fetchMp.testChoices!!.map { it.userId })
-                    if(fetchUsers.status){
-                        mpRankingItem.addAll(
-                            fetchMp.testChoices!!.map {
-                                RankingItem(fetchUsers.users!!.first { user -> user.uid == it.userId }, it, null)
+                    val topicsPassed = fetchMp.testChoices!!.filter {
+                        it.optionExam.numberQues == it.totalQuestion && it.overall.toInt() > 0
+                    }.map { it.userId }
+                    if(topicsPassed.isNotEmpty()){
+                        val fetchUsers = userService.getUsersInListUserId(topicsPassed)
+                        if(fetchUsers.status){
+                            mpRankingItem.addAll(
+                                fetchMp.testChoices!!.map {
+                                    RankingItem(fetchUsers.users!!.first { user -> user.uid == it.userId }, it, null)
+                                }
+                            )
+                            runOnUiThread {
+                                mpRankingAdapter.notifyDataSetChanged()
                             }
-                        )
-                        runOnUiThread {
-                            mpRankingAdapter.notifyDataSetChanged()
-                        }
-                    }else{
-                        runOnUiThread {
-                            Toast.makeText(this@RankingActivity, fetchUsers.data.toString(), Toast.LENGTH_LONG).show()
+                        }else{
+                            runOnUiThread {
+                                Toast.makeText(this@RankingActivity, fetchUsers.data.toString(), Toast.LENGTH_LONG).show()
+                            }
                         }
                     }
                 }else{
@@ -148,21 +153,27 @@ class RankingActivity: AppCompatActivity() {
             withContext(Dispatchers.IO) {
                 val fetchWrite = wTService.findWritingTestByTopicId(topicId)
                 if(fetchWrite.status){
-                    val fetchUsers = userService.getUsersInListUserId(fetchWrite.quizWrites!!.map { it.userId })
-                    if(fetchUsers.status){
-                        wtRankingItem.addAll(
-                            fetchWrite.quizWrites!!.map {
-                                RankingItem(fetchUsers.users!!.first { user -> user.uid == it.userId }, null, it)
+                    val topicsPassed = fetchWrite.quizWrites!!.filter {
+                        it.optionExam.numberQues == it.totalQuestion && it.overall.toInt() > 0
+                    }.map { it.userId }
+                    if(topicsPassed.isNotEmpty()){
+                        val fetchUsers = userService.getUsersInListUserId(topicsPassed)
+                        if(fetchUsers.status){
+                            wtRankingItem.addAll(
+                                fetchWrite.quizWrites!!.map {
+                                    RankingItem(fetchUsers.users!!.first { user -> user.uid == it.userId }, null, it)
+                                }
+                            )
+                            runOnUiThread {
+                                wTRankingAdapter.notifyDataSetChanged()
                             }
-                        )
-                        runOnUiThread {
-                            wTRankingAdapter.notifyDataSetChanged()
-                        }
-                    }else{
-                        runOnUiThread {
-                            Toast.makeText(this@RankingActivity, fetchUsers.data.toString(), Toast.LENGTH_LONG).show()
+                        }else{
+                            runOnUiThread {
+                                Toast.makeText(this@RankingActivity, fetchUsers.data.toString(), Toast.LENGTH_LONG).show()
+                            }
                         }
                     }
+
                 }else{
                     runOnUiThread {
                         Toast.makeText(this@RankingActivity, fetchWrite.data.toString(), Toast.LENGTH_LONG).show()

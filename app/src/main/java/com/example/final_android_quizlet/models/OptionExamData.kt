@@ -1,4 +1,4 @@
-package com.example.final_android_quizlet.common
+package com.example.final_android_quizlet.models
 
 import java.io.Serializable
 

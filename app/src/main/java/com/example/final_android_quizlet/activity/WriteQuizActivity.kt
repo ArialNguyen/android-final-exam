@@ -14,12 +14,8 @@ import com.example.final_android_quizlet.R
 import com.example.final_android_quizlet.auth.Login
 import com.example.final_android_quizlet.common.ActionTransition
 import com.example.final_android_quizlet.common.DialogClickedEvent
-import com.example.final_android_quizlet.common.EAnswer
 import com.example.final_android_quizlet.fragments.dialog.DialogFeedBackChoiceTest
-import com.example.final_android_quizlet.models.Answer
-import com.example.final_android_quizlet.models.QuizWrite
-import com.example.final_android_quizlet.models.Term
-import com.example.final_android_quizlet.models.Topic
+import com.example.final_android_quizlet.models.*
 import com.example.final_android_quizlet.service.AuthService
 import com.example.final_android_quizlet.service.QuizWriteService
 import com.example.final_android_quizlet.service.TopicService
@@ -51,6 +47,7 @@ class WriteQuizActivity : AppCompatActivity() {
     private lateinit var etQuit: TextView
 
     // hard data
+    private lateinit var optionData: OptionExamData
     private var writingTestDb: QuizWrite? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,28 +65,33 @@ class WriteQuizActivity : AppCompatActivity() {
         }
         val userId = authService.getCurrentUser().uid
         if (intent.getSerializableExtra("topic") == null ||
-            intent.getSerializableExtra("answerType") == null ||
+            intent.getSerializableExtra("optionExam") == null ||
             intent.getSerializableExtra("terms") == null
             ) {
             finish()
             Toast.makeText(this, "Oops something wrong. Try again!!!", Toast.LENGTH_LONG).show()
             actionTransition.rollBackTransition()
         }
-        showAnswer = intent.getBooleanExtra("showAnswer", false)
-        answerType = intent.getSerializableExtra("answerType") as EAnswer
+        optionData = intent.getSerializableExtra("optionExam") as OptionExamData
+
+        showAnswer = optionData.showAns
+        answerType = optionData.answer
         topicIntent = intent.getSerializableExtra("topic") as Topic
 
         if (intent.getSerializableExtra("quizWrite") != null) {
-            Log.i("TAG", "quizWrite INtent : $")
             writingTestDb = intent.getSerializableExtra("quizWrite") as QuizWrite
         }
 
         items = intent.getSerializableExtra("terms") as List<Term>
 
+        // initialize WritingTest
         quizWrite = QuizWrite()
         quizWrite.uid = UUID.randomUUID().toString()
         quizWrite.topicId = topicIntent.uid
         quizWrite.userId = userId
+        quizWrite.optionExam = optionData
+        quizWrite.totalQuestion = topicIntent.terms.size
+
 
         updateUIWithTerm()
         updatePageNumber()
@@ -146,15 +148,21 @@ class WriteQuizActivity : AppCompatActivity() {
         if (result) {
             quizWrite.overall = quizWrite.overall.toInt() + 1
         }
-        val dialogFeedBackChoiceTest =
-            DialogFeedBackChoiceTest(result, ques, ans, answerText, object : DialogClickedEvent.FeedBackChoiceTest {
-                override fun setSuccessButton() {
-                    currentIndex++
-                    updateUIWithTerm()
-                    updatePageNumber()
-                }
-            })
-        dialogFeedBackChoiceTest.show(supportFragmentManager, DialogFeedBackChoiceTest::class.simpleName)
+        if(showAnswer){
+            val dialogFeedBackChoiceTest =
+                DialogFeedBackChoiceTest(result, ques, ans, answerText, object : DialogClickedEvent.FeedBackChoiceTest {
+                    override fun setSuccessButton() {
+                        currentIndex++
+                        updateUIWithTerm()
+                        updatePageNumber()
+                    }
+                })
+            dialogFeedBackChoiceTest.show(supportFragmentManager, DialogFeedBackChoiceTest::class.simpleName)
+        }else{
+            currentIndex++
+            updateUIWithTerm()
+            updatePageNumber()
+        }
     }
 
     private fun updateUIWithTerm() {
@@ -191,32 +199,51 @@ class WriteQuizActivity : AppCompatActivity() {
                 if (result) {
                     quizWrite.overall = quizWrite.overall.toInt() + 1
                 }
+                if (showAnswer){
+                    val dialogFeedBackChoiceTest =
+                        DialogFeedBackChoiceTest(result, ques, ans, answerText, object : DialogClickedEvent.FeedBackChoiceTest {
+                            override fun setSuccessButton() {
+                                val intent = Intent(this@WriteQuizActivity, ResultQuizActivity::class.java)
+                                intent.putExtra("overall", quizWrite.overall)
+                                intent.putExtra("totalItems", items.size)
+                                intent.putExtra("result", quizWrite)
+                                startActivity(intent)
 
-                val dialogFeedBackChoiceTest =
-                    DialogFeedBackChoiceTest(result, ques, ans, answerText, object : DialogClickedEvent.FeedBackChoiceTest {
-                        override fun setSuccessButton() {
-                            val intent = Intent(this@WriteQuizActivity, ResultQuizActivity::class.java)
-                            intent.putExtra("overall", quizWrite.overall)
-                            intent.putExtra("totalItems", items.size)
-                            intent.putExtra("result", quizWrite)
-                            startActivity(intent)
-
-                            lifecycleScope.launch {
-                                withContext(Dispatchers.IO) {
-                                    if (writingTestDb != null) {
-                                        Log.i("TAG", "writingTestDb: $writingTestDb")
-                                        quizWriteService.WTForUserLogged().deleteWritingTestById(writingTestDb!!.uid)
-                                    }
-                                    val createQuiz = quizWriteService.saveUserAnswer(quizWrite)
-                                    if (createQuiz.status) {
-                                        intent.putExtra("result", quizWrite)
-                                        startActivity(intent)
+                                lifecycleScope.launch {
+                                    withContext(Dispatchers.IO) {
+                                        if (writingTestDb != null) {
+                                            quizWriteService.WTForUserLogged().deleteWritingTestById(writingTestDb!!.uid)
+                                        }
+                                        val createQuiz = quizWriteService.saveUserAnswer(quizWrite)
+                                        if (createQuiz.status) {
+                                            intent.putExtra("result", quizWrite)
+                                            startActivity(intent)
+                                        }
                                     }
                                 }
                             }
+                        })
+                    dialogFeedBackChoiceTest.show(supportFragmentManager, DialogFeedBackChoiceTest::class.simpleName)
+                }else{
+                    val intent = Intent(this@WriteQuizActivity, ResultQuizActivity::class.java)
+                    intent.putExtra("overall", quizWrite.overall)
+                    intent.putExtra("totalItems", items.size)
+                    intent.putExtra("result", quizWrite)
+                    startActivity(intent)
+
+                    lifecycleScope.launch {
+                        withContext(Dispatchers.IO) {
+                            if (writingTestDb != null) {
+                                quizWriteService.WTForUserLogged().deleteWritingTestById(writingTestDb!!.uid)
+                            }
+                            val createQuiz = quizWriteService.saveUserAnswer(quizWrite)
+                            if (createQuiz.status) {
+                                intent.putExtra("result", quizWrite)
+                                startActivity(intent)
+                            }
                         }
-                    })
-                dialogFeedBackChoiceTest.show(supportFragmentManager, DialogFeedBackChoiceTest::class.simpleName)
+                    }
+                }
             }
         } else {
             txNext.text = "NEXT"

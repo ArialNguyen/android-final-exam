@@ -8,6 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.final_android_quizlet.R
 import com.example.final_android_quizlet.common.*
+import com.example.final_android_quizlet.models.EAnswer
+import com.example.final_android_quizlet.models.OptionExamData
 import com.example.final_android_quizlet.models.Term
 import com.example.final_android_quizlet.service.*
 import kotlinx.coroutines.Dispatchers
@@ -72,11 +74,8 @@ class MainQuizActivity : AppCompatActivity() {
                         terms.shuffle()
                     }
                     intent.putExtra("terms", terms as Serializable)
-                    // Answer Type Option
-
-                    intent.putExtra("answerType", optionData.answer)
-                    // Show answer
-                    intent.putExtra("showAnswer", optionData.showAns)
+                    // Option Exam
+                    intent.putExtra("optionExam", optionData)
 
                     intent.putExtra("topic", fetchTopic.topic!!)
                     startActivity(intent)
@@ -117,7 +116,7 @@ class MainQuizActivity : AppCompatActivity() {
                     if (optionData.answer == EAnswer.TERM){
                         answers.addAll(fetchTopic.topic!!.terms.map { it.term })
                     }
-                    intent.putExtra("answerType", optionData.answer)
+
                     // Get number question
                     val tmpList = question.take(optionData.numberQues)
                     question.clear()
@@ -128,8 +127,9 @@ class MainQuizActivity : AppCompatActivity() {
                         question.shuffle()
                     }
 
-                    // Show answer
-                    intent.putExtra("showAnswer", optionData.showAns)
+
+                    // Option Exam
+                    intent.putExtra("optionExam", optionData)
 
                     intent.putExtra("topic", fetchTopic.topic!!)
                     intent.putExtra("answers", answers as Serializable)

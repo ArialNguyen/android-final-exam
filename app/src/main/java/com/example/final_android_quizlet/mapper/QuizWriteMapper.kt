@@ -9,7 +9,6 @@ class QuizWriteMapper {
     private val mapper = ModelMapper()
 
     fun convertToQuizWrite(quizWrite: DocumentSnapshot): QuizWrite {
-//        return mapper.map(quizWrite, QuizWrite::class.java)
         val uid = quizWrite["uid"] as String
         val answers = mutableListOf<Answer>()
         val list = quizWrite["answers"] as? List<Map<String, Any>>
@@ -30,10 +29,16 @@ class QuizWriteMapper {
             )
             )
         }
+        val optionMap = quizWrite["optionExam"] as Map<String, Any>
+        val optionData = OptionExamData(
+            optionMap["numberQues"].toString().toInt(), optionMap["showAns"].toString().toBoolean(),
+            optionMap["shuffle"].toString().toBoolean(), EAnswer.valueOf(optionMap["answer"].toString())
+        )
         val overall = quizWrite["overall"] as Number
+        val totalQuestion = quizWrite["totalQuestion"] as Number
         val topicId = quizWrite["topicId"] as String
         val userId = quizWrite["userId"] as String
-        val multipleChoice = QuizWrite(uid, topicId, answers, overall, userId)
+        val multipleChoice = QuizWrite(uid, topicId, answers, overall, optionData, totalQuestion.toInt(), userId)
         multipleChoice.createdAt = createdAt
         return multipleChoice
     }

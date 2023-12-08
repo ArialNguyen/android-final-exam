@@ -20,9 +20,9 @@ import androidx.appcompat.widget.SwitchCompat
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.final_android_quizlet.R
 import com.example.final_android_quizlet.common.ActionTransition
-import com.example.final_android_quizlet.common.EAnswer
+import com.example.final_android_quizlet.models.EAnswer
 import com.example.final_android_quizlet.common.ManageScopeApi
-import com.example.final_android_quizlet.common.OptionExamData
+import com.example.final_android_quizlet.models.OptionExamData
 import com.example.final_android_quizlet.models.Topic
 import com.example.final_android_quizlet.service.AuthService
 import com.example.final_android_quizlet.service.TopicService
