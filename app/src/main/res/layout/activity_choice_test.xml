@@ -28,7 +28,7 @@
                 android:textSize="20sp"
                 android:layout_gravity="center"
                 android:text=""
-            android:fontFamily="@font/playfairdisplay_medium"/>
+            android:fontFamily="@font/playfairdisplay_black"/>
 
     </androidx.appcompat.widget.Toolbar>
     <ProgressBar
