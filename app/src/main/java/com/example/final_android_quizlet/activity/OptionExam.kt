@@ -106,6 +106,11 @@ class OptionExam : AppCompatActivity() {
             actionOnLanguageAns()
         }
 
+        imgCancel.setOnClickListener {
+            finish()
+            actionTransition.rollBackTransition()
+        }
+
         btnDone.setOnClickListener {
             val intent = Intent(this, MainQuizActivity::class.java)
             intent.putExtra("data", optionExamData)
