@@ -38,7 +38,6 @@ class MainQuizActivity : AppCompatActivity() {
         }
     }
     private fun writingTest(){
-        val intent = Intent(this, WriteQuizActivity::class.java)
         if(intent.getStringExtra("topicId").isNullOrEmpty() || intent.getSerializableExtra("data") == null){
             Toast.makeText(this@MainQuizActivity, "Error for move page, please try again!!!", Toast.LENGTH_LONG).show()
             finish()
@@ -46,6 +45,7 @@ class MainQuizActivity : AppCompatActivity() {
         }
         val topicId = intent.getStringExtra("topicId")!!
         val optionData = intent.getSerializableExtra("data") as OptionExamData
+        val intent = Intent(this, WriteQuizActivity::class.java)
         lifecycleScope.launch {
             withContext(Dispatchers.IO){
                 val fetchTopic = topicService.getTopicById(topicId)
@@ -59,6 +59,25 @@ class MainQuizActivity : AppCompatActivity() {
                     intent.putExtra("quizWrite", fetchWT.quizWrite)
                 }
                 runOnUiThread {
+                    // AnswerType
+                    val terms = fetchTopic.topic!!.terms.toMutableList()
+
+                    // Number Question
+                    val tmpList = terms.take(optionData.numberQues)
+                    terms.clear()
+                    terms.addAll(tmpList)
+
+                    // Shuffle Option
+                    if(optionData.shuffle){
+                        terms.shuffle()
+                    }
+                    intent.putExtra("terms", terms as Serializable)
+                    // Answer Type Option
+
+                    intent.putExtra("answerType", optionData.answer)
+                    // Show answer
+                    intent.putExtra("showAnswer", optionData.showAns)
+
                     intent.putExtra("topic", fetchTopic.topic!!)
                     startActivity(intent)
                     finish()
@@ -115,7 +134,6 @@ class MainQuizActivity : AppCompatActivity() {
                     intent.putExtra("topic", fetchTopic.topic!!)
                     intent.putExtra("answers", answers as Serializable)
                     intent.putExtra("terms", question as Serializable)
-
 
                     startActivity(intent)
                     finish()

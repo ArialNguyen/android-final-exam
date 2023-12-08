@@ -4,6 +4,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:padding="15dp"
         android:background="@color/colorBackground"
         tools:context=".activity.OptionExam">
     <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
@@ -22,13 +23,14 @@
                   android:textSize="18dp"
                   android:layout_height="wrap_content" android:text="TOpic Name"
                   app:layout_constraintStart_toStartOf="parent"
-                  android:layout_marginTop="10dp"
+                  android:layout_marginTop="15dp"
                   app:layout_constraintEnd_toEndOf="parent" android:id="@+id/tvTopicName_OptionExam"
                   app:layout_constraintTop_toBottomOf="@+id/imgCancel_OptionExam"/>
         <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
                   android:text="Thiết lập bài kiểm tra"
                   app:layout_constraintTop_toBottomOf="@+id/tvTopicName_OptionExam"
                   android:textSize="24dp"
+                  android:layout_marginTop="5dp"
                   android:textStyle="bold"
                   android:textColor="@color/black"
                   app:layout_constraintStart_toStartOf="parent"
@@ -43,7 +45,7 @@
                                                        android:id="@+id/constraintLayout17">
         <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
                                                            android:layout_height="wrap_content"
-                                                           android:padding="15dp"
+                                                           android:padding="10dp"
                                                            app:layout_constraintStart_toStartOf="parent"
                                                            app:layout_constraintEnd_toEndOf="parent"
                                                            app:layout_constraintTop_toTopOf="parent"
@@ -73,7 +75,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
         <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
                                                            android:layout_height="wrap_content"
-                                                           android:padding="15dp"
+                                                           android:padding="10dp"
                                                            app:layout_constraintTop_toBottomOf="@+id/constraintLayout14"
                                                            app:layout_constraintStart_toStartOf="parent"
                                                            app:layout_constraintEnd_toEndOf="parent"
@@ -83,7 +85,7 @@
                       android:textSize="18dp"
                       android:textColor="@color/black"
                       android:layout_height="wrap_content" app:layout_constraintStart_toStartOf="parent"
-                      app:layout_constraintTop_toTopOf="parent"/>
+                      app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent"/>
             <androidx.appcompat.widget.SwitchCompat android:layout_width="wrap_content"
                                                     android:layout_height="wrap_content"
                                                     android:id="@+id/swShowAns_OptionExam"
@@ -93,7 +95,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
         <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
                                                            android:layout_height="wrap_content"
-                                                           android:padding="15dp"
+                                                           android:padding="10dp"
                                                            app:layout_constraintTop_toBottomOf="@+id/constraintLayout15"
                                                            app:layout_constraintStart_toStartOf="parent"
                                                            app:layout_constraintEnd_toEndOf="parent"
@@ -103,7 +105,7 @@
                       android:textSize="18dp"
                       android:textColor="@color/black"
                       android:layout_height="wrap_content" app:layout_constraintStart_toStartOf="parent"
-                      app:layout_constraintTop_toTopOf="parent"/>
+                      app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent"/>
             <androidx.appcompat.widget.SwitchCompat android:layout_width="wrap_content"
                                                     android:layout_height="wrap_content"
                                                     android:id="@+id/swShuffle_OptionExam"
@@ -113,7 +115,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
         <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
                                                            android:layout_height="wrap_content"
-                                                           android:padding="15dp"
+                                                           android:padding="10dp"
                                                            android:id="@+id/llLanguageAns_OptionExam"
                                                            app:layout_constraintTop_toBottomOf="@+id/constraintLayout20"
                                                            app:layout_constraintStart_toStartOf="parent"
@@ -131,6 +133,7 @@
                           android:layout_height="wrap_content" app:layout_constraintStart_toStartOf="parent"
                           app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent"/>
                 <ImageView android:layout_width="20dp"
+                           android:layout_marginEnd="10dp"
                            android:src="@drawable/down_arrow_svgrepo_com"
                            android:layout_height="30dp" app:layout_constraintEnd_toEndOf="parent"
                            app:layout_constraintTop_toTopOf="parent"/>
