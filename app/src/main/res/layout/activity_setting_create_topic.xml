@@ -26,6 +26,7 @@
                 android:src="@drawable/ic_baseline_back_24"/>
         <TextView android:layout_width="wrap_content"
                   android:text="Cài đặt"
+            android:fontFamily="@font/playfairdisplay_black"
                   android:textSize="20dp"
                   android:textStyle="bold"
                   android:textColor="@color/white"
@@ -41,6 +42,7 @@
                                                        android:id="@+id/constraintLayout12">
         <TextView android:layout_width="wrap_content"
                   android:text="Ngôn ngữ"
+            android:fontFamily="@font/playfairdisplay_black"
                   android:textSize="16dp"
                   android:layout_marginStart="15dp"
                   android:layout_height="wrap_content" app:layout_constraintStart_toStartOf="parent"
@@ -58,6 +60,7 @@
                                                            android:id="@+id/constraintLayout10">
             <TextView android:layout_width="wrap_content"
                       android:text="Thuật ngữ"
+                android:fontFamily="@font/playfairdisplay_semibold"
                       android:textColor="@color/black"
                       android:layout_gravity="start"
                       android:textSize="16dp"
@@ -66,6 +69,7 @@
                       app:layout_constraintBottom_toBottomOf="parent"/>
             <TextView android:layout_width="wrap_content"
                       android:text="Chọn ngôn ngữ"
+                android:fontFamily="@font/playfairdisplay_bold"
                       android:textStyle="bold"
                       android:id="@+id/tvSelectTermLang_createTerm"
                       android:textColor="#4338ca"
@@ -86,6 +90,7 @@
                                                            app:layout_constraintTop_toBottomOf="@+id/constraintLayout10">
             <TextView android:layout_width="wrap_content"
                       android:text="Định nghĩa"
+                android:fontFamily="@font/playfairdisplay_semibold"
                       android:textColor="@color/black"
                       android:layout_gravity="start"
                       android:textSize="16dp"
@@ -94,6 +99,7 @@
                       app:layout_constraintBottom_toBottomOf="parent"/>
             <TextView android:layout_width="wrap_content"
                       android:text="Chọn ngôn ngữ"
+                android:fontFamily="@font/playfairdisplay_bold"
                       android:id="@+id/tvSelectDefinitionLang_createTerm"
                       android:textStyle="bold"
                       android:textColor="#4338ca"
@@ -112,6 +118,7 @@
                                                        app:layout_constraintTop_toBottomOf="@+id/constraintLayout12">
         <TextView android:layout_width="wrap_content"
                   android:text="Quyền riêng tư"
+            android:fontFamily="@font/playfairdisplay_black"
                   android:textSize="16dp"
                   android:layout_marginStart="15dp"
                   android:layout_height="wrap_content" app:layout_constraintStart_toStartOf="parent"
@@ -129,6 +136,7 @@
                                                            android:id="@+id/constraintLayout11">
             <TextView android:layout_width="wrap_content"
                       android:text="Ai có thể truy cập"
+                android:fontFamily="@font/playfairdisplay_semibold"
                       android:textColor="@color/black"
                       android:layout_gravity="start"
                       android:textSize="16dp"
@@ -137,6 +145,7 @@
                       app:layout_constraintBottom_toBottomOf="parent"/>
             <TextView android:layout_width="wrap_content"
                       android:text="Chỉ tôi"
+                android:fontFamily="@font/playfairdisplay_bold"
                       android:textStyle="bold"
                       android:textColor="#4338ca"
                       android:textSize="16dp"

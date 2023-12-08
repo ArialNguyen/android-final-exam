@@ -25,6 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="29dp"
             android:text="Class six"
+        android:fontFamily="@font/playfairdisplay_black"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintTop_toTopOf="parent"
@@ -44,12 +45,14 @@
                 android:layout_height="wrap_content" android:id="@+id/tvTotalTopic_FolderLibrary"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
-                android:text="1 học phần"/>
+                android:text="1 học phần"
+            android:fontFamily="@font/playfairdisplay_medium"/>
         <TextView
                 android:id="@+id/tvUserName_FolderLibrary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="quizlette23254363"
+            android:fontFamily="@font/playfairdisplay_semibold"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/imgAvatarIcon_folderLibrary"

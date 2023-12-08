@@ -46,6 +46,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Thêm vào thư mục"
+                android:fontFamily="@font/playfairdisplay_semibold"
                     android:layout_marginLeft="30dp"
                     android:textSize="20sp"/>
 
@@ -68,6 +69,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Sửa"
+                android:fontFamily="@font/playfairdisplay_semibold"
                     android:layout_marginLeft="30dp"
                     android:textSize="20sp"/>
 
@@ -90,6 +92,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Trạng thái"
+                android:fontFamily="@font/playfairdisplay_semibold"
                     android:layout_marginLeft="30dp"
                     android:textSize="20sp"/>
 
@@ -115,6 +118,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Xóa học phần"
+                android:fontFamily="@font/playfairdisplay_semibold"
                     android:layout_marginLeft="30dp"
                     android:textSize="20sp"/>
 

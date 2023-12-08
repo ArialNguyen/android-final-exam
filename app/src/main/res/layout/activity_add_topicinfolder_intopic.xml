@@ -30,6 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:text="Thêm vào thư mục"
+            android:fontFamily="@font/playfairdisplay_black"
             android:textStyle="bold"
             android:textSize="24sp"/>
 
@@ -56,6 +57,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="+ Tạo thư mục mới"
+            android:fontFamily="@font/playfairdisplay_medium"
                 android:textStyle="bold"
                 android:textColor="@color/next_btn_color"/>
     </LinearLayout>

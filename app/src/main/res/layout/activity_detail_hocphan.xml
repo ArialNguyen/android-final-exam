@@ -80,6 +80,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Tiếng anh"
+                android:fontFamily="@font/playfairdisplay_black"
                     android:textSize="25sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"
@@ -98,6 +99,7 @@
                       android:gravity="center_vertical"
                       android:layout_marginStart="10dp"
                       android:text="Public"
+                android:fontFamily="@font/playfairdisplay_medium"
                       app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent"
                       android:id="@+id/tvMode_DetailTopic"
                       app:layout_constraintVertical_bias="0.0" app:layout_constraintStart_toEndOf="@+id/divider3"/>
@@ -137,6 +139,7 @@
                         android:textStyle="bold"
                         android:gravity="center"
                         android:text="quizlette23254363"
+                    android:fontFamily="@font/playfairdisplay_semibold"
                         app:layout_constraintStart_toEndOf="@+id/imgAvatarIcon_DetailTopic"
                         app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent"/>
                 <View
@@ -149,7 +152,8 @@
                         app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent"/>
                 <TextView
                         android:text="2 thuật ngữ"
-                        android:layout_width="74dp"
+                    android:fontFamily="@font/playfairdisplay_medium"
+                        android:layout_width="wrap_content"
                         android:textSize="14sp"
                         android:layout_marginLeft="12dp"
                         android:layout_height="match_parent" android:id="@+id/tvTotalTerm_DetailTopic"
@@ -158,6 +162,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
             <TextView
                     android:text="Description"
+                android:fontFamily="@font/playfairdisplay_medium"
                     android:layout_width="match_parent"
                     android:textSize="18sp"
                     android:paddingTop="5dp"
@@ -217,12 +222,14 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Flashcard"
+                            android:fontFamily="@font/playfairdisplay_black"
                                 android:textSize="20sp"
                                 android:textStyle="bold"/>
                         <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Ôn lại các thuật ngữ và định nghĩa"/>
+                                android:text="Ôn lại các thuật ngữ và định nghĩa"
+                            android:fontFamily="@font/playfairdisplay_medium"/>
                     </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -270,12 +277,14 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Trắc nghiệm"
+                            android:fontFamily="@font/playfairdisplay_black"
                                 android:textSize="20sp"
                                 android:textStyle="bold"/>
                         <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Làm bài kiểm tra trắc nghiệm thư"/>
+                                android:text="Làm bài kiểm tra trắc nghiệm thư"
+                            android:fontFamily="@font/playfairdisplay_medium"/>
                     </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -323,12 +332,14 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Gõ từ"
+                            android:fontFamily="@font/playfairdisplay_black"
                                 android:textSize="20sp"
                                 android:textStyle="bold"/>
                         <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Nhập lại nghĩa tiếng Anh và ngược lại"/>
+                                android:text="Nhập lại nghĩa tiếng Anh và ngược lại"
+                            android:fontFamily="@font/playfairdisplay_medium"/>
                     </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>

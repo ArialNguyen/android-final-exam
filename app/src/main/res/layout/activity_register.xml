@@ -31,6 +31,7 @@
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
                         android:text="Here’s\nyour first\nstep with \nus! "
+                    android:fontFamily="@font/playfairdisplay_black"
                         android:textColor="@color/whiteTextColor" />
 
                 <ImageView
@@ -63,6 +64,7 @@
                                 android:id="@+id/et_name_register"
                                 style="@style/modifiedEditText"
                                 android:hint="Enter Name"
+                            android:fontFamily="@font/playfairdisplay_medium"
                                 android:inputType="textPersonName"
                                 android:maxLines="1" />
                     </com.google.android.material.textfield.TextInputLayout>
@@ -76,6 +78,7 @@
                                 android:id="@+id/et_email_register"
                                 style="@style/modifiedEditText"
                                 android:hint="Enter email"
+                            android:fontFamily="@font/playfairdisplay_medium"
                                 android:inputType="textEmailAddress"
                                 android:maxLines="1" />
                     </com.google.android.material.textfield.TextInputLayout>
@@ -89,6 +92,7 @@
                                 android:id="@+id/et_password_register"
                                 style="@style/modifiedEditText"
                                 android:hint="Enter password"
+                            android:fontFamily="@font/playfairdisplay_medium"
                                 android:inputType="textPassword"
                                 android:maxLines="1" />
                     </com.google.android.material.textfield.TextInputLayout>
@@ -101,6 +105,7 @@
                                 android:id="@+id/et_password2"
                                 style="@style/modifiedEditText"
                                 android:hint="Enter password again"
+                            android:fontFamily="@font/playfairdisplay_medium"
                                 android:inputType="textPassword"
                                 android:maxLines="1" />
                     </com.google.android.material.textfield.TextInputLayout>
@@ -111,6 +116,7 @@
                             android:layout_gravity="center_horizontal"
                             android:layout_marginTop="@dimen/loginViewsMargin"
                             android:text="Register"
+                        android:fontFamily="@font/playfairdisplay_bold"
                             app:initialCornerAngle="27dp"
                             app:spinning_bar_color="#FFF"
                             app:spinning_bar_padding="6dp"
@@ -121,6 +127,7 @@
                             android:id="@+id/move_to_login"
                             android:layout_marginTop="@dimen/loginViewsMargin"
                             android:text="Already have an account?"
+                        android:fontFamily="@font/playfairdisplay_black"
                             android:textAlignment="center"
                             android:textColor="@color/themeColor"
                             android:textSize="17sp"
@@ -149,6 +156,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="6"
                         android:text="Use other Methods"
+                    android:fontFamily="@font/playfairdisplay_italic"
                         android:textAlignment="center"
                         android:textColor="@color/whiteTextColor"
                         android:textSize="12sp" />

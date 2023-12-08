@@ -23,6 +23,7 @@
             android:layout_height="wrap_content"
             android:textAlignment="viewStart"
             android:text="Tạo"
+            android:fontFamily="@font/playfairdisplay_black"
             android:padding="8dp"
             android:textColor="@color/black"
             android:layout_marginStart="12dp"
@@ -57,6 +58,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Tạo học phần"
+            android:fontFamily="@font/playfairdisplay_medium"
             android:textColor="@color/black"
             android:layout_marginLeft="30dp"
             android:textSize="16sp"/>
@@ -80,6 +82,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Tạo thư mục"
+            android:fontFamily="@font/playfairdisplay_medium"
             android:textColor="@color/black"
             android:layout_marginLeft="30dp"
             android:textSize="16sp"/>

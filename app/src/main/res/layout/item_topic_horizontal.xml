@@ -18,6 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:text="Tiếng anh"
+        android:fontFamily="@font/playfairdisplay_black"
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
@@ -39,6 +40,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
                 android:text="3 thuật ngữ"
+            android:fontFamily="@font/playfairdisplay_medium"
                 android:textSize="18sp" />
     </RelativeLayout>
 
@@ -62,6 +64,7 @@
                 android:layout_width="223dp"
                 android:layout_height="match_parent"
                 android:text="quizlette23254363"
+            android:fontFamily="@font/playfairdisplay_semibold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/imgAvatarIcon_itemTopicHorizon"
                 app:layout_constraintTop_toBottomOf="@+id/round_background"

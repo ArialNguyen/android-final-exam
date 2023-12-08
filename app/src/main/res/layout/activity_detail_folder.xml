@@ -29,6 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:text="Thư mục"
+            android:fontFamily="@font/playfairdisplay_bold"
             android:textStyle="bold"
             android:textSize="24sp"/>
 
@@ -60,6 +61,7 @@
             <TextView
                     android:id="@+id/tvFolderName"
                     android:text="CLASS SIX"
+                android:fontFamily="@font/playfairdisplay_black"
                     android:layout_width="wrap_content"
                     android:textSize="30dp"
                     android:textColor="@color/black"
@@ -79,6 +81,7 @@
             <TextView
                     android:id="@+id/tvTotalTerm"
                     android:text="1 học phần"
+                android:fontFamily="@font/playfairdisplay_medium"
                     android:layout_width="wrap_content"
                     android:textSize="20dp"
                     android:textColor="#AAA8A8"
@@ -113,6 +116,7 @@
                     android:paddingStart="5dp"
                     android:gravity="center"
                     android:text="quizlette23254363"
+                android:fontFamily="@font/playfairdisplay_semibold"
                     app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0.428" app:layout_constraintStart_toEndOf="@+id/imgAvatar"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -127,6 +131,7 @@
             app:cardElevation="20dp"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
+        android:layout_marginTop="@dimen/_10sdp"
             app:cardUseCompatPadding="true"
             tools:listitem="@layout/item_tien_trinh"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
