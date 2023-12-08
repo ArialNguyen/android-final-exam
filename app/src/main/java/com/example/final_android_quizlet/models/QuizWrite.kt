@@ -8,16 +8,16 @@ data class QuizWrite(
     var topicId: String,
     var answers: MutableList<Answer>,
     var overall: Number,
+    var optionExam: OptionExamData,
+    var totalQuestion: Int,
     var userId: String
 ): Serializable {
     var createdAt: Date?= null
-    constructor() : this("", "", mutableListOf(), 0, "")
+    constructor() : this("", "", mutableListOf(), 0, OptionExamData(), 0, "")
 
     override fun toString(): String {
-        return "QuizWrite(uid='$uid', topicId='$topicId', answers=$answers, overall=$overall, userId='$userId', createdAt=$createdAt)"
+        return "QuizWrite(uid='$uid', topicId='$topicId', answers=$answers, overall=$overall, optionExam=$optionExam, totalQuestion=$totalQuestion, userId='$userId', createdAt=$createdAt)"
     }
-
-
 }
 
 data class Answer(

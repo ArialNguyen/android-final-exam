@@ -16,12 +16,8 @@ import com.example.final_android_quizlet.adapter.data.ResultChoiceAdapterItem
 import com.example.final_android_quizlet.auth.Login
 import com.example.final_android_quizlet.common.ActionTransition
 import com.example.final_android_quizlet.common.DialogClickedEvent
-import com.example.final_android_quizlet.common.EAnswer
 import com.example.final_android_quizlet.fragments.dialog.DialogFeedBackChoiceTest
-import com.example.final_android_quizlet.models.AnswerChoice
-import com.example.final_android_quizlet.models.MultipleChoice
-import com.example.final_android_quizlet.models.Term
-import com.example.final_android_quizlet.models.Topic
+import com.example.final_android_quizlet.models.*
 import com.example.final_android_quizlet.service.AuthService
 import com.example.final_android_quizlet.service.MultipleChoiceService
 import kotlinx.coroutines.Dispatchers
@@ -60,10 +56,11 @@ class ChoiceTest : AppCompatActivity() {
 
     // Hard Data
     private lateinit var answerType: EAnswer
+    private lateinit var optionExam: OptionExamData
+    private lateinit var topicIntent: Topic
     private var showAnswerIntent: Boolean = false
     private val choiceTest: MultipleChoice = MultipleChoice()
     private var choiceDB: MultipleChoice? = null
-    private var topicIntent: Topic? = null
     private var items: MutableList<Term> = mutableListOf()
     private val answers: MutableList<String> = mutableListOf()
     private var currentTermIndex = 0
@@ -82,7 +79,7 @@ class ChoiceTest : AppCompatActivity() {
         if (intent.getSerializableExtra("topic") == null ||
             intent.getSerializableExtra("answers") == null ||
             intent.getSerializableExtra("terms") == null ||
-            intent.getSerializableExtra("answerType") == null
+            intent.getSerializableExtra("optionExam") == null
         ) {
             finish()
             Toast.makeText(this, "Oops, something wrong. Try again!!!", Toast.LENGTH_LONG).show()
@@ -91,16 +88,21 @@ class ChoiceTest : AppCompatActivity() {
         if (intent.getSerializableExtra("choice") != null) {
             choiceDB = intent.getSerializableExtra("choice") as MultipleChoice
         }
-        showAnswerIntent = intent.getBooleanExtra("showAnswer", false)
+        optionExam = intent.getSerializableExtra("optionExam") as OptionExamData
+        showAnswerIntent = optionExam.showAns
 
         topicIntent = intent.getSerializableExtra("topic") as Topic
         items.addAll(intent.getSerializableExtra("terms") as List<Term>)
         answers.addAll(intent.getSerializableExtra("answers") as List<String>)
-        answerType = intent.getSerializableExtra("answerType") as EAnswer
+        answerType = optionExam.answer
 
+        // Initialize ChoiceTest
         choiceTest.uid = UUID.randomUUID().toString()
+        choiceTest.optionExam = optionExam
         choiceTest.userId = userId
-        choiceTest.topicId = topicIntent!!.uid
+        choiceTest.topicId = topicIntent.uid
+        choiceTest.totalQuestion = topicIntent.terms.size
+
         // Link view
         imgExit = findViewById(R.id.img_exit_choiceTest)
         tvProgress = findViewById(R.id.tvProgress_choiceTest)
@@ -257,13 +259,17 @@ class ChoiceTest : AppCompatActivity() {
         val answer = AnswerChoice(items[currentTermIndex], answerChosen, result)
         choiceTest.answers.add(answer)
         currentTermIndex++
-        val dialogFeedBackChoiceTest =
-            DialogFeedBackChoiceTest(result, ques, ans, answerChosen, object : DialogClickedEvent.FeedBackChoiceTest {
-                override fun setSuccessButton() {
-                    loadExamView()
-                }
-            })
-        dialogFeedBackChoiceTest.show(supportFragmentManager, DialogFeedBackChoiceTest::class.simpleName)
+        if(showAnswerIntent){
+            val dialogFeedBackChoiceTest =
+                DialogFeedBackChoiceTest(result, ques, ans, answerChosen, object : DialogClickedEvent.FeedBackChoiceTest {
+                    override fun setSuccessButton() {
+                        loadExamView()
+                    }
+                })
+            dialogFeedBackChoiceTest.show(supportFragmentManager, DialogFeedBackChoiceTest::class.simpleName)
+        }else{
+            loadExamView()
+        }
 
     }
 }

@@ -7,16 +7,18 @@ data class MultipleChoice(
     var uid: String,
     var answers: MutableList<AnswerChoice>,
     var overall: Number,
+    var optionExam: OptionExamData,
+    var totalQuestion: Int,
     var topicId: String,
     var userId: String,
 ) : Serializable {
     var createdAt: Date?= null
 
     constructor() : this(
-        "", mutableListOf(), 0, "", ""
+        "", mutableListOf(), 0, OptionExamData(), 0,"", ""
     )
     override fun toString(): String {
-        return "MultipleChoice(uid='$uid', answers=$answers, overall=$overall, topicId='$topicId', userId='$userId')"
+        return "MultipleChoice(uid='$uid', answers=$answers, overall=$overall, optionExam=$optionExam, totalQuestion=$totalQuestion, topicId='$topicId', userId='$userId')"
     }
 }
 

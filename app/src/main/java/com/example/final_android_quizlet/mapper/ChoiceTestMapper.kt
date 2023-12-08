@@ -1,8 +1,6 @@
 package com.example.final_android_quizlet.mapper
 
-import com.example.final_android_quizlet.models.AnswerChoice
-import com.example.final_android_quizlet.models.MultipleChoice
-import com.example.final_android_quizlet.models.Term
+import com.example.final_android_quizlet.models.*
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
 import org.modelmapper.ModelMapper
@@ -29,10 +27,16 @@ class ChoiceTestMapper {
                 result
             ))
         }
+        val optionMap = choiceTest["optionExam"] as Map<String, Any>
+        val optionData = OptionExamData(
+            optionMap["numberQues"].toString().toInt(), optionMap["showAns"].toString().toBoolean(),
+            optionMap["shuffle"].toString().toBoolean(), EAnswer.valueOf(optionMap["answer"].toString())
+        )
         val overall = choiceTest["overall"] as Number
+        val totalQuestion = choiceTest["totalQuestion"] as Number
         val topicId = choiceTest["topicId"] as String
         val userId = choiceTest["userId"] as String
-        val multipleChoice = MultipleChoice(uid, answers, overall, topicId, userId)
+        val multipleChoice = MultipleChoice(uid, answers, overall, optionData, totalQuestion.toInt(), topicId, userId)
         multipleChoice.createdAt = createdAt
         return multipleChoice
     }
