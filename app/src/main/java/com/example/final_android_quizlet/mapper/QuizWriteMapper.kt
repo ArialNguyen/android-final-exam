@@ -32,7 +32,7 @@ class QuizWriteMapper {
         val optionMap = quizWrite["optionExam"] as Map<String, Any>
         val optionData = OptionExamData(
             optionMap["numberQues"].toString().toInt(), optionMap["showAns"].toString().toBoolean(),
-            optionMap["shuffle"].toString().toBoolean(), EAnswer.valueOf(optionMap["answer"].toString())
+            optionMap["shuffle"].toString().toBoolean(), EAnswer.valueOf(optionMap["answer"].toString()), optionMap["autoSpeak"].toString().toBoolean()
         )
         val overall = quizWrite["overall"] as Number
         val totalQuestion = quizWrite["totalQuestion"] as Number

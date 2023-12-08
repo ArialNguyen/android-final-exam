@@ -3,7 +3,7 @@ package com.example.final_android_quizlet.activity
 //import com.example.final_android_quizlet.activity.SplashActivity.Companion.listOfQ
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import android.speech.tts.TextToSpeech
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
@@ -47,6 +47,7 @@ class WriteQuizActivity : AppCompatActivity() {
     private lateinit var etQuit: TextView
 
     // hard data
+    private lateinit var textToSpeech: TextToSpeech
     private lateinit var optionData: OptionExamData
     private var writingTestDb: QuizWrite? = null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -92,9 +93,20 @@ class WriteQuizActivity : AppCompatActivity() {
         quizWrite.optionExam = optionData
         quizWrite.totalQuestion = topicIntent.terms.size
 
+        // TextToSpeech
+        // Speech
+        textToSpeech = TextToSpeech(this){ status ->
+            if (status == TextToSpeech.SUCCESS){
+                val result = textToSpeech.setLanguage(Locale.forLanguageTag(if (answerType.name == EAnswer.DEFINITION.name) topicIntent.termLanguage!! else topicIntent.definitionLanguage!!))
+                if(result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED){
+                    Toast.makeText(this, "Oops language not Supported!!!", Toast.LENGTH_LONG).show()
+                }
+                // Load View
+                updateUIWithTerm()
+                updatePageNumber()
+            }
+        }
 
-        updateUIWithTerm()
-        updatePageNumber()
 
         txNext.setOnClickListener {
             insertData()
@@ -109,7 +121,8 @@ class WriteQuizActivity : AppCompatActivity() {
         }
 
         etQuit.setOnClickListener {
-            onBackPressed()
+            finish()
+            actionTransition.rollBackTransition()
         }
     }
 
@@ -251,6 +264,9 @@ class WriteQuizActivity : AppCompatActivity() {
                 insertData()
             }
         }
+        if(optionData.autoSpeak){
+            textToSpeech.speak(txCard.text.toString(), TextToSpeech.QUEUE_FLUSH, null)
+        }
     }
 
     private fun updatePageNumber() {
@@ -259,7 +275,6 @@ class WriteQuizActivity : AppCompatActivity() {
 
 
     override fun onBackPressed() {
-        super.onBackPressed()
         backAction()
     }
 }

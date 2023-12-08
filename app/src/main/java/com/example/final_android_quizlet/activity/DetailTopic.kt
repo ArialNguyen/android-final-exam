@@ -142,6 +142,7 @@ class DetailTopic : AppCompatActivity() {
             intent.putExtra("topic", currentTopic)
             intent.putExtra("exam", ChoiceTest::class.simpleName)
             startActivity(intent)
+            actionTransition.moveNextTransition()
         }
 
         cvWriteText!!.setOnClickListener {
@@ -152,6 +153,7 @@ class DetailTopic : AppCompatActivity() {
             intent.putExtra("topic", currentTopic)
             intent.putExtra("exam", WriteQuizActivity::class.simpleName)
             startActivity(intent)
+            actionTransition.moveNextTransition()
         }
 
         // Recycler View

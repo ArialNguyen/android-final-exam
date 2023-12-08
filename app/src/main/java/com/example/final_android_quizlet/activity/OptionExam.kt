@@ -36,6 +36,7 @@ class OptionExam : AppCompatActivity() {
     private val authService: AuthService = AuthService()
 
     // View
+    private lateinit var swAutoSpeak: SwitchCompat
     private lateinit var imgCancel: ImageView
     private lateinit var tvTopicName: TextView
     private lateinit var llNumberQues: LinearLayout
@@ -81,6 +82,7 @@ class OptionExam : AppCompatActivity() {
         btnDone = findViewById(R.id.btn_Done)
         tvLangAnswer = findViewById(R.id.tvLangAnswer_OptionExam)
         swShuffle = findViewById(R.id.swShuffle_OptionExam)
+        swAutoSpeak = findViewById(R.id.swAutoSpeak_OptionExam)
         // Load View
         tvTopicName.text = topicIntent.title
         tvTotalQues.text = topicIntent.terms.size.toString()
@@ -102,6 +104,11 @@ class OptionExam : AppCompatActivity() {
             optionExamData.shuffle = b
         }
 
+        swAutoSpeak.setOnCheckedChangeListener { compoundButton, b ->
+            Log.i("TAG", "IsChecked: $b")
+            optionExamData.autoSpeak = b
+        }
+
         llLanguageAns.setOnClickListener {
             actionOnLanguageAns()
         }
@@ -117,6 +124,7 @@ class OptionExam : AppCompatActivity() {
             intent.putExtra("classDestination", examDes)
             intent.putExtra("topicId", topicIntent.uid)
             startActivity(intent)
+            finish()
             actionTransition.moveNextTransition()
         }
     }

@@ -2,6 +2,7 @@ package com.example.final_android_quizlet.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.View
 import android.widget.*
@@ -21,6 +22,7 @@ import com.example.final_android_quizlet.models.*
 import com.example.final_android_quizlet.service.AuthService
 import com.example.final_android_quizlet.service.MultipleChoiceService
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
@@ -64,6 +66,7 @@ class ChoiceTest : AppCompatActivity() {
     private var items: MutableList<Term> = mutableListOf()
     private val answers: MutableList<String> = mutableListOf()
     private var currentTermIndex = 0
+    private lateinit var textToSpeech: TextToSpeech
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -110,19 +113,15 @@ class ChoiceTest : AppCompatActivity() {
         // Link view -> Layout Result
         layoutExam = findViewById(R.id.layout_exam_choiceTest)
         tvTermTitle = findViewById(R.id.tvTermTitle_choiceTest)
-        topicIntent!!.terms.forEachIndexed { index, term ->
+        topicIntent.terms.forEachIndexed { index, term ->
             when (index) {
                 0 -> answersView.add(findViewById(R.id.tvTermDefinition1_choiceTest))
 
-
                 1 -> answersView.add(findViewById(R.id.tvTermDefinition2_choiceTest))
-
 
                 2 -> answersView.add(findViewById(R.id.tvTermDefinition3_choiceTest))
 
-
                 3 -> answersView.add(findViewById(R.id.tvTermDefinition4_choiceTest))
-
 
                 else -> return@forEachIndexed
             }
@@ -137,8 +136,17 @@ class ChoiceTest : AppCompatActivity() {
         btnLearning = findViewById(R.id.btn_learning_choiceTest)
         recyclerView = findViewById(R.id.recyclerView_choiceTest)
 
-        // Load View
-        loadExamView()
+        // Speech
+        textToSpeech = TextToSpeech(this){ status ->
+            if (status == TextToSpeech.SUCCESS){
+                val result = textToSpeech.setLanguage(Locale.forLanguageTag(if (answerType.name == EAnswer.DEFINITION.name) topicIntent.termLanguage!! else topicIntent.definitionLanguage!!))
+                // Load View
+                loadExamView()
+                if(result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED){
+                    Toast.makeText(this, "Oops language not Supported!!!", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
 
         // Recycler View
         recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
@@ -155,6 +163,11 @@ class ChoiceTest : AppCompatActivity() {
         imgExit.setOnClickListener {
             onBackPressed()
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+
     }
 
     private fun updateProgress() {
@@ -189,7 +202,7 @@ class ChoiceTest : AppCompatActivity() {
             btnExam.setOnClickListener {
                 val intent = Intent(this, DetailTopic::class.java)
                 intent.putExtra("action", "openExam")
-                intent.putExtra("topicId", topicIntent!!.uid) // Need to convert to whole topic not id
+                intent.putExtra("topicId", topicIntent.uid) // Need to convert to whole topic not id
                 startActivity(intent)
                 finish()
                 actionTransition.rollBackTransition()
@@ -238,6 +251,9 @@ class ChoiceTest : AppCompatActivity() {
                 view.text = randomAnswers[index]
             }
             updateProgress()
+            if(optionExam.autoSpeak){
+                textToSpeech.speak(tvTermTitle.text.trim().toString(), TextToSpeech.QUEUE_FLUSH, null)
+            }
         }
     }
 

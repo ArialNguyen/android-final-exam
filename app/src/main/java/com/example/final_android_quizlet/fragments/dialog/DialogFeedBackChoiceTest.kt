@@ -8,9 +8,9 @@ import android.view.Window
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.fragment.app.DialogFragment
 import com.example.final_android_quizlet.R
 import com.example.final_android_quizlet.common.DialogClickedEvent
-import fr.tvbarthel.lib.blurdialogfragment.SupportBlurDialogFragment
 
 class DialogFeedBackChoiceTest(
     private val result: Boolean,
@@ -18,8 +18,7 @@ class DialogFeedBackChoiceTest(
     private val ans: String,
     private val ownerAns: String,
     private val dialogClickedEvent: DialogClickedEvent.FeedBackChoiceTest
-) : SupportBlurDialogFragment() {
-
+) : DialogFragment() {
     // View
     private lateinit var llTrue: LinearLayout
     private lateinit var llFalse: LinearLayout
@@ -70,7 +69,4 @@ class DialogFeedBackChoiceTest(
 
         return view
     }
-
-
-
 }

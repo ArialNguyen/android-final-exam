@@ -16,7 +16,8 @@ android {
         targetSdk 33
         versionCode 1
         versionName "1.0"
-
+        renderscriptTargetApi 22
+        renderscriptSupportModeEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -84,6 +85,5 @@ dependencies {
     // Scroll Choice
     implementation 'com.webianks.library:scroll-choice:1.0.1'
     // Blur Background Dialog
-    implementation 'fr.tvbarthel.blurdialogfragment:lib:2.2.0'
-    //
+
 }

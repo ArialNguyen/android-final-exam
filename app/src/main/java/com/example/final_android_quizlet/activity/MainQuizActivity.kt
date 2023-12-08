@@ -93,7 +93,7 @@ class MainQuizActivity : AppCompatActivity() {
         }
         val topicId = intent.getStringExtra("topicId")!!
         val optionData = intent.getSerializableExtra("data") as OptionExamData
-        val intent = Intent(this, ChoiceTest::class.java)
+        val intentDes = Intent(this, ChoiceTest::class.java)
         lifecycleScope.launch {
             withContext(Dispatchers.IO){
                 val fetchTopic = topicService.getTopicById(topicId)
@@ -105,7 +105,7 @@ class MainQuizActivity : AppCompatActivity() {
                 val fetchChoice = choiceService.MPForUserLogged().findChoiceTestByTopicId(topicId)
                 if(fetchChoice.status){
                     Log.i("TAG", "choiceTest: ${fetchChoice.testChoice}")
-                    intent.putExtra("choice", fetchChoice.testChoice)
+                    intentDes.putExtra("choice", fetchChoice.testChoice)
                 }
                 runOnUiThread {
                     // Handle Option Data
@@ -127,17 +127,16 @@ class MainQuizActivity : AppCompatActivity() {
                         question.shuffle()
                     }
 
-
                     // Option Exam
-                    intent.putExtra("optionExam", optionData)
+                    intentDes.putExtra("optionExam", optionData)
 
-                    intent.putExtra("topic", fetchTopic.topic!!)
-                    intent.putExtra("answers", answers as Serializable)
-                    intent.putExtra("terms", question as Serializable)
+                    intentDes.putExtra("topic", fetchTopic.topic!!)
+                    intentDes.putExtra("answers", answers as Serializable)
+                    intentDes.putExtra("terms", question as Serializable)
 
-                    startActivity(intent)
-                    finish()
+                    startActivity(intentDes)
                     actionTransition.moveNextTransition()
+                    finish()
                 }
             }
         }

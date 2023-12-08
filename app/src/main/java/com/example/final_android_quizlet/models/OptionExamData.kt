@@ -11,13 +11,14 @@ class OptionExamData(
     var showAns: Boolean,
     var shuffle: Boolean,
     var answer: EAnswer,
+    var autoSpeak: Boolean
 ) : Serializable{
     constructor(): this(
-        0, false, false, EAnswer.DEFINITION
+        0, false, false, EAnswer.DEFINITION, false
     )
 
     override fun toString(): String {
-        return "OptionExamData(numberQues=$numberQues, showAns=$showAns, shuffle=$shuffle, answerLanguage=$answer)"
+        return "OptionExamData(numberQues=$numberQues, showAns=$showAns, shuffle=$shuffle, answerLanguage=$answer, autoSpeak=$autoSpeak)"
     }
 
 }
