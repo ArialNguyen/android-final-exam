@@ -67,6 +67,37 @@ class TopicService {
         return res
     }
 
+    suspend fun deleteTopic(topicId: String): ResponseObject {
+        val res = ResponseObject()
+        try {
+            val documentId = getDocumentIdByField("uid", topicId)
+            db.collection("topics").document(documentId).delete().await()
+            res.status = true
+        } catch (e: Exception) {
+            res.data = e.message.toString()
+            res.status = false
+        }
+        return res
+    }
+
+    suspend fun updateTopicWithTerms(topic: Topic): ResponseObject {
+        val res = ResponseObject()
+        try {
+            val topicId = topic.uid ?: throw Exception("Topic ID is missing!")
+            val documentId = getDocumentIdByField("uid", topicId)
+            val topicMap = topic.asMap()
+
+            topicMap.remove("uid")
+            db.collection("topics").document(documentId).update(topicMap).await()
+
+            res.status = true
+        } catch (e: Exception) {
+            res.data = e.message.toString()
+            res.status = false
+        }
+        return res
+    }
+
     suspend fun getTopicsByUserId(userId: String): ResponseObject {
         val res: ResponseObject = ResponseObject()
         try {

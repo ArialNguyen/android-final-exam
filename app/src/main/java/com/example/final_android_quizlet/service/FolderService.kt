@@ -39,6 +39,19 @@ class FolderService {
         return res
     }
 
+    suspend fun deleteFolder(folderId: String): ResponseObject {
+        val res = ResponseObject()
+        try {
+            val documentId = getDocumentIdByFields(listOf(MyFBQuery("uid", folderId, MyFBQueryMethod.EQUAL)))
+            db.collection("folders").document(documentId).delete().await()
+            res.status = true
+        } catch (e: Exception) {
+            res.data = e.message.toString()
+            res.status = false
+        }
+        return res
+    }
+
     suspend fun getDocumentIdByFields(params: List<MyFBQuery>): String {
         var collectionRef = db.collection("folders")
         var query: Query? = null

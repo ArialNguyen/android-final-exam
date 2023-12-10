@@ -34,6 +34,7 @@ import com.example.final_android_quizlet.models.Topic
 import com.example.final_android_quizlet.service.AuthService
 import com.example.final_android_quizlet.service.TopicService
 import com.example.final_android_quizlet.service.UserService
+import com.google.android.material.button.MaterialButton
 import com.google.firebase.firestore.FieldValue
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
@@ -172,6 +173,10 @@ class DetailTopic : AppCompatActivity() {
         indicator2!!.attachToRecyclerView(recyclerViewHorizontal!!, pagerSnapHelper)
         adapter.registerAdapterDataObserver(indicator2!!.adapterDataObserver) // Need to have this line to update data
 
+        if (intent.hasExtra("topicData")) {
+            val receivedTopic: Topic = intent.getSerializableExtra("topicData") as Topic
+        }
+
 
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
@@ -240,7 +245,9 @@ class DetailTopic : AppCompatActivity() {
             }
 
             editDetailTopic.setOnClickListener {
-
+                val intent = Intent(this, CreateTermActivity::class.java)
+                intent.putExtra("topicData", currentTopic) // Gửi đối tượng Topic sang CreateTermActivity
+                startActivity(intent)
                 dialog.dismiss()
             }
 
@@ -250,6 +257,7 @@ class DetailTopic : AppCompatActivity() {
             }
 
             removeDetailTopic.setOnClickListener {
+                removeDetailTopic()
                 dialog.dismiss()
             }
         }
@@ -265,6 +273,37 @@ class DetailTopic : AppCompatActivity() {
         dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
         dialog.window?.setGravity(Gravity.BOTTOM)
     }
+
+    private fun removeDetailTopic() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Confirm Deletion")
+        builder.setMessage("Are you sure you want to delete this topic?")
+
+        builder.setPositiveButton("Yes") { dialog, which ->
+            lifecycleScope.launch {
+                withContext(Dispatchers.IO) {
+                    val deleteTopicResult = topicService.deleteTopic(currentTopic.uid)
+                    runOnUiThread {
+                        if (deleteTopicResult.status) {
+                            Toast.makeText(this@DetailTopic, "Topic deleted successfully", Toast.LENGTH_LONG).show()
+                            finish()
+                        } else {
+                            Toast.makeText(this@DetailTopic, "Failed to delete topic", Toast.LENGTH_LONG).show()
+                        }
+                    }
+                }
+            }
+            dialog.dismiss()
+        }
+
+        builder.setNegativeButton("No") { dialog, which ->
+            dialog.dismiss()
+        }
+
+        val dialog = builder.create()
+        dialog.show()
+    }
+
 
     private fun statusActivity() {
         val builder = AlertDialog.Builder(this)

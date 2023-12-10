@@ -18,6 +18,7 @@ import com.example.final_android_quizlet.auth.Login
 import com.example.final_android_quizlet.common.ActionTransition
 import com.example.final_android_quizlet.common.DialogClickedEvent
 import com.example.final_android_quizlet.fragments.dialog.DialogLogout
+import com.example.final_android_quizlet.fragments.dialog.UpdateNameDialog
 import com.example.final_android_quizlet.service.AuthService
 import com.example.final_android_quizlet.service.UserService
 import com.squareup.picasso.Picasso
@@ -30,6 +31,7 @@ class ProfileActivity : AppCompatActivity() {
     private var tvUserName: TextView? = null
     private var tvEmail: TextView? = null
     private var tvChangePwd: TextView? = null
+    private var tvChangeName: TextView? = null
     private var layoutLogout: ConstraintLayout? = null
 
     private val userService: UserService = UserService()
@@ -54,6 +56,7 @@ class ProfileActivity : AppCompatActivity() {
         tvUserName = findViewById(R.id.tvUserName_profile)
         tvEmail = findViewById(R.id.tvEmail_profile)
         tvChangePwd = findViewById(R.id.tvChangePwd_profile)
+        tvChangeName = findViewById(R.id.tvChangeName_profile)
         layoutLogout = findViewById(R.id.imgLogout_profile)
 
 
@@ -66,6 +69,19 @@ class ProfileActivity : AppCompatActivity() {
                 Picasso.get().load(user.avatar).into(imgAvatar)
             }
 
+        }
+
+        tvChangeName!!.setOnClickListener {
+            val updateNameDialog = UpdateNameDialog(this, tvUserName?.text.toString()) { newName ->
+                lifecycleScope.launch {
+                    val uid = authService.getCurrentUser().uid
+                    val res = userService.updateUserName(uid, newName)
+                    if (res.status) {
+                        tvUserName?.text = newName
+                    }
+                }
+            }
+            updateNameDialog.show()
         }
 
         tvChangePwd!!.setOnClickListener {

@@ -186,6 +186,22 @@ class UserService {
         return res
     }
 
+    suspend fun updateUserName(uid: String, newName: String): ResponseObject {
+        val res = ResponseObject()
+        try {
+            val documentId = getDocumentIdByField("uid", uid)
+            val updateMap = hashMapOf<String, Any>("name" to newName)
 
+            db.collection("users").document(documentId)
+                .update(updateMap)
+                .await()
+
+            res.status = true
+        } catch (e: Exception) {
+            res.status = false
+            res.data = e.message.toString()
+        }
+        return res
+    }
 
 }

@@ -6,7 +6,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import android.util.Log
+import android.view.ContextMenu
+import android.view.MenuItem
 import android.view.View
+import android.widget.AdapterView
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
@@ -150,7 +153,27 @@ class CreateTermActivity : AppCompatActivity() {
             val newItem = Term(UUID.randomUUID().toString(), "", "")
             termList.add(newItem)
             adapter.notifyItemInserted(termList.size - 1)
+            updateTopicWithTerms()
         }
+
+
+        val receivedTopicSerializable = intent.getSerializableExtra("topicData")
+        if (receivedTopicSerializable != null && receivedTopicSerializable is Topic) {
+            val receivedTopic = receivedTopicSerializable as Topic
+            if (receivedTopic.terms.isEmpty()) {
+                receivedTopic.terms = arrayListOf()
+            }
+
+            etTitle.setText(receivedTopic.title)
+            etDescription.setText(receivedTopic.description)
+
+            termList.clear()
+            termList.addAll(receivedTopic.terms)
+
+            adapter = TermAdapter(termList)
+            recyclerView.adapter = adapter
+        }
+
 
 
         layoutDescription.setOnClickListener {
@@ -200,6 +223,40 @@ class CreateTermActivity : AppCompatActivity() {
                 }
             }
             loaderFull.visibility = View.GONE
+        }
+    }
+
+    fun updateTopicWithTerms() {
+        val title = etTitle.text.toString()
+        val description = etDescription.text.toString()
+        val usefulTerms = getUsefulTerm()
+        val currentUser = authService.getCurrentUser()
+
+        val receivedTopicSerializable = intent.getSerializableExtra("topicData")
+        val receivedTopic = receivedTopicSerializable as? Topic
+
+        val updatedTopic = receivedTopic?.copy(title = title, description = description, terms = usefulTerms)
+            ?: Topic(
+                UUID.randomUUID().toString(),
+                title, description, usefulTerms,
+                currentUser.uid,
+                accessMode, ELearnTopicStatus.NOT_LEARN,
+                termLang?.toLanguageTag() ?: "", definitionLang?.toLanguageTag() ?: ""
+            )
+
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                val res = topicService.updateTopicWithTerms(updatedTopic)
+                if (res.status) {
+                    runOnUiThread {
+                        Toast.makeText(this@CreateTermActivity, "Topic updated successfully!", Toast.LENGTH_LONG).show()
+                    }
+                } else {
+                    runOnUiThread {
+                        Toast.makeText(this@CreateTermActivity, res.data.toString(), Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
         }
     }
 

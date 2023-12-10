@@ -1,5 +1,6 @@
 package com.example.final_android_quizlet.activity
 
+import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
@@ -56,6 +57,8 @@ class DetailFolderActivity : AppCompatActivity() {
 
     // Data for intent
     private var folder: Folder? = null
+
+    private lateinit var adapter: TopicAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -151,6 +154,7 @@ class DetailFolderActivity : AppCompatActivity() {
         }
 
         removeDetailFolder.setOnClickListener {
+            removeDetailFolder()
             dialog.dismiss()
         }
 
@@ -163,6 +167,36 @@ class DetailFolderActivity : AppCompatActivity() {
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
         dialog.window?.setGravity(Gravity.BOTTOM)
+    }
+
+    private fun removeDetailFolder() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Confirm Deletion")
+        builder.setMessage("Are you sure you want to delete this folder?")
+
+        builder.setPositiveButton("Yes") { dialog, which ->
+            lifecycleScope.launch {
+                withContext(Dispatchers.IO) {
+                    val deleteFolderResult = folderService.deleteFolder(folder!!.uid)
+                    runOnUiThread {
+                        if (deleteFolderResult.status) {
+                            Toast.makeText(this@DetailFolderActivity, "Folder deleted successfully", Toast.LENGTH_LONG).show()
+                            finish()
+                        } else {
+                            Toast.makeText(this@DetailFolderActivity, "Failed to delete folder", Toast.LENGTH_LONG).show()
+                        }
+                    }
+                }
+            }
+            dialog.dismiss()
+        }
+
+        builder.setNegativeButton("No") { dialog, which ->
+            dialog.dismiss()
+        }
+
+        val dialog = builder.create()
+        dialog.show()
     }
 
     override fun onBackPressed() {
