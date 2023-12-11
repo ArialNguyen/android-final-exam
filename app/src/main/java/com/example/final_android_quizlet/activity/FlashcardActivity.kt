@@ -26,8 +26,10 @@ import com.example.final_android_quizlet.auth.Login
 import com.example.final_android_quizlet.common.ActionDialog
 import com.example.final_android_quizlet.common.ActionTransition
 import com.example.final_android_quizlet.common.ManageScopeApi
+import com.example.final_android_quizlet.models.EAnswer
 import com.example.final_android_quizlet.models.Enum.ETermList
 import com.example.final_android_quizlet.models.FlashCard
+import com.example.final_android_quizlet.models.OptionExamData
 import com.example.final_android_quizlet.models.Term
 import com.example.final_android_quizlet.models.Topic
 import com.example.final_android_quizlet.service.AuthService
@@ -46,6 +48,7 @@ class FlashcardActivity : AppCompatActivity() {
     private val authService: AuthService = AuthService()
     private val flashCardService: FlashCardService = FlashCardService()
     private lateinit var textToSpeech: TextToSpeech
+    private var optionExamData: OptionExamData = OptionExamData()
 
     // Layout Learning
     private lateinit var imgExit: ImageView
@@ -307,7 +310,8 @@ class FlashcardActivity : AppCompatActivity() {
             startActivity(Intent(this, Login::class.java))
         }
 
-        if (intent.getSerializableExtra("topic") == null || intent.getSerializableExtra("remainTerms") == null) {
+        if (intent.getSerializableExtra("topic") == null ||
+            intent.getSerializableExtra("remainTerms") == null) {
             finish()
             actionTransition.rollBackTransition()
             Toast.makeText(this, "Some thing error, please try again!!!", Toast.LENGTH_LONG).show()
@@ -345,6 +349,8 @@ class FlashcardActivity : AppCompatActivity() {
         btnLearningResult = findViewById(R.id.btn_LearningResult_flashcard)
         // Load data
         dragShadowBuilder = CustomDragShadowBuilder(cardBackground)
+        optionExamData = intent.getSerializableExtra("optionExam") as? OptionExamData ?: OptionExamData()
+
 
         // TextToSpeech
         textToSpeech = TextToSpeech(this){ status ->
