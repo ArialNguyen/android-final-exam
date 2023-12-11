@@ -19,6 +19,7 @@ import com.example.final_android_quizlet.common.ActionTransition
 import com.example.final_android_quizlet.common.DialogClickedEvent
 import com.example.final_android_quizlet.fragments.dialog.DialogFeedBackChoiceTest
 import com.example.final_android_quizlet.models.*
+import com.example.final_android_quizlet.models.Enum.ETermList
 import com.example.final_android_quizlet.service.AuthService
 import com.example.final_android_quizlet.service.MultipleChoiceService
 import kotlinx.coroutines.Dispatchers
@@ -68,7 +69,6 @@ class ChoiceTest : AppCompatActivity() {
     private var currentTermIndex = 0
     private lateinit var textToSpeech: TextToSpeech
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_choice_test)
@@ -82,7 +82,8 @@ class ChoiceTest : AppCompatActivity() {
         if (intent.getSerializableExtra("topic") == null ||
             intent.getSerializableExtra("answers") == null ||
             intent.getSerializableExtra("terms") == null ||
-            intent.getSerializableExtra("optionExam") == null
+            intent.getSerializableExtra("optionExam") == null ||
+            intent.getSerializableExtra("termType") == null
         ) {
             finish()
             Toast.makeText(this, "Oops, something wrong. Try again!!!", Toast.LENGTH_LONG).show()
@@ -91,6 +92,7 @@ class ChoiceTest : AppCompatActivity() {
         if (intent.getSerializableExtra("choice") != null) {
             choiceDB = intent.getSerializableExtra("choice") as MultipleChoice
         }
+        val termType = intent.getSerializableExtra("termType") as ETermList
         optionExam = intent.getSerializableExtra("optionExam") as OptionExamData
         showAnswerIntent = optionExam.showAns
 
@@ -98,6 +100,11 @@ class ChoiceTest : AppCompatActivity() {
         items.addAll(intent.getSerializableExtra("terms") as List<Term>)
         answers.addAll(intent.getSerializableExtra("answers") as List<String>)
         answerType = optionExam.answer
+        Log.i("TAG", "terms: $items")
+        Log.i("TAG", "answers: $answers")
+
+
+
 
         // Initialize ChoiceTest
         choiceTest.uid = UUID.randomUUID().toString()
@@ -105,6 +112,7 @@ class ChoiceTest : AppCompatActivity() {
         choiceTest.userId = userId
         choiceTest.topicId = topicIntent.uid
         choiceTest.totalQuestion = topicIntent.terms.size
+        choiceTest.termType = termType
 
         // Link view
         imgExit = findViewById(R.id.img_exit_choiceTest)
@@ -113,7 +121,7 @@ class ChoiceTest : AppCompatActivity() {
         // Link view -> Layout Result
         layoutExam = findViewById(R.id.layout_exam_choiceTest)
         tvTermTitle = findViewById(R.id.tvTermTitle_choiceTest)
-        topicIntent.terms.forEachIndexed { index, term ->
+        items.forEachIndexed { index, term ->
             when (index) {
                 0 -> answersView.add(findViewById(R.id.tvTermDefinition1_choiceTest))
 
@@ -137,7 +145,9 @@ class ChoiceTest : AppCompatActivity() {
         recyclerView = findViewById(R.id.recyclerView_choiceTest)
 
         // Speech
+
         textToSpeech = TextToSpeech(this){ status ->
+            Log.i("TAG", "textToSpeech: ")
             if (status == TextToSpeech.SUCCESS){
                 val result = textToSpeech.setLanguage(Locale.forLanguageTag(if (answerType.name == EAnswer.DEFINITION.name) topicIntent.termLanguage!! else topicIntent.definitionLanguage!!))
                 // Load View
@@ -246,6 +256,7 @@ class ChoiceTest : AppCompatActivity() {
             tvTermTitle.text =
                 if (answerType.name == EAnswer.TERM.name) items[currentTermIndex].definition else items[currentTermIndex].term
             // handle random answer
+            Log.i("TAG", "term Title: ${tvTermTitle.text}")
             val randomAnswers = loadRandomAnswers()
             answersView.forEachIndexed { index, view ->
                 view.text = randomAnswers[index]

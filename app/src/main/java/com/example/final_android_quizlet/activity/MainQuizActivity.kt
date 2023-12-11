@@ -9,6 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.final_android_quizlet.R
 import com.example.final_android_quizlet.common.*
 import com.example.final_android_quizlet.models.EAnswer
+import com.example.final_android_quizlet.models.Enum.ETermList
 import com.example.final_android_quizlet.models.OptionExamData
 import com.example.final_android_quizlet.models.Term
 import com.example.final_android_quizlet.service.*
@@ -32,15 +33,16 @@ class MainQuizActivity : AppCompatActivity() {
         val exerciseType = intent.getStringExtra("classDestination")
         val optionData = intent.getSerializableExtra("data") as OptionExamData // Lấy OptionExamData từ intent
 
+        val typeTerm = intent.getSerializableExtra("typeTerm") as ETermList
         if (exerciseType == ChoiceTest::class.simpleName) {
-            choiceTest()
+            choiceTest(typeTerm)
         } else if (exerciseType == WriteQuizActivity::class.simpleName) {
-            writingTest()
+            writingTest(typeTerm)
         }else{
             flashCard(optionData)
         }
     }
-    private fun writingTest(){
+    private fun writingTest(typeTerm: ETermList) {
         if(intent.getStringExtra("topicId").isNullOrEmpty() || intent.getSerializableExtra("data") == null){
             Toast.makeText(this@MainQuizActivity, "Error for move page, please try again!!!", Toast.LENGTH_LONG).show()
             finish()
@@ -57,13 +59,13 @@ class MainQuizActivity : AppCompatActivity() {
                     finish()
                     actionTransition.rollBackTransition()
                 }
-                val fetchWT = writeQuizService.WTForUserLogged().findWritingTestByTopicId(topicId)
+                val fetchWT = writeQuizService.WTForUserLogged().findWritingTestByTopicId(topicId, typeTerm)
                 if(fetchWT.status){
                     intent.putExtra("quizWrite", fetchWT.quizWrite)
                 }
                 runOnUiThread {
                     // AnswerType
-                    val terms = fetchTopic.topic!!.terms.toMutableList()
+                    val terms = if( typeTerm.name == ETermList.NORMAL_TERMS.name ) fetchTopic.topic!!.terms.toMutableList() else fetchTopic.topic!!.starList.toMutableList()
 
                     // Number Question
                     val tmpList = terms.take(optionData.numberQues)
@@ -79,6 +81,7 @@ class MainQuizActivity : AppCompatActivity() {
                     intent.putExtra("optionExam", optionData)
 
                     intent.putExtra("topic", fetchTopic.topic!!)
+                    intent.putExtra("termType", typeTerm)
                     startActivity(intent)
                     finish()
                     actionTransition.moveNextTransition()
@@ -86,7 +89,7 @@ class MainQuizActivity : AppCompatActivity() {
             }
         }
     }
-    private fun choiceTest(){
+    private fun choiceTest(typeTerm: ETermList) {
         if(intent.getStringExtra("topicId").isNullOrEmpty() || intent.getSerializableExtra("data") == null){
             Toast.makeText(this@MainQuizActivity, "Error for move page, please try again!!!", Toast.LENGTH_LONG).show()
             finish()
@@ -103,20 +106,20 @@ class MainQuizActivity : AppCompatActivity() {
                     finish()
                     actionTransition.rollBackTransition()
                 }
-                val fetchChoice = choiceService.MPForUserLogged().findChoiceTestByTopicId(topicId)
+                val fetchChoice = choiceService.MPForUserLogged().findChoiceTestByTopicIdAndTermType(topicId, typeTerm)
                 if(fetchChoice.status){
-                    Log.i("TAG", "choiceTest: ${fetchChoice.testChoice}")
                     intentDes.putExtra("choice", fetchChoice.testChoice)
                 }
                 runOnUiThread {
                     // Handle Option Data
-//                    val fetchAnswers = fetchTopic.topic!!.terms.map { it.definition } as Serializable
-                    val question = fetchTopic.topic!!.terms.toMutableList()
-                    val answers = fetchTopic.topic!!.terms.map { it.definition }.toMutableList()
+                    val question = if (typeTerm.name == ETermList.NORMAL_TERMS.name) fetchTopic.topic!!.terms.toMutableList() else fetchTopic.topic!!.starList.toMutableList()
+                    val answers = if (typeTerm.name == ETermList.NORMAL_TERMS.name) fetchTopic.topic!!.terms.map { it.definition }.toMutableList() else fetchTopic.topic!!.starList.map { it.definition }.toMutableList()
                     // Answer Type
                     if (optionData.answer == EAnswer.TERM){
-                        answers.addAll(fetchTopic.topic!!.terms.map { it.term })
+                        answers.addAll(question.map { it.term })
                     }
+                    Log.i("TAG", "size: ${question.size} & $typeTerm")
+                    Log.i("TAG", "optionData: $optionData")
 
                     // Get number question
                     val tmpList = question.take(optionData.numberQues)
@@ -132,6 +135,7 @@ class MainQuizActivity : AppCompatActivity() {
                     intentDes.putExtra("optionExam", optionData)
 
                     intentDes.putExtra("topic", fetchTopic.topic!!)
+                    intentDes.putExtra("termType", typeTerm)
                     intentDes.putExtra("answers", answers as Serializable)
                     intentDes.putExtra("terms", question as Serializable)
 

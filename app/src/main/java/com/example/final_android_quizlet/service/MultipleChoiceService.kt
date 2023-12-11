@@ -5,6 +5,7 @@ import android.util.Log
 import com.example.final_android_quizlet.dao.ResponseObject
 import com.example.final_android_quizlet.mapper.ChoiceTestMapper
 import com.example.final_android_quizlet.mapper.FlashCardMapper
+import com.example.final_android_quizlet.models.Enum.ETermList
 import com.example.final_android_quizlet.models.FlashCard
 import com.example.final_android_quizlet.models.MultipleChoice
 import com.example.final_android_quizlet.models.User
@@ -82,12 +83,13 @@ class MultipleChoiceService {
     inner class MPForUserLogged{
 
         private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
-        suspend fun findChoiceTestByTopicId(topicId: String): ResponseObject {
+        suspend fun findChoiceTestByTopicIdAndTermType(topicId: String, termType: ETermList): ResponseObject {
             val res: ResponseObject = ResponseObject()
             try {
                 val data = db.collection("choice_test")
                     .whereEqualTo("userId", firebaseAuth.currentUser!!.uid)
                     .whereEqualTo("topicId", topicId)
+                    .whereEqualTo("termType", termType.name)
                     .get().await()
 
                 if (data.documents.size == 0) {

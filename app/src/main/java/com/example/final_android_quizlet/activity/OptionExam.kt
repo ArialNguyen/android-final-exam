@@ -22,6 +22,7 @@ import com.example.final_android_quizlet.R
 import com.example.final_android_quizlet.common.ActionTransition
 import com.example.final_android_quizlet.models.EAnswer
 import com.example.final_android_quizlet.common.ManageScopeApi
+import com.example.final_android_quizlet.models.Enum.ETermList
 import com.example.final_android_quizlet.models.OptionExamData
 import com.example.final_android_quizlet.models.Topic
 import com.example.final_android_quizlet.service.AuthService
@@ -57,6 +58,7 @@ class OptionExam : AppCompatActivity() {
     private val listQues: MutableList<String> = mutableListOf()
     private lateinit var topicIntent: Topic
     private lateinit var examDes: String
+    private lateinit var typeTerm: ETermList
 
     private val optionExamData: OptionExamData = OptionExamData()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,13 +66,16 @@ class OptionExam : AppCompatActivity() {
         setContentView(R.layout.activity_option_exam)
 
         // Check Intent
-        if(intent.getSerializableExtra("topic") == null || intent.getStringExtra("exam") == null){
+        if(intent.getSerializableExtra("topic") == null ||
+            intent.getStringExtra("exam") == null ||
+            intent.getSerializableExtra("typeTerm") == null){
             finish()
             Toast.makeText(this, "Oops, something wrong. Try again!!!", Toast.LENGTH_LONG).show()
             actionTransition.rollBackTransition()
         }
         topicIntent = intent.getSerializableExtra("topic") as Topic
         examDes = intent.getStringExtra("exam") as String
+        typeTerm = intent.getSerializableExtra("typeTerm") as ETermList
         Log.i("TAG", "examDes: $examDes")
         // Get view
         imgCancel = findViewById(R.id.imgCancel_OptionExam)
@@ -85,8 +90,8 @@ class OptionExam : AppCompatActivity() {
         swAutoSpeak = findViewById(R.id.swAutoSpeak_OptionExam)
         // Load View
         tvTopicName.text = topicIntent.title
-        tvTotalQues.text = topicIntent.terms.size.toString()
-        optionExamData.numberQues = topicIntent.terms.size
+        tvTotalQues.text = if (typeTerm.name == ETermList.NORMAL_TERMS.name) topicIntent.terms.size.toString() else topicIntent.starList.size.toString()
+        optionExamData.numberQues = if (typeTerm.name == ETermList.NORMAL_TERMS.name) topicIntent.terms.size else topicIntent.starList.size
         tvLangAnswer.text = if (optionExamData.answer.name == EAnswer.TERM.name) "Thuật ngữ" else "Định nghĩa"
 
         // Handle Click
@@ -123,6 +128,7 @@ class OptionExam : AppCompatActivity() {
             intent.putExtra("data", optionExamData)
             intent.putExtra("classDestination", examDes)
             intent.putExtra("topicId", topicIntent.uid)
+            intent.putExtra("typeTerm", typeTerm)
             startActivity(intent)
             finish()
             actionTransition.moveNextTransition()
@@ -136,13 +142,15 @@ class OptionExam : AppCompatActivity() {
         tvDone = dialog.findViewById(R.id.tvDone_ScrollChoice)
         scrollChoiceNbQues = dialog.findViewById(R.id.scroll_choice)
         if(listQues.isEmpty()){
-            listQues.addAll(List(topicIntent.terms.size) { index -> (index + 1 ).toString() })
+            listQues.addAll(List(
+                if (typeTerm.name == ETermList.NORMAL_TERMS.name) topicIntent.terms.size
+                else topicIntent.starList.size
+            ) { index -> (index + 1 ).toString() })
         }
         scrollChoiceNbQues.addItems(listQues, listQues.size)
 
         // Handle Click
         tvDone.setOnClickListener {
-            Log.i("TAG", "item: ${ scrollChoiceNbQues.currentItemPosition}")
             tvTotalQues.text = "${scrollChoiceNbQues.currentItemPosition + 1}"
             optionExamData.numberQues = scrollChoiceNbQues.currentItemPosition + 1
             dialog.dismiss()

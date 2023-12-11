@@ -3,6 +3,7 @@ package com.example.final_android_quizlet.service
 import android.util.Log
 import com.example.final_android_quizlet.dao.ResponseObject
 import com.example.final_android_quizlet.mapper.QuizWriteMapper
+import com.example.final_android_quizlet.models.Enum.ETermList
 import com.example.final_android_quizlet.models.QuizWrite
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
@@ -70,12 +71,13 @@ class QuizWriteService {
     inner class WTForUserLogged{
         private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 
-        suspend fun findWritingTestByTopicId(topicId: String): ResponseObject {
+        suspend fun findWritingTestByTopicId(topicId: String, termType: ETermList): ResponseObject {
             val res: ResponseObject = ResponseObject()
             try {
                 val data = db.collection("writing_test")
                     .whereEqualTo("userId", firebaseAuth.currentUser!!.uid)
                     .whereEqualTo("topicId", topicId)
+                    .whereEqualTo("termType", termType.name)
                     .get().await()
 
                 if (data.documents.size == 0) {

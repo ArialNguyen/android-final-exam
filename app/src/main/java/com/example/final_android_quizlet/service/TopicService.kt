@@ -6,6 +6,7 @@ import com.example.final_android_quizlet.common.MyFBQueryMethod
 import com.example.final_android_quizlet.dao.ResponseObject
 import com.example.final_android_quizlet.mapper.TopicMapper
 import com.example.final_android_quizlet.models.EModeTopic
+import com.example.final_android_quizlet.models.Term
 import com.example.final_android_quizlet.models.Topic
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
@@ -37,6 +38,47 @@ class TopicService {
                 throw Exception("Some thing wrong when create Topic --Unknown_Reason")
             }
             res.topic = topicMapper.convertToTopic(fetch2.data!!)
+            res.status = true
+        }catch (e: Exception){
+            Log.i("TAG", "ERROR: ${e.message}")
+            res.data = e.message.toString()
+            res.status = false
+        }
+        return res
+    }
+
+    suspend fun addTermToStarTopic(topicId: String, term: Term): ResponseObject {
+        val res = ResponseObject()
+        try {
+            val fetch1 =  db.collection("topics").
+                    whereArrayContains("starList", term).get().await()
+            if(fetch1.documents.size > 0){
+                throw Exception("This Term already Exists")
+            }
+            val topicDocumentId = getDocumentIdByField("uid", topicId)
+            db.collection("topics").document(topicDocumentId).update(
+                "starList", FieldValue.arrayUnion(term)
+            )
+            res.status = true
+        }catch (e: Exception){
+            Log.i("TAG", "ERROR: ${e.message}")
+            res.data = e.message.toString()
+            res.status = false
+        }
+        return res
+    }
+    suspend fun removeTermToStarTopic(topicId: String, term: Term): ResponseObject {
+        val res = ResponseObject()
+        try {
+            val fetch1 =  db.collection("topics").
+            whereArrayContains("starList", term).get().await()
+            if(fetch1.documents.size == 0){
+                throw Exception("This Term not Exists")
+            }
+            val topicDocumentId = getDocumentIdByField("uid", topicId)
+            db.collection("topics").document(topicDocumentId).update(
+                "starList", FieldValue.arrayRemove(term)
+            )
             res.status = true
         }catch (e: Exception){
             Log.i("TAG", "ERROR: ${e.message}")

@@ -1,94 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:background="@color/colorBackground"
-    tools:context=".fragments.FragmentTopicLibrary">
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             android:orientation="vertical"
+             android:background="@color/colorBackground"
+             tools:context=".fragments.FragmentTopicLibrary">
 
     <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="16dp">
-        <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/llFilterTopic_TopicFG"
-                style="@style/Theme.Finalandroidquizlet"
+        <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                tools:ignore="MissingConstraints" app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent">
-            <EditText
-                    android:id="@+id/etFilterTopic_library"
-                    style="@style/Theme.MaterialComponents.Light"
-                    android:hint="Filtering Topic"
-                android:fontFamily="@font/playfairdisplay_medium"
-                    android:inputType="textEmailAddress"
+                android:layout_height="match_parent"
+                android:padding="16dp">
+            <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/llFilterTopic_TopicFG"
+                    style="@style/Theme.Finalandroidquizlet"
                     android:layout_width="match_parent"
-                    android:layout_height="49dp"
-                    android:maxLines="1"/>
-        </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    tools:ignore="MissingConstraints" app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent">
+                <EditText
+                        android:id="@+id/etFilterTopic_library"
+                        style="@style/Theme.MaterialComponents.Light"
+                        android:hint="Filtering Topic"
+                        android:fontFamily="@font/playfairdisplay_medium"
+                        android:inputType="textEmailAddress"
+                        android:layout_width="match_parent"
+                        android:layout_height="49dp"
+                        android:maxLines="1"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
 
-        <TextView
-                android:id="@+id/text_tien_trinh"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:layout_weight="1"
-                android:visibility="gone"
-                android:text="Học phần"
-            android:fontFamily="@font/playfairdisplay_black"
-                android:textSize="18sp"
-                app:layout_constraintTop_toBottomOf="@+id/llFilterTopic_TopicFG"
-                tools:ignore="MissingConstraints" app:layout_constraintStart_toStartOf="parent"/>
+            <TextView
+                    android:id="@+id/text_tien_trinh"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:layout_weight="1"
+                    android:visibility="gone"
+                    android:text="Học phần"
+                    android:fontFamily="@font/playfairdisplay_black"
+                    android:textSize="18sp"
+                    app:layout_constraintTop_toBottomOf="@+id/llFilterTopic_TopicFG"
+                    tools:ignore="MissingConstraints" app:layout_constraintStart_toStartOf="parent"/>
 
-        <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView_library"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                app:cardElevation="20dp"
-                app:cardUseCompatPadding="true"
-                tools:listitem="@layout/item_tien_trinh"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintTop_toBottomOf="@+id/text_tien_trinh"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
-        <TextView
-                android:id="@+id/tvSaveTopic_library"
-                android:layout_width="wrap_content"
-                android:visibility="gone"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:layout_weight="1"
-                android:text="Đã lưu"
-            android:fontFamily="@font/playfairdisplay_black"
-                android:textSize="18sp"
-                app:layout_constraintTop_toBottomOf="@+id/recyclerView_library"
-                tools:ignore="MissingConstraints" app:layout_constraintStart_toStartOf="parent"/>
-        <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewSaved_library"
-                android:layout_width="match_parent"
-                android:visibility="gone"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="8dp"
-                android:layout_marginTop="15dp"
-                app:cardElevation="20dp"
-                app:cardUseCompatPadding="true"
-                tools:listitem="@layout/item_tien_trinh"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintTop_toBottomOf="@+id/tvSaveTopic_library"
-                tools:ignore="MissingConstraints"
-                app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerView_library"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    app:cardElevation="20dp"
+
+                    app:cardUseCompatPadding="true"
+                    tools:listitem="@layout/item_tien_trinh"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintTop_toBottomOf="@+id/text_tien_trinh"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+            <TextView
+                    android:id="@+id/tvSaveTopic_library"
+                    android:layout_width="wrap_content"
+                    android:visibility="gone"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:layout_weight="1"
+                    android:text="Đã lưu"
+                    android:fontFamily="@font/playfairdisplay_black"
+                    android:textSize="18sp"
+                    app:layout_constraintTop_toBottomOf="@+id/recyclerView_library"
+                    tools:ignore="MissingConstraints" app:layout_constraintStart_toStartOf="parent"/>
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewSaved_library"
+                    android:layout_width="match_parent"
+                    android:visibility="gone"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="8dp"
+                    android:layout_marginTop="15dp"
+                    app:cardElevation="20dp"
+                    android:nestedScrollingEnabled="false"
+                    app:cardUseCompatPadding="true"
+                    tools:listitem="@layout/item_tien_trinh"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintTop_toBottomOf="@+id/tvSaveTopic_library"
+                    tools:ignore="MissingConstraints"
+                    app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
 </FrameLayout>

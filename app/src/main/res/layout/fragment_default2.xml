@@ -6,13 +6,13 @@
              android:elevation="3dp"
              android:padding="8dp"
              android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
-             tools:context=".fragments.DefaultFragmentRv">
+             tools:context=".fragments.FragmentDefault2">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
                                                        android:layout_height="match_parent">
         <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewUser_defaultFG"
+                android:id="@+id/recyclerViewUser_defaultFG2"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:cardCornerRadius="8dp"
