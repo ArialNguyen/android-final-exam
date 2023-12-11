@@ -31,9 +31,9 @@ class MainQuizActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main_quiz)
 
         val exerciseType = intent.getStringExtra("classDestination")
-        val optionData = intent.getSerializableExtra("data") as OptionExamData // Lấy OptionExamData từ intent
+        val optionData = intent.getSerializableExtra("data") as OptionExamData
 
-        val typeTerm = intent.getSerializableExtra("typeTerm") as ETermList
+        val typeTerm = intent.getSerializableExtra("typeTerm") as ETermList? ?: ETermList.NORMAL_TERMS
         if (exerciseType == ChoiceTest::class.simpleName) {
             choiceTest(typeTerm)
         } else if (exerciseType == WriteQuizActivity::class.simpleName) {
