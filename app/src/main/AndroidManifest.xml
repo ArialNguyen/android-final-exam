@@ -86,10 +86,6 @@
                 android:exported="false">
         </activity>
         <activity
-                android:name=".activity.QuizActivity"
-                android:exported="false">
-        </activity>
-        <activity
                 android:name=".activity.DetailFolderActivity"
                 android:exported="false">
         </activity>
@@ -118,6 +114,9 @@
         <activity
                 android:name=".activity.ResultQuizActivity"
                 android:exported="false"/>
+        <activity
+            android:name=".activity.SettingFlash"
+            android:exported="false"/>
         <activity
                 android:name=".auth.ForgotPwd"
                 android:exported="true"

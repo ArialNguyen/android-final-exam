@@ -30,13 +30,14 @@ class MainQuizActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main_quiz)
 
         val exerciseType = intent.getStringExtra("classDestination")
+        val optionData = intent.getSerializableExtra("data") as OptionExamData // Lấy OptionExamData từ intent
 
         if (exerciseType == ChoiceTest::class.simpleName) {
             choiceTest()
         } else if (exerciseType == WriteQuizActivity::class.simpleName) {
             writingTest()
         }else{
-            flashCard()
+            flashCard(optionData)
         }
     }
     private fun writingTest(){
@@ -142,7 +143,7 @@ class MainQuizActivity : AppCompatActivity() {
         }
     }
 
-    private fun flashCard(){
+    private fun flashCard(optionData: OptionExamData){
         val intent = Intent(this, FlashcardActivity::class.java)
         val topicId = this.intent.getStringExtra("topicId")
         if(topicId.isNullOrEmpty()){
@@ -180,7 +181,14 @@ class MainQuizActivity : AppCompatActivity() {
                 }else{
                     remainTerms.addAll(fetchTopic.topic!!.terms)
                 }
+                if (optionData.shuffle) {
+                    remainTerms.shuffle()
+                }
+                val answers = fetchTopic.topic!!.terms.map { it.definition }.toMutableList()
                 runOnUiThread {
+                    if (optionData.answer == EAnswer.TERM){
+                        answers.addAll(fetchTopic.topic!!.terms.map { it.term })
+                    }
                     intent.putExtra("topic", fetchTopic.topic!!)
                     intent.putExtra("remainTerms", remainTerms as Serializable?)
                     startActivity(intent)

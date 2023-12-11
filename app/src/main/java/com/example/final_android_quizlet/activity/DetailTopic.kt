@@ -129,10 +129,15 @@ class DetailTopic : AppCompatActivity() {
 
 
         cvFlashCard!!.setOnClickListener {
-            val intent = Intent(this, MainQuizActivity::class.java)
-            intent.putExtra("classDestination", FlashcardActivity::class.simpleName)
-            intent.putExtra("topicId", currentTopic.uid)
+//            val intent = Intent(this, MainQuizActivity::class.java)
+//            intent.putExtra("classDestination", FlashcardActivity::class.simpleName)
+//            intent.putExtra("topicId", currentTopic.uid)
+//            startActivity(intent)
+            val intent = Intent(this, SettingFlash::class.java)
+            intent.putExtra("topic", currentTopic)
+            intent.putExtra("exam", FlashcardActivity::class.simpleName)
             startActivity(intent)
+            actionTransition.moveNextTransition()
         }
 
         cvChoice!!.setOnClickListener {
@@ -173,9 +178,6 @@ class DetailTopic : AppCompatActivity() {
         indicator2!!.attachToRecyclerView(recyclerViewHorizontal!!, pagerSnapHelper)
         adapter.registerAdapterDataObserver(indicator2!!.adapterDataObserver) // Need to have this line to update data
 
-        if (intent.hasExtra("topicData")) {
-            val receivedTopic: Topic = intent.getSerializableExtra("topicData") as Topic
-        }
 
 
         lifecycleScope.launch {

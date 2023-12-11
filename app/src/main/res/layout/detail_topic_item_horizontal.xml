@@ -14,12 +14,6 @@
                                        app:layout_constraintStart_toStartOf="parent"
                                        android:id="@+id/cvTermFront_TopicDetail"
                                        app:layout_constraintBottom_toBottomOf="parent">
-        <ImageView android:layout_width="40dp"
-            android:id="@+id/imgStar_DetailTopic"
-            android:layout_marginTop="10dp"
-            android:layout_marginStart="280dp"
-            android:src="@drawable/star"
-            android:layout_height="40dp"/>
 
         <TextView
                 android:text="Front"
@@ -37,11 +31,6 @@
                                        app:layout_constraintStart_toStartOf="parent"
                                        android:id="@+id/cvTermBack_TopicDetail"
                                        app:layout_constraintBottom_toBottomOf="parent">
-        <ImageView android:layout_width="40dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginStart="280dp"
-            android:src="@drawable/star"
-            android:layout_height="40dp"/>
 
         <TextView
                 android:text="Back"
