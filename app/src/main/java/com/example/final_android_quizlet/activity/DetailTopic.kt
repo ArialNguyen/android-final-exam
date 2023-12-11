@@ -123,7 +123,6 @@ class DetailTopic : AppCompatActivity() {
         currentUserId = authService.getCurrentUser().uid
 
         toolbar = findViewById(R.id.toolbar_detail_hocphan)
-//        tvTerm = findViewById(R.id.tv_Term_TopicDetail)
         imgRanking = findViewById(R.id.imgRank_DetailTopic)
         tvMode = findViewById(R.id.tvMode_DetailTopic)
         recyclerViewHorizontal = findViewById(R.id.recyclerView_DetailTopic)
@@ -361,7 +360,6 @@ class DetailTopic : AppCompatActivity() {
         recyclerViewRight.adapter = termAdapterStar
         recyclerViewRight.layoutManager = LinearLayoutManager(this)
         if(termsStarItem.isNotEmpty()){
-            recyclerViewRight.setItemViewCacheSize(termsStarItem.size)
             termAdapterStar.notifyDataSetChanged()
         }
         termAdapterStar.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
@@ -382,7 +380,6 @@ class DetailTopic : AppCompatActivity() {
                     val child = adapter.createViewHolder(recyclerViewRight, adapter.getItemViewType(0)).itemView
                     child.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
                     val itemHeight = child.measuredHeight
-                    Log.i("TAG", "measuredHeight: $itemHeight")
                     recyclerViewRight.layoutParams.height = itemHeight * itemCount * child.marginBottom
                     recyclerViewRight.requestLayout()
                 }
