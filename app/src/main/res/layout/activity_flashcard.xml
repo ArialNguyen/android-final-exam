@@ -159,7 +159,6 @@
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:paddingTop="10dp"
-                android:alpha="0"
                 android:paddingBottom="10dp"
                 android:background="@drawable/border_learning"
                 android:layout_width="50dp"

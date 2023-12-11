@@ -1,6 +1,7 @@
 package com.example.final_android_quizlet.mapper
 
 import com.example.final_android_quizlet.models.*
+import com.example.final_android_quizlet.models.Enum.ETermList
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
 import org.modelmapper.ModelMapper
@@ -38,7 +39,8 @@ class QuizWriteMapper {
         val totalQuestion = quizWrite["totalQuestion"] as Number
         val topicId = quizWrite["topicId"] as String
         val userId = quizWrite["userId"] as String
-        val multipleChoice = QuizWrite(uid, topicId, answers, overall, optionData, totalQuestion.toInt(), userId)
+        val termType = ETermList.valueOf(quizWrite["termType"] as String)
+        val multipleChoice = QuizWrite(uid, topicId, answers, overall, optionData, totalQuestion.toInt(), userId, termType)
         multipleChoice.createdAt = createdAt
         return multipleChoice
     }

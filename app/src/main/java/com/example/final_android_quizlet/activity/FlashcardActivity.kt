@@ -26,6 +26,7 @@ import com.example.final_android_quizlet.auth.Login
 import com.example.final_android_quizlet.common.ActionDialog
 import com.example.final_android_quizlet.common.ActionTransition
 import com.example.final_android_quizlet.common.ManageScopeApi
+import com.example.final_android_quizlet.models.Enum.ETermList
 import com.example.final_android_quizlet.models.FlashCard
 import com.example.final_android_quizlet.models.Term
 import com.example.final_android_quizlet.models.Topic
@@ -245,7 +246,7 @@ class FlashcardActivity : AppCompatActivity() {
         val currentTermId = items[indexCurrentTerm - 1].uid
         return FlashCard(
             UUID.randomUUID().toString(), termsLearning,
-            termsKnew, currentTermId, topicIntent.uid, userId!!
+            termsKnew, currentTermId, topicIntent.uid, userId!!, ETermList.NORMAL_TERMS // NEed to change
         )
     }
     private fun saveFlashCardIntent(): FlashCard {
@@ -421,8 +422,8 @@ class FlashcardActivity : AppCompatActivity() {
 
     private fun flipCard(frontAnimation: AnimatorSet, backAnimation: AnimatorSet) {
         if (isFront) {
-            frontAnimation.setTarget(cardFront);
-            backAnimation.setTarget(cardBack);
+            frontAnimation.setTarget(cardFront)
+            backAnimation.setTarget(cardBack)
             frontAnimation.start()
             backAnimation.start()
             isFront = false

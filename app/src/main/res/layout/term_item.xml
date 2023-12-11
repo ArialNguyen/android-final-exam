@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                   android:layout_marginBottom="18dp"
+                                                   android:padding="10dp"
+                                                   android:elevation="3dp"
+                                                   android:background="@drawable/white_background_algorithm"
+                                                   xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+                                                   android:layout_height="wrap_content">
+    <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
+                                                       android:layout_height="wrap_content"
+                                                        android:padding="8dp"
+                                                       app:layout_constraintStart_toStartOf="parent"
+                                                       app:layout_constraintEnd_toEndOf="parent"
+                                                       app:layout_constraintTop_toTopOf="parent"
+                                                       android:id="@+id/constraintLayout21">
+        <TextView android:layout_width="wrap_content"
+                  android:text="Thuật ngữ"
+                  android:textSize="22dp"
+                  android:id="@+id/tvTerm_itemTerm"
+                  android:textColor="@color/black"
+                  android:layout_height="wrap_content" app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent"/>
+        <ImageView android:layout_width="35dp"
+                   android:layout_gravity="end"
+                   android:id="@+id/imgStar_itemTerm"
+                   android:layout_height="35dp"
+                   android:src="@drawable/star_fall_minimalistic_2_svgrepo_com"
+                   app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent"
+                   app:layout_constraintBottom_toBottomOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:textSize="22dp"
+              android:padding="8dp"
+              android:id="@+id/tvDefinition_itemTerm"
+              android:textColor="@color/black"
+              android:text="Định nghĩa"
+              app:layout_constraintTop_toBottomOf="@+id/constraintLayout21"
+              app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

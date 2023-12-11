@@ -197,7 +197,7 @@ class CreateTermActivity : AppCompatActivity() {
                             Topic(
                                 UUID.randomUUID().toString(),
                                 title, description, getUsefulTerm(),
-                                currentUser.uid,
+                                mutableListOf(), currentUser.uid,
                                 accessMode, ELearnTopicStatus.NOT_LEARN,
                                 termLang!!.toLanguageTag(), definitionLang!!.toLanguageTag()
                             )
@@ -238,7 +238,7 @@ class CreateTermActivity : AppCompatActivity() {
         val updatedTopic = receivedTopic?.copy(title = title, description = description, terms = usefulTerms)
             ?: Topic(
                 UUID.randomUUID().toString(),
-                title, description, usefulTerms,
+                title, description, usefulTerms, mutableListOf(),
                 currentUser.uid,
                 accessMode, ELearnTopicStatus.NOT_LEARN,
                 termLang?.toLanguageTag() ?: "", definitionLang?.toLanguageTag() ?: ""

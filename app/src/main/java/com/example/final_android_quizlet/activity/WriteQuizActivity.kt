@@ -1,6 +1,7 @@
 package com.example.final_android_quizlet.activity
 
 //import com.example.final_android_quizlet.activity.SplashActivity.Companion.listOfQ
+import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
@@ -16,6 +17,7 @@ import com.example.final_android_quizlet.common.ActionTransition
 import com.example.final_android_quizlet.common.DialogClickedEvent
 import com.example.final_android_quizlet.fragments.dialog.DialogFeedBackChoiceTest
 import com.example.final_android_quizlet.models.*
+import com.example.final_android_quizlet.models.Enum.ETermList
 import com.example.final_android_quizlet.service.AuthService
 import com.example.final_android_quizlet.service.QuizWriteService
 import com.example.final_android_quizlet.service.TopicService
@@ -47,6 +49,7 @@ class WriteQuizActivity : AppCompatActivity() {
     private lateinit var etQuit: TextView
 
     // hard data
+    private lateinit var termType: ETermList
     private lateinit var textToSpeech: TextToSpeech
     private lateinit var optionData: OptionExamData
     private var writingTestDb: QuizWrite? = null
@@ -67,12 +70,14 @@ class WriteQuizActivity : AppCompatActivity() {
         val userId = authService.getCurrentUser().uid
         if (intent.getSerializableExtra("topic") == null ||
             intent.getSerializableExtra("optionExam") == null ||
-            intent.getSerializableExtra("terms") == null
-            ) {
+            intent.getSerializableExtra("terms") == null ||
+            intent.getSerializableExtra("termType") == null
+        ) {
             finish()
             Toast.makeText(this, "Oops something wrong. Try again!!!", Toast.LENGTH_LONG).show()
             actionTransition.rollBackTransition()
         }
+        termType = intent.getSerializableExtra("termType") as ETermList
         optionData = intent.getSerializableExtra("optionExam") as OptionExamData
 
         showAnswer = optionData.showAns
@@ -92,13 +97,15 @@ class WriteQuizActivity : AppCompatActivity() {
         quizWrite.userId = userId
         quizWrite.optionExam = optionData
         quizWrite.totalQuestion = topicIntent.terms.size
+        quizWrite.termType = termType
 
         // TextToSpeech
         // Speech
-        textToSpeech = TextToSpeech(this){ status ->
-            if (status == TextToSpeech.SUCCESS){
-                val result = textToSpeech.setLanguage(Locale.forLanguageTag(if (answerType.name == EAnswer.DEFINITION.name) topicIntent.termLanguage!! else topicIntent.definitionLanguage!!))
-                if(result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED){
+        textToSpeech = TextToSpeech(this) { status ->
+            if (status == TextToSpeech.SUCCESS) {
+                val result =
+                    textToSpeech.setLanguage(Locale.forLanguageTag(if (answerType.name == EAnswer.DEFINITION.name) topicIntent.termLanguage!! else topicIntent.definitionLanguage!!))
+                if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                     Toast.makeText(this, "Oops language not Supported!!!", Toast.LENGTH_LONG).show()
                 }
                 // Load View
@@ -138,14 +145,15 @@ class WriteQuizActivity : AppCompatActivity() {
     private fun insertData() {
         val answerText = edWrite.text.toString()
         var result = false
-        var ques = if (answerType.name == EAnswer.DEFINITION.name) items[currentIndex].term else items[currentIndex].definition
+        var ques =
+            if (answerType.name == EAnswer.DEFINITION.name) items[currentIndex].term else items[currentIndex].definition
         var ans = if (answerType.name == EAnswer.TERM.name) items[currentIndex].term else items[currentIndex].definition
-        if (answerText == items[currentIndex].definition && answerType.name == EAnswer.DEFINITION.name){
+        if (answerText == items[currentIndex].definition && answerType.name == EAnswer.DEFINITION.name) {
             result = true
             ques = items[currentIndex].term
             ans = items[currentIndex].definition
         }
-        if (answerText == items[currentIndex].term && answerType.name == EAnswer.TERM.name){
+        if (answerText == items[currentIndex].term && answerType.name == EAnswer.TERM.name) {
             result = true
             ques = items[currentIndex].definition
             ans = items[currentIndex].term
@@ -161,7 +169,7 @@ class WriteQuizActivity : AppCompatActivity() {
         if (result) {
             quizWrite.overall = quizWrite.overall.toInt() + 1
         }
-        if(showAnswer){
+        if (showAnswer) {
             val dialogFeedBackChoiceTest =
                 DialogFeedBackChoiceTest(result, ques, ans, answerText, object : DialogClickedEvent.FeedBackChoiceTest {
                     override fun setSuccessButton() {
@@ -171,7 +179,7 @@ class WriteQuizActivity : AppCompatActivity() {
                     }
                 })
             dialogFeedBackChoiceTest.show(supportFragmentManager, DialogFeedBackChoiceTest::class.simpleName)
-        }else{
+        } else {
             currentIndex++
             updateUIWithTerm()
             updatePageNumber()
@@ -179,7 +187,8 @@ class WriteQuizActivity : AppCompatActivity() {
     }
 
     private fun updateUIWithTerm() {
-        txCard.text = if (answerType.name == EAnswer.DEFINITION.name) items[currentIndex].term else items[currentIndex].definition
+        txCard.text =
+            if (answerType.name == EAnswer.DEFINITION.name) items[currentIndex].term else items[currentIndex].definition
         edWrite.text.clear()
 
         if (currentIndex == items.size - 1) {
@@ -188,14 +197,16 @@ class WriteQuizActivity : AppCompatActivity() {
 
                 val answerText = edWrite.text.toString()
                 var result = false
-                var ques = if (answerType.name == EAnswer.DEFINITION.name) items[currentIndex].term else items[currentIndex].definition
-                var ans = if (answerType.name == EAnswer.TERM.name) items[currentIndex].term else items[currentIndex].definition
-                if (answerText == items[currentIndex].definition && answerType.name == EAnswer.DEFINITION.name){
+                var ques =
+                    if (answerType.name == EAnswer.DEFINITION.name) items[currentIndex].term else items[currentIndex].definition
+                var ans =
+                    if (answerType.name == EAnswer.TERM.name) items[currentIndex].term else items[currentIndex].definition
+                if (answerText == items[currentIndex].definition && answerType.name == EAnswer.DEFINITION.name) {
                     result = true
                     ques = items[currentIndex].term
                     ans = items[currentIndex].definition
                 }
-                if (answerText == items[currentIndex].term && answerType.name == EAnswer.TERM.name){
+                if (answerText == items[currentIndex].term && answerType.name == EAnswer.TERM.name) {
                     result = true
                     ques = items[currentIndex].definition
                     ans = items[currentIndex].term
@@ -212,38 +223,51 @@ class WriteQuizActivity : AppCompatActivity() {
                 if (result) {
                     quizWrite.overall = quizWrite.overall.toInt() + 1
                 }
-                if (showAnswer){
+                if (showAnswer) {
                     val dialogFeedBackChoiceTest =
-                        DialogFeedBackChoiceTest(result, ques, ans, answerText, object : DialogClickedEvent.FeedBackChoiceTest {
-                            override fun setSuccessButton() {
-                                val intent = Intent(this@WriteQuizActivity, ResultQuizActivity::class.java)
-                                intent.putExtra("overall", quizWrite.overall)
-                                intent.putExtra("totalItems", items.size)
-                                intent.putExtra("result", quizWrite)
-                                startActivity(intent)
-
-                                lifecycleScope.launch {
-                                    withContext(Dispatchers.IO) {
-                                        if (writingTestDb != null) {
-                                            quizWriteService.WTForUserLogged().deleteWritingTestById(writingTestDb!!.uid)
-                                        }
-                                        val createQuiz = quizWriteService.saveUserAnswer(quizWrite)
-                                        if (createQuiz.status) {
-                                            intent.putExtra("result", quizWrite)
-                                            startActivity(intent)
+                        DialogFeedBackChoiceTest(
+                            result,
+                            ques,
+                            ans,
+                            answerText,
+                            object : DialogClickedEvent.FeedBackChoiceTest {
+                                override fun setSuccessButton() {
+                                    val progressDialog = ProgressDialog(this@WriteQuizActivity)
+                                    progressDialog.setTitle("Updating...")
+                                    progressDialog.setMessage("Please wait, we're setting your data...")
+                                    progressDialog.show()
+                                    val intent = Intent(this@WriteQuizActivity, ResultQuizActivity::class.java)
+                                    intent.putExtra("overall", quizWrite.overall)
+                                    intent.putExtra("totalItems", items.size)
+                                    intent.putExtra("result", quizWrite)
+                                    lifecycleScope.launch {
+                                        withContext(Dispatchers.IO) {
+                                            if (writingTestDb != null) {
+                                                quizWriteService.WTForUserLogged()
+                                                    .deleteWritingTestById(writingTestDb!!.uid)
+                                            }
+                                            val createQuiz = quizWriteService.saveUserAnswer(quizWrite)
+                                            if (createQuiz.status) {
+                                                intent.putExtra("result", quizWrite)
+                                                startActivity(intent)
+                                                actionTransition.moveNextTransition()
+                                                finish()
+                                            }
+                                            progressDialog.dismiss()
                                         }
                                     }
                                 }
-                            }
-                        })
+                            })
                     dialogFeedBackChoiceTest.show(supportFragmentManager, DialogFeedBackChoiceTest::class.simpleName)
-                }else{
+                } else {
+                    val progressDialog = ProgressDialog(this@WriteQuizActivity)
+                    progressDialog.setTitle("Updating...")
+                    progressDialog.setMessage("Please wait, we're setting your data...")
+                    progressDialog.show()
                     val intent = Intent(this@WriteQuizActivity, ResultQuizActivity::class.java)
                     intent.putExtra("overall", quizWrite.overall)
                     intent.putExtra("totalItems", items.size)
                     intent.putExtra("result", quizWrite)
-                    startActivity(intent)
-
                     lifecycleScope.launch {
                         withContext(Dispatchers.IO) {
                             if (writingTestDb != null) {
@@ -253,7 +277,10 @@ class WriteQuizActivity : AppCompatActivity() {
                             if (createQuiz.status) {
                                 intent.putExtra("result", quizWrite)
                                 startActivity(intent)
+                                actionTransition.moveNextTransition()
+                                finish()
                             }
+                            progressDialog.dismiss()
                         }
                     }
                 }
@@ -264,7 +291,7 @@ class WriteQuizActivity : AppCompatActivity() {
                 insertData()
             }
         }
-        if(optionData.autoSpeak){
+        if (optionData.autoSpeak) {
             textToSpeech.speak(txCard.text.toString(), TextToSpeech.QUEUE_FLUSH, null)
         }
     }

@@ -1,4 +1,5 @@
 package com.example.final_android_quizlet.activity
+import android.app.Notification.Action
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -11,7 +12,8 @@ import com.example.final_android_quizlet.models.QuizWrite
 import com.example.final_android_quizlet.models.Topic
 import com.mikhaellopez.circularprogressbar.CircularProgressBar
 
-class ResultQuizActivity:AppCompatActivity() {
+class ResultQuizActivity : AppCompatActivity() {
+    private val actionTransition: ActionTransition = ActionTransition(this)
 
     private lateinit var tvTrue: TextView
     private lateinit var tvFalse: TextView
@@ -39,6 +41,7 @@ class ResultQuizActivity:AppCompatActivity() {
         tvTotalFalse.text = totalIncorrect.toString()
 
         btnNewTest.setOnClickListener {
+            actionTransition.moveNextTransition()
             finish()
         }
 

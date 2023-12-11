@@ -1,5 +1,6 @@
 package com.example.final_android_quizlet.models
 
+import com.example.final_android_quizlet.models.Enum.ETermList
 import java.io.Serializable
 
 class FlashCard(
@@ -8,10 +9,11 @@ class FlashCard(
     var termsKnew: MutableList<Term>,
     var currentTermId: String,
     var topicId: String,
-    var userId: String
+    var userId: String,
+    var eTermList: ETermList
 ) : Serializable {
     constructor() : this(
-        "", mutableListOf(), mutableListOf(), "", "", ""
+        "", mutableListOf(), mutableListOf(), "", "", "", ETermList.NORMAL_TERMS
     )
     constructor(flashCard: FlashCard) : this() {
         uid = flashCard.uid
@@ -20,10 +22,11 @@ class FlashCard(
         currentTermId = flashCard.currentTermId
         topicId = flashCard.topicId
         userId = flashCard.userId
+        eTermList = flashCard.eTermList
     }
 
     override fun toString(): String {
-        return "FlashCard(uid='$uid', TermsLearning=$termsLearning, TermsKnew=$termsKnew, currentTermId=$currentTermId, topicId=$topicId, userId='$userId')"
+        return "FlashCard(uid='$uid', termsLearning=$termsLearning, termsKnew=$termsKnew, currentTermId='$currentTermId', topicId='$topicId', userId='$userId')"
     }
 
 

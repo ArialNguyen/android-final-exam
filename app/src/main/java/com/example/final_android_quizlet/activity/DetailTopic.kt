@@ -6,8 +6,8 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
-import android.media.Image
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -19,22 +19,29 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
+import androidx.core.view.marginBottom
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import com.example.final_android_quizlet.R
-import com.example.final_android_quizlet.adapter.DetailTopicHoriAdapter
+import com.example.final_android_quizlet.adapter.*
 import com.example.final_android_quizlet.auth.Login
 import com.example.final_android_quizlet.common.ActionTransition
+import com.example.final_android_quizlet.common.GetBackAdapterFromViewPager
 import com.example.final_android_quizlet.common.ManageScopeApi
+import com.example.final_android_quizlet.fragments.DefaultFragmentRv
 import com.example.final_android_quizlet.models.EModeTopic
+import com.example.final_android_quizlet.models.Enum.ETermList
 import com.example.final_android_quizlet.models.Term
 import com.example.final_android_quizlet.models.Topic
 import com.example.final_android_quizlet.service.AuthService
 import com.example.final_android_quizlet.service.TopicService
 import com.example.final_android_quizlet.service.UserService
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.firestore.FieldValue
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
@@ -64,6 +71,17 @@ class DetailTopic : AppCompatActivity() {
     private var avatarUser: CircleImageView? = null
     private var tvDecription: TextView? = null
     private var tvTotalTerm: TextView? = null
+    private lateinit var viewPagerTerm: ViewPager2
+    private lateinit var recyclerViewLeft: RecyclerView
+    private lateinit var recyclerViewRight: RecyclerView
+
+    // Adapter For Term
+    private lateinit var tabDetailTopic: TabLayout
+    private lateinit var adapterVP: VPCommunityAdapter
+    private lateinit var termAdapterAll: TermStarAdapter
+    private lateinit var termAdapterStar: TermStarAdapter
+    private val termsItem: MutableList<TermStarAdapterItem> = mutableListOf()
+    private val termsStarItem: MutableList<TermStarAdapterItem> = mutableListOf()
 
     // Adapter
     private var recyclerViewHorizontal: RecyclerView? = null
@@ -72,6 +90,7 @@ class DetailTopic : AppCompatActivity() {
     // Info Current
     private lateinit var currentTopic: Topic
     private lateinit var currentUserId: String
+    private var currentTab: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -111,6 +130,9 @@ class DetailTopic : AppCompatActivity() {
         avatarUser = findViewById(R.id.imgAvatarIcon_DetailTopic)
         tvUserName = findViewById(R.id.tvUserName_DetailTopic)
 
+        viewPagerTerm = findViewById(R.id.viewPager2_DetailTopic)
+        tabDetailTopic = findViewById(R.id.tabDetailTopic)
+
         val imgMenuTopic = findViewById<ImageView>(R.id.imgMenuTopic_DetailTopic)
         val imgBack = findViewById<ImageView>(R.id.imgBack_DetailTopic)
 
@@ -132,27 +154,28 @@ class DetailTopic : AppCompatActivity() {
             val intent = Intent(this, MainQuizActivity::class.java)
             intent.putExtra("classDestination", FlashcardActivity::class.simpleName)
             intent.putExtra("topicId", currentTopic.uid)
+            intent.putExtra("typeTerm", if (currentTab == 0)  ETermList.NORMAL_TERMS else ETermList.STAR_TERMS)
             startActivity(intent)
         }
 
         cvChoice!!.setOnClickListener {
-//            val intent = Intent(this, MainQuizActivity::class.java)
-//            intent.putExtra("exercise_type", "choice")
-//            intent.putExtra("topicId", currentTopic.uid)
             val intent = Intent(this, OptionExam::class.java)
+            currentTopic.starList.clear()
+            currentTopic.starList.addAll(termsStarItem.map { it.term })
             intent.putExtra("topic", currentTopic)
             intent.putExtra("exam", ChoiceTest::class.simpleName)
+            intent.putExtra("typeTerm", if (currentTab == 0)  ETermList.NORMAL_TERMS else ETermList.STAR_TERMS)
             startActivity(intent)
             actionTransition.moveNextTransition()
         }
 
         cvWriteText!!.setOnClickListener {
-//            val intent = Intent(this, MainQuizActivity::class.java)
-//            intent.putExtra("exercise_type", "writingTest")
-//            intent.putExtra("topicId", currentTopic.uid)
             val intent = Intent(this, OptionExam::class.java)
+            currentTopic.starList.clear()
+            currentTopic.starList.addAll(termsStarItem.map { it.term })
             intent.putExtra("topic", currentTopic)
             intent.putExtra("exam", WriteQuizActivity::class.simpleName)
+            intent.putExtra("typeTerm", if (currentTab == 0)  ETermList.NORMAL_TERMS else ETermList.STAR_TERMS)
             startActivity(intent)
             actionTransition.moveNextTransition()
         }
@@ -173,16 +196,101 @@ class DetailTopic : AppCompatActivity() {
         indicator2!!.attachToRecyclerView(recyclerViewHorizontal!!, pagerSnapHelper)
         adapter.registerAdapterDataObserver(indicator2!!.adapterDataObserver) // Need to have this line to update data
 
-        if (intent.hasExtra("topicData")) {
-            val receivedTopic: Topic = intent.getSerializableExtra("topicData") as Topic
+        // Handle View Term
+        val tab1 = tabDetailTopic.newTab()
+        tab1.setText("Học hết")
+        val tab2 = tabDetailTopic.newTab()
+        tab2.setText("Học 1")
+
+        val termAll = DefaultFragmentRv(object : GetBackAdapterFromViewPager {
+            override fun onActionBack(view: View) {
+                actionOnTermAll(view)
+            }
+        })
+        val termStar = DefaultFragmentRv(object : GetBackAdapterFromViewPager {
+            override fun onActionBack(view: View) {
+                actionOnTermStar(view)
+            }
+        })
+
+        adapterVP = VPCommunityAdapter(this)
+        termAdapterAll = TermStarAdapter(termsItem)
+        termAdapterStar = TermStarAdapter(termsStarItem)
+
+        adapterVP.addFragment(termAll, "Học hết")
+        adapterVP.addFragment(termStar, "Học ${termsStarItem.size}")
+
+        viewPagerTerm.adapter = adapterVP
+        TabLayoutMediator(tabDetailTopic, viewPagerTerm) { tab, position ->
+            tab.text = adapterVP.getTabTitle(position)
+            tab.view.setOnClickListener {
+                currentTab = position
+            }
+        }.attach() // Connect viewPager and Tab
+
+        termAdapterAll.setOnItemStarClickListener { it , position ->
+            Log.i("TAG", "Handle click: $it")
+            lifecycleScope.launch {
+                withContext(Dispatchers.IO){
+                    if(it.selected){
+                        termsStarItem.add(it)
+                        runOnUiThread {
+                            tabDetailTopic.getTabAt(1)!!.text = "Học ${termsStarItem.size}"
+                            termAdapterStar.notifyItemInserted(termsStarItem.size)
+                        }
+                        topicService.addTermToStarTopic(currentTopic.uid, it.term)
+                    }else{
+                        // Remove
+                        val idxStar = termsStarItem.indexOfFirst { it1 -> it.term.uid == it1.term.uid }
+                        termsStarItem.removeAt(idxStar)
+                        runOnUiThread {
+                            tabDetailTopic.getTabAt(1)!!.text = "Học ${termsStarItem.size}"
+                            termAdapterStar.notifyItemRemoved(idxStar)
+                        }
+                        topicService.removeTermToStarTopic(currentTopic.uid, it.term)
+                    }
+                    runOnUiThread {
+                        termAdapterAll.notifyItemChanged(position)
+                    }
+                }
+            }
+        }
+        termAdapterStar.setOnItemStarClickListener { it, i ->
+            lifecycleScope.launch {
+                withContext(Dispatchers.IO){
+                    termsStarItem.removeAt(i)
+                    val idxOfTermAll = termsItem.indexOfFirst { it1 -> it1.term.uid == it.term.uid }
+                    termsItem[idxOfTermAll].selected = false
+                    runOnUiThread {
+                        termAdapterStar.notifyItemRemoved(i)
+                        tabDetailTopic.getTabAt(1)!!.text = "Học ${termsStarItem.size}"
+                        termAdapterAll.notifyItemChanged(idxOfTermAll)
+                    }
+                    topicService.removeTermToStarTopic(currentTopic.uid, it.term)
+                }
+            }
         }
 
 
+        // Fetch data
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
                 val fetchTopic = topicService.getTopicById(topicId)
                 if(fetchTopic.status){
                     currentTopic = fetchTopic.topic!!
+                    termsItem.addAll(currentTopic.terms.map {
+                        TermStarAdapterItem(it, currentTopic.starList.firstOrNull { it2 -> it2.uid == it.uid } != null)
+                    })
+                    termsStarItem.addAll(currentTopic.starList.map { TermStarAdapterItem(it, true) })
+                    runOnUiThread {
+                        if(::termAdapterAll.isInitialized){
+                            termAdapterAll.notifyDataSetChanged()
+                        }
+                        if(::termAdapterStar.isInitialized){
+                            tabDetailTopic.getTabAt(1)!!.text = "Học ${termsStarItem.size}"
+                            termAdapterStar.notifyDataSetChanged()
+                        }
+                    }
                     val fetchUser = userService.getUserByField("uid", currentTopic.userId)
                     if(fetchUser.status){
                         items.addAll(currentTopic.terms)
@@ -204,6 +312,71 @@ class DetailTopic : AppCompatActivity() {
             }
         }
 
+    }
+    private fun actionOnTermAll(view: View){
+        recyclerViewLeft = view.findViewById(R.id.recyclerViewUser_defaultFG)
+        recyclerViewLeft.adapter = termAdapterAll
+        recyclerViewLeft.layoutManager = LinearLayoutManager(this)
+        if(termsItem.isNotEmpty()){
+            recyclerViewLeft.setItemViewCacheSize(termsItem.size)
+            termAdapterAll.notifyDataSetChanged()
+        }
+        termAdapterAll.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                super.onItemRangeInserted(positionStart, itemCount)
+                updateHeight()
+            }
+
+            override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
+                super.onItemRangeRemoved(positionStart, itemCount)
+                updateHeight()
+            }
+
+            private fun updateHeight() {
+                val adapter = recyclerViewLeft.adapter ?: return
+                val itemCount = adapter.itemCount
+                if (itemCount > 0) {
+                    val child = adapter.createViewHolder(recyclerViewLeft, adapter.getItemViewType(0)).itemView
+                    child.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
+                    val itemHeight = child.measuredHeight
+                    recyclerViewLeft.layoutParams.height = itemHeight * itemCount
+                    recyclerViewLeft.requestLayout()
+                }
+            }
+        })
+    }
+    private fun actionOnTermStar(view: View){
+        recyclerViewRight = view.findViewById(R.id.recyclerViewUser_defaultFG)
+        recyclerViewRight.adapter = termAdapterStar
+        recyclerViewRight.layoutManager = LinearLayoutManager(this)
+        if(termsStarItem.isNotEmpty()){
+            recyclerViewRight.setItemViewCacheSize(termsStarItem.size)
+            termAdapterStar.notifyDataSetChanged()
+        }
+        termAdapterStar.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                super.onItemRangeInserted(positionStart, itemCount)
+                updateHeight()
+            }
+
+            override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
+                super.onItemRangeRemoved(positionStart, itemCount)
+                updateHeight()
+            }
+
+            private fun updateHeight() {
+                val adapter = recyclerViewRight.adapter ?: return
+                val itemCount = adapter.itemCount
+                if (itemCount > 0) {
+                    val child = adapter.createViewHolder(recyclerViewRight, adapter.getItemViewType(0)).itemView
+                    child.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
+                    val itemHeight = child.measuredHeight
+                    Log.i("TAG", "measuredHeight: $itemHeight")
+                    recyclerViewRight.layoutParams.height = itemHeight * itemCount * child.marginBottom
+                    recyclerViewRight.requestLayout()
+                }
+            }
+        })
     }
 
     private fun showMenuDetailTopic() {
