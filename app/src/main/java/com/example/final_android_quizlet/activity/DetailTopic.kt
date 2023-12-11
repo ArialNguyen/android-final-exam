@@ -2,6 +2,7 @@ package com.example.final_android_quizlet.activity
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.app.ProgressDialog
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Rect
@@ -12,23 +13,25 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
 import androidx.core.view.marginBottom
+import androidx.core.view.setMargins
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.example.final_android_quizlet.R
-import com.example.final_android_quizlet.adapter.*
+import com.example.final_android_quizlet.adapter.DetailTopicHoriAdapter
+import com.example.final_android_quizlet.adapter.TermStarAdapter
+import com.example.final_android_quizlet.adapter.TermStarAdapterItem
+import com.example.final_android_quizlet.adapter.VPCommunityAdapter
 import com.example.final_android_quizlet.auth.Login
 import com.example.final_android_quizlet.common.ActionTransition
+import com.example.final_android_quizlet.common.FileAction
 import com.example.final_android_quizlet.common.GetBackAdapterFromViewPager
 import com.example.final_android_quizlet.common.ManageScopeApi
 import com.example.final_android_quizlet.fragments.DefaultFragmentRv
@@ -39,7 +42,6 @@ import com.example.final_android_quizlet.models.Topic
 import com.example.final_android_quizlet.service.AuthService
 import com.example.final_android_quizlet.service.TopicService
 import com.example.final_android_quizlet.service.UserService
-import com.google.android.material.button.MaterialButton
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.firestore.FieldValue
@@ -50,6 +52,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.relex.circleindicator.CircleIndicator2
 
+
 class DetailTopic : AppCompatActivity() {
     // Service
     private val topicService: TopicService = TopicService()
@@ -57,6 +60,7 @@ class DetailTopic : AppCompatActivity() {
     private val actionTransition: ActionTransition = ActionTransition(this)
     private val authService: AuthService = AuthService()
     private val userService: UserService = UserService()
+    private val fileAction: FileAction = FileAction(this)
 
 
     private var toolbar: Toolbar? = null
@@ -87,6 +91,9 @@ class DetailTopic : AppCompatActivity() {
     private var recyclerViewHorizontal: RecyclerView? = null
     private val items: MutableList<Term> = mutableListOf()
 
+    // Intent
+    private lateinit var topicIdIntent: String
+
     // Info Current
     private lateinit var currentTopic: Topic
     private lateinit var currentUserId: String
@@ -112,7 +119,7 @@ class DetailTopic : AppCompatActivity() {
             actionTransition.rollBackTransition()
         }
         // Handle preData
-        val topicId = intent.getStringExtra("topicId")!!
+        topicIdIntent = intent.getStringExtra("topicId")!!
         currentUserId = authService.getCurrentUser().uid
 
         toolbar = findViewById(R.id.toolbar_detail_hocphan)
@@ -137,7 +144,7 @@ class DetailTopic : AppCompatActivity() {
         val imgBack = findViewById<ImageView>(R.id.imgBack_DetailTopic)
 
         imgRanking.setOnClickListener {
-            startActivity(Intent(this, RankingActivity::class.java).putExtra("topicId", topicId))
+            startActivity(Intent(this, RankingActivity::class.java).putExtra("topicId", topicIdIntent))
             actionTransition.moveNextTransition()
         }
 
@@ -275,7 +282,7 @@ class DetailTopic : AppCompatActivity() {
         // Fetch data
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                val fetchTopic = topicService.getTopicById(topicId)
+                val fetchTopic = topicService.getTopicById(topicIdIntent)
                 if(fetchTopic.status){
                     currentTopic = fetchTopic.topic!!
                     termsItem.addAll(currentTopic.terms.map {
@@ -384,6 +391,7 @@ class DetailTopic : AppCompatActivity() {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.dialog_menu_topic)
         val cancelDetailTopic: ImageView = dialog.findViewById(R.id.imgCancel_DetailTopic)
+        val liExportToCsv: LinearLayout = dialog.findViewById(R.id.liExportToCsv_DetailTopic)
         if(currentTopic.userId != currentUserId){
             dialog.findViewById<LinearLayout>(R.id.llForOwner_menuTopic).visibility = View.GONE
             dialog.findViewById<LinearLayout>(R.id.llForGuest_menuTopic).visibility = View.VISIBLE
@@ -435,6 +443,9 @@ class DetailTopic : AppCompatActivity() {
             }
         }
 
+        liExportToCsv.setOnClickListener {
+            openDialogAskFileName()
+        }
 
         cancelDetailTopic.setOnClickListener {
             dialog.dismiss()
@@ -445,6 +456,57 @@ class DetailTopic : AppCompatActivity() {
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
         dialog.window?.setGravity(Gravity.BOTTOM)
+    }
+
+    private fun openDialogAskFileName(){
+        val alert = AlertDialog.Builder(this)
+        alert.setMessage("Enter Your Message")
+        alert.setTitle("Enter FileName")
+
+        val edittext = EditText(this)
+        val lp = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.MATCH_PARENT,
+        )
+        lp.setMargins(20, 20, 20, 20)
+        edittext.layoutParams = lp
+
+        alert.setView(edittext)
+
+        alert.setPositiveButton("OK") { dialog, whichButton ->
+            if(edittext.text.isNotEmpty()){
+                val progressDialog = ProgressDialog(this)
+                progressDialog.setTitle("Exporting...")
+                progressDialog.setMessage("Please wait, we're exporting your data...")
+                progressDialog.show()
+
+                lifecycleScope.launch {
+                    val fetchTopic = topicService.getTopicById(topicIdIntent)
+                    if (fetchTopic.status) {
+                        val res = fileAction.writeTopicToCsv(edittext.text.toString(), fetchTopic.topic!!)
+                        this@DetailTopic.runOnUiThread {
+                            if (res.status) {
+                                Toast.makeText(this@DetailTopic, "Export Successfully", Toast.LENGTH_LONG).show()
+                                dialog.dismiss()
+                            } else {
+                                Toast.makeText(this@DetailTopic, res.data.toString(), Toast.LENGTH_LONG).show()
+                            }
+                        }
+                    } else {
+                        this@DetailTopic.runOnUiThread {
+                            Toast.makeText(this@DetailTopic, fetchTopic.data.toString(), Toast.LENGTH_LONG).show()
+                        }
+                    }
+                    progressDialog.dismiss()
+                }
+            }
+        }
+
+        alert.setNegativeButton("Cancel") { dialog, whichButton ->
+            dialog.dismiss()
+        }
+
+        alert.show()
     }
 
     private fun removeDetailTopic() {
