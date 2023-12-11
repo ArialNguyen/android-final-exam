@@ -91,7 +91,7 @@ class OptionExam : AppCompatActivity() {
         // Load View
         tvTopicName.text = topicIntent.title
         tvTotalQues.text = if (typeTerm.name == ETermList.NORMAL_TERMS.name) topicIntent.terms.size.toString() else topicIntent.starList.size.toString()
-        optionExamData.numberQues = topicIntent.terms.size
+        optionExamData.numberQues = if (typeTerm.name == ETermList.NORMAL_TERMS.name) topicIntent.terms.size else topicIntent.starList.size
         tvLangAnswer.text = if (optionExamData.answer.name == EAnswer.TERM.name) "Thuật ngữ" else "Định nghĩa"
 
         // Handle Click

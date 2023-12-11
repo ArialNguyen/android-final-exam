@@ -116,6 +116,8 @@ class MainQuizActivity : AppCompatActivity() {
                     if (optionData.answer == EAnswer.TERM){
                         answers.addAll(question.map { it.term })
                     }
+                    Log.i("TAG", "size: ${question.size} & $typeTerm")
+                    Log.i("TAG", "optionData: $optionData")
 
                     // Get number question
                     val tmpList = question.take(optionData.numberQues)
