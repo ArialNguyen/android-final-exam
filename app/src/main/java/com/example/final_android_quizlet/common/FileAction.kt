@@ -3,13 +3,18 @@ package com.example.final_android_quizlet.common
 import android.app.Activity
 import android.content.Context
 import android.net.Uri
+import android.os.Environment
 import android.util.Log
 import android.widget.Toast
+import com.example.final_android_quizlet.dao.ResponseObject
 import com.example.final_android_quizlet.models.Term
 import com.example.final_android_quizlet.models.Topic
 import com.google.firebase.auth.FirebaseAuth
 import org.apache.commons.csv.CSVFormat
+import org.apache.commons.csv.CSVPrinter
 import java.io.BufferedReader
+import java.io.File
+import java.io.FileWriter
 import java.io.InputStreamReader
 import java.lang.IllegalArgumentException
 import java.util.*
@@ -102,6 +107,39 @@ class FileAction(private val ctx: Context) {
         return topicsSuccess
     }
 
+    fun writeTopicToCsv(fileName: String, topic: Topic): ResponseObject {
+        val res = ResponseObject()
+        val name = if (fileName.contains(".")) fileName.substring(0, fileName.indexOf(".")) + ".csv"
+        else "$fileName.csv"
+        try {
+            val file = File(
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), name
+            )
+            if(file.exists()){
+                throw Exception("File with name '${fileName}' already exist. Please type another name")
+            }
+            val printer = CSVPrinter(
+                FileWriter(
+                    file
+                ), CSVFormat.DEFAULT
+            )
+            printer.printRecord(fieldsTopicExport[0], topic.title)
+            printer.printRecord(fieldsTopicExport[1], topic.description)
+            printer.printRecord(fieldsTopicExport[2], topic.termLanguage)
+            printer.printRecord(fieldsTopicExport[3], topic.definitionLanguage)
+            printer.printRecord(fieldsTopicExport[4], *topic.terms.map { "${it.term}, ${it.definition}" }.toTypedArray())
+            printer.close()
+            res.status = true
+        } catch (e: Exception) {
+            Log.i("TAG ERROR", "writeUsersToCsv: ${e.message}")
+            res.status = false
+            res.data = e.message.toString()
+        }
+        return res
+    }
+
+
+
     fun mapToTopic(hashMap: HashMap<String, Any>): Topic {
         val topic = Topic()
         topic.userId = firebaseAuth.currentUser!!.uid
@@ -131,5 +169,4 @@ class FileAction(private val ctx: Context) {
             str
         }
     }
-
 }
