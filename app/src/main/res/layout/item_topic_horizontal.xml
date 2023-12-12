@@ -5,7 +5,7 @@
                                                    android:layout_height="wrap_content"
                                                    xmlns:app="http://schemas.android.com/apk/res-auto"
                                                    android:orientation="vertical"
-                                                   android:padding="10dp"
+    android:padding="16dp"
                                                    android:background="@drawable/white_background_algorithm"
                                                    android:elevation="3dp"
                                                    android:layout_marginEnd="10dp"
@@ -47,13 +47,13 @@
     <RelativeLayout android:layout_width="0dp" android:layout_height="33dp"
                     app:layout_constraintTop_toBottomOf="@+id/round_background"
                     app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginTop="8dp" app:layout_constraintHorizontal_bias="0.627">
+                    android:layout_marginTop="10dp" app:layout_constraintHorizontal_bias="0.627">
 
         <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/imgAvatarIcon_itemTopicHorizon"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_marginTop="2dp"
+
                 android:src="@drawable/person"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/round_background"
@@ -70,8 +70,8 @@
                 app:layout_constraintTop_toBottomOf="@+id/round_background"
                 android:gravity="center_vertical"
                 android:textSize="16dp"
-                android:layout_alignParentEnd="true" android:layout_marginEnd="85dp"
-                android:layout_toEndOf="@+id/imgAvatarIcon_itemTopicHorizon" android:layout_marginStart="8dp"
+                android:layout_alignParentEnd="true"
+                android:layout_toEndOf="@+id/imgAvatarIcon_itemTopicHorizon" android:layout_marginStart="10dp"
                 tools:ignore="NotSibling"/>
     </RelativeLayout>
 

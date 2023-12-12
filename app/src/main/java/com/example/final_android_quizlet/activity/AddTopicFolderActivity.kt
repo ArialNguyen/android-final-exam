@@ -68,7 +68,7 @@ class AddTopicFolderActivity : AppCompatActivity() {
         viewPager = findViewById(R.id.viewPager_AddTopic_FolderActivity)
         val imgBack = findViewById<ImageView>(R.id.imgBack_AddTopic_FolderActivity)
         val toolbar = findViewById<Toolbar>(R.id.toolbar_AddTopic_FolderActivity)
-        setSupportActionBar(toolbar)
+
 
         // Handle onclick
         imgBack.setOnClickListener {

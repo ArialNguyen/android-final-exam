@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="16dp"
     tools:context=".fragments.FragmentAddTopic_CreateFolder">
 
     <!-- TODO: Update blank fragment layout -->
@@ -19,7 +20,6 @@
                 app:cardCornerRadius="8dp"
                 app:cardElevation="20dp"
                 app:cardUseCompatPadding="true"
-                android:padding="15dp"
                 tools:listitem="@layout/item_tien_trinh"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:ignore="MissingConstraints"/>

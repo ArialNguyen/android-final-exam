@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/bg_white_corner_16">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:background="@drawable/bg_green_corner_16_top_left_top_right"
+        android:text="Name File Export" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:layout_marginTop="50dp"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/edNameFileCSV_DetailTopic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="File Name"
+            android:padding="12dp"
+            android:background="@drawable/bg_white_corner_10_border_gray"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnDialogSave"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Save"
+                android:fontFamily="@font/playfairdisplay_bold"
+                android:textSize="12sp"
+                android:backgroundTint="@color/red"
+                android:padding="12dp"
+                android:layout_marginEnd="10dp"/>
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnDialogCancel_logout"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Cancel"
+                android:fontFamily="@font/playfairdisplay_bold"
+                android:textSize="12sp"
+                android:textColor="@color/lavender"
+                app:strokeWidth="2dp"
+                app:strokeColor="@color/lavender"
+                android:backgroundTint="@color/white"
+                android:padding="12dp"
+                android:layout_marginEnd="10dp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

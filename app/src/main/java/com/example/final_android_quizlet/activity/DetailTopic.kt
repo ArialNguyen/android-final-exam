@@ -463,22 +463,16 @@ class DetailTopic : AppCompatActivity() {
     }
 
     private fun openDialogAskFileName(){
-        val alert = AlertDialog.Builder(this)
-        alert.setMessage("Enter Your Message")
-        alert.setTitle("Enter FileName")
+        val dialog = Dialog(this)
+        dialog.setContentView(R.layout.dialog_export_csv)
 
-        val edittext = EditText(this)
-        val lp = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.MATCH_PARENT,
-        )
-        lp.setMargins(20, 20, 20, 20)
-        edittext.layoutParams = lp
+        val btnDialogSave = dialog.findViewById<Button>(R.id.btnDialogSave)
+        val btnDialogCancel = dialog.findViewById<Button>(R.id.btnDialogCancel_logout)
+        val edNameFileCSV = dialog.findViewById<EditText>(R.id.edNameFileCSV_DetailTopic)
 
-        alert.setView(edittext)
-
-        alert.setPositiveButton("OK") { dialog, whichButton ->
-            if(edittext.text.isNotEmpty()){
+        btnDialogSave.setOnClickListener {
+            val fileName = edNameFileCSV.text.toString()
+            if (fileName.isNotEmpty()) {
                 val progressDialog = ProgressDialog(this)
                 progressDialog.setTitle("Exporting...")
                 progressDialog.setMessage("Please wait, we're exporting your data...")
@@ -487,8 +481,8 @@ class DetailTopic : AppCompatActivity() {
                 lifecycleScope.launch {
                     val fetchTopic = topicService.getTopicById(topicIdIntent)
                     if (fetchTopic.status) {
-                        val res = fileAction.writeTopicToCsv(edittext.text.toString(), fetchTopic.topic!!)
-                        this@DetailTopic.runOnUiThread {
+                        val res = fileAction.writeTopicToCsv(fileName, fetchTopic.topic!!)
+                        runOnUiThread {
                             if (res.status) {
                                 Toast.makeText(this@DetailTopic, "Export Successfully", Toast.LENGTH_LONG).show()
                                 dialog.dismiss()
@@ -497,20 +491,23 @@ class DetailTopic : AppCompatActivity() {
                             }
                         }
                     } else {
-                        this@DetailTopic.runOnUiThread {
+                        runOnUiThread {
                             Toast.makeText(this@DetailTopic, fetchTopic.data.toString(), Toast.LENGTH_LONG).show()
                         }
                     }
                     progressDialog.dismiss()
                 }
+            } else {
+                Toast.makeText(this@DetailTopic, "Please enter a file name", Toast.LENGTH_SHORT).show()
             }
         }
 
-        alert.setNegativeButton("Cancel") { dialog, whichButton ->
+        btnDialogCancel.setOnClickListener {
             dialog.dismiss()
         }
 
-        alert.show()
+
+        dialog.show()
     }
 
     private fun removeDetailTopic() {

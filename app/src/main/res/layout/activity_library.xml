@@ -12,7 +12,7 @@
         android:id="@+id/toolbar_library"
         android:background="@color/colorBackground"
         app:title="Library"
-        app:titleMarginStart="30dp"
+        app:titleMarginStart="16dp"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toRightOf="parent"
