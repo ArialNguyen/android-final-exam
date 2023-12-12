@@ -107,6 +107,7 @@
                                                            android:id="@+id/constraintLayout20">
             <TextView android:layout_width="wrap_content"
                       android:text="Trộn câu hỏi"
+                android:id="@+id/tvShuffe_OptionExam"
                 android:fontFamily="@font/playfairdisplay_semibold"
                       android:textSize="18dp"
                       android:textColor="@color/black"
@@ -155,6 +156,7 @@
                                                                android:id="@+id/constraintLayout16">
                 <TextView android:layout_width="wrap_content"
                           android:text="Trả lời bằng"
+                    android:id="@+id/tvFont_OptionExam"
                     android:fontFamily="@font/playfairdisplay_semibold"
                           android:textSize="18dp"
                           android:textColor="@color/black"

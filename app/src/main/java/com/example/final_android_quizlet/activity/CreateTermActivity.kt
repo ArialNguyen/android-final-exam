@@ -19,6 +19,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isGone
 import androidx.lifecycle.lifecycleScope
+import com.example.final_android_quizlet.MainActivity
 import com.example.final_android_quizlet.R
 import com.example.final_android_quizlet.adapter.TermAdapter
 import com.example.final_android_quizlet.auth.Login
@@ -132,6 +133,10 @@ class CreateTermActivity : AppCompatActivity() {
             actionTransition.moveNextTransition()
         }
 
+        if (intent.getBooleanExtra("isEditAction", false)) {
+            settingButton.visibility = View.GONE
+        }
+
         llImportFromCSV.setOnClickListener {
             val intent = Intent(Intent.ACTION_GET_CONTENT)
             intent.addCategory(Intent.CATEGORY_OPENABLE)
@@ -227,33 +232,46 @@ class CreateTermActivity : AppCompatActivity() {
     }
 
     fun updateTopicWithTerms() {
-        val title = etTitle.text.toString()
-        val description = etDescription.text.toString()
-        val usefulTerms = getUsefulTerm()
-        val currentUser = authService.getCurrentUser()
+        imgFinish.setOnClickListener {
+            val title = etTitle.text.toString()
+            val description = etDescription.text.toString()
+            val usefulTerms = getUsefulTerm()
+            val currentUser = authService.getCurrentUser()
 
-        val receivedTopicSerializable = intent.getSerializableExtra("topicData")
-        val receivedTopic = receivedTopicSerializable as? Topic
+            val receivedTopicSerializable = intent.getSerializableExtra("topicData")
+            val receivedTopic = receivedTopicSerializable as? Topic
 
-        val updatedTopic = receivedTopic?.copy(title = title, description = description, terms = usefulTerms)
-            ?: Topic(
-                UUID.randomUUID().toString(),
-                title, description, usefulTerms, mutableListOf(),
-                currentUser.uid,
-                accessMode, ELearnTopicStatus.NOT_LEARN,
-                termLang?.toLanguageTag() ?: "", definitionLang?.toLanguageTag() ?: ""
-            )
+            val updatedTopic =
+                receivedTopic?.copy(title = title, description = description, terms = usefulTerms)
+                    ?: Topic(
+                        UUID.randomUUID().toString(),
+                        title, description, usefulTerms, mutableListOf(),
+                        currentUser.uid,
+                        accessMode, ELearnTopicStatus.NOT_LEARN,
+                        termLang?.toLanguageTag() ?: "", definitionLang?.toLanguageTag() ?: ""
+                    )
 
-        lifecycleScope.launch {
-            withContext(Dispatchers.IO) {
-                val res = topicService.updateTopicWithTerms(updatedTopic)
-                if (res.status) {
-                    runOnUiThread {
-                        Toast.makeText(this@CreateTermActivity, "Topic updated successfully!", Toast.LENGTH_LONG).show()
-                    }
-                } else {
-                    runOnUiThread {
-                        Toast.makeText(this@CreateTermActivity, res.data.toString(), Toast.LENGTH_LONG).show()
+            lifecycleScope.launch {
+                withContext(Dispatchers.IO) {
+                    val res = topicService.updateTopicWithTerms(updatedTopic)
+                    if (res.status) {
+                        runOnUiThread {
+                            Toast.makeText(
+                                this@CreateTermActivity,
+                                "Topic updated successfully!",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                        val mainActivityIntent = Intent(this@CreateTermActivity, MainActivity::class.java)
+                        startActivity(mainActivityIntent)
+                    } else {
+                        runOnUiThread {
+                            Toast.makeText(
+                                this@CreateTermActivity,
+                                res.data.toString(),
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
                     }
                 }
             }

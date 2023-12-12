@@ -155,9 +155,11 @@ class DetailTopic : AppCompatActivity() {
 //            intent.putExtra("classDestination", FlashcardActivity::class.simpleName)
 //            intent.putExtra("topicId", currentTopic.uid)
 //            startActivity(intent)
-            val intent = Intent(this, SettingFlash::class.java)
+            val intent = Intent(this, OptionExam::class.java)
             intent.putExtra("topic", currentTopic)
             intent.putExtra("exam", FlashcardActivity::class.simpleName)
+            intent.putExtra("typeTerm", if (currentTab == 0)  ETermList.NORMAL_TERMS else ETermList.STAR_TERMS)
+            intent.putExtra("changeLayout", true)
             startActivity(intent)
             actionTransition.moveNextTransition()
         }
@@ -424,6 +426,7 @@ class DetailTopic : AppCompatActivity() {
             editDetailTopic.setOnClickListener {
                 val intent = Intent(this, CreateTermActivity::class.java)
                 intent.putExtra("topicData", currentTopic) // Gửi đối tượng Topic sang CreateTermActivity
+                intent.putExtra("isEditAction", true)
                 startActivity(intent)
                 dialog.dismiss()
             }

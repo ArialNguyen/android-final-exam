@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
+import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.Button
@@ -47,6 +48,11 @@ class OptionExam : AppCompatActivity() {
     private lateinit var btnDone: Button
     private lateinit var tvLangAnswer: TextView
     private lateinit var swShuffle: SwitchCompat
+    private lateinit var constraintLayout14: ConstraintLayout
+    private lateinit var constraintLayout15: ConstraintLayout
+    private lateinit var constraintLayout19: ConstraintLayout
+    private lateinit var tvShuffe: TextView
+    private lateinit var tvFont: TextView
     // -> Dialog Scroll View
     private lateinit var tvDone: TextView
     private lateinit var scrollChoiceNbQues: ScrollChoice
@@ -88,11 +94,25 @@ class OptionExam : AppCompatActivity() {
         tvLangAnswer = findViewById(R.id.tvLangAnswer_OptionExam)
         swShuffle = findViewById(R.id.swShuffle_OptionExam)
         swAutoSpeak = findViewById(R.id.swAutoSpeak_OptionExam)
+        constraintLayout14 = findViewById(R.id.constraintLayout14)
+        constraintLayout15 = findViewById(R.id.constraintLayout15)
+        constraintLayout19 = findViewById(R.id.constraintLayout19)
+        tvShuffe = findViewById(R.id.tvShuffe_OptionExam)
+        tvFont = findViewById(R.id.tvFont_OptionExam)
         // Load View
         tvTopicName.text = topicIntent.title
         tvTotalQues.text = if (typeTerm.name == ETermList.NORMAL_TERMS.name) topicIntent.terms.size.toString() else topicIntent.starList.size.toString()
         optionExamData.numberQues = if (typeTerm.name == ETermList.NORMAL_TERMS.name) topicIntent.terms.size else topicIntent.starList.size
         tvLangAnswer.text = if (optionExamData.answer.name == EAnswer.TERM.name) "Thuật ngữ" else "Định nghĩa"
+
+        val changeLayout = intent.getBooleanExtra("changeLayout", false)
+        if (changeLayout) {
+            constraintLayout14.visibility = View.GONE
+            constraintLayout15.visibility = View.GONE
+            constraintLayout19.visibility = View.GONE
+            tvShuffe.text = "Trộn thẻ"
+            tvFont.text = "Mặt trước"
+        }
 
         // Handle Click
         llNumberQues.setOnClickListener {
