@@ -53,9 +53,8 @@ class AuthService() {
             val authResult = firebaseAuth.signInWithEmailAndPassword(email, fetch1.user!!.passwordAuth).await()
             if (firebaseAuth.currentUser!!.isEmailVerified) {
                 res.status = true
-                res.data = authResult.user!!.email.toString()
+                res.user = getUserLogin().user
             } else {
-                Log.i(res.data.toString(), "login: ")
                 throw Exception("Please verify your email to login !!!")
             }
         } catch (e: Exception) {
@@ -155,7 +154,6 @@ class AuthService() {
 
     fun logout() {
         firebaseAuth.signOut()
-        Log.i("LOGOUT", "${firebaseAuth.currentUser}")
     }
 
 }

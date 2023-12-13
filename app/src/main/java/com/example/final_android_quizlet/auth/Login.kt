@@ -11,10 +11,14 @@ import com.example.final_android_quizlet.MainActivity
 import com.example.final_android_quizlet.R
 import com.example.final_android_quizlet.common.ActionTransition
 import com.example.final_android_quizlet.common.ManageScopeApi
+import com.example.final_android_quizlet.common.Session
 import com.example.final_android_quizlet.dao.ResponseObject
 import com.example.final_android_quizlet.db.CallbackInterface
 import com.example.final_android_quizlet.service.AuthService
 import com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class Login : AppCompatActivity() {
     private val authService: AuthService = AuthService()
@@ -35,7 +39,7 @@ class Login : AppCompatActivity() {
             val data: Intent? = result.data
             tvUsername!!.setText(data!!.getStringExtra("email"))
         }else if (result.resultCode == FORGORPWD_CODE){
-
+            // ???
         }
     }
 
@@ -51,7 +55,13 @@ class Login : AppCompatActivity() {
 //        var classTarget = MainActivity::class.java.name
 
         if(authService.isLogin()){
-            startActivity(Intent(this, MainActivity::class.java))
+            lifecycleScope.launch {
+                withContext(Dispatchers.IO){
+                    Session.getInstance(this@Login).user = authService.getUserLogin().user
+                    actionTransition.rollBackTransition()
+                    finish()
+                }
+            }
         }
 
 
@@ -77,9 +87,7 @@ class Login : AppCompatActivity() {
 
                     override fun onCallback(res: ResponseObject) {
                         if (res.status) {
-                            Log.i("FINISH", "onCallback: ")
-//                            val intent = Intent(this@Login, Class.forName(classTarget))
-//                            startActivity(intent)
+                            Session.getInstance(this@Login).user = res.user
                             actionTransition.rollBackTransition()
                             finish()
                         } else {

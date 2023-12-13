@@ -23,9 +23,11 @@ import com.example.final_android_quizlet.adapter.data.LibraryTopicAdapterItem
 import com.example.final_android_quizlet.auth.Login
 import com.example.final_android_quizlet.common.ActionDialog
 import com.example.final_android_quizlet.common.GetBackAdapterFromViewPager
+import com.example.final_android_quizlet.common.Session
 import com.example.final_android_quizlet.fragments.FragmentFolderLibrary
 import com.example.final_android_quizlet.fragments.FragmentTopicLibrary
 import com.example.final_android_quizlet.models.Topic
+import com.example.final_android_quizlet.models.User
 import com.example.final_android_quizlet.service.AuthService
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -46,8 +48,6 @@ class LibraryActivity() : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_library)
-
-
         if(!authService.isLogin()){
             startActivity(Intent(this, Login::class.java))
         }
@@ -63,7 +63,6 @@ class LibraryActivity() : AppCompatActivity() {
         libraryAdapter = LibraryAdapter(this)
         libraryAdapter.addFragment(FragmentTopicLibrary( object : GetBackAdapterFromViewPager{
             override fun onResult(view: View, items: MutableList<LibraryTopicAdapterItem>, adapter: TopicAdapter) {
-                Log.i("TAG", "onResult: FragmentTopicLibrary")
                 view.findViewById<TextInputLayout>(R.id.llFilterTopic_TopicFG).visibility = View.VISIBLE
                 view.findViewById<TextView>(R.id.text_tien_trinh).visibility = View.VISIBLE
                 view.findViewById<TextView>(R.id.tvSaveTopic_library).visibility = View.VISIBLE
@@ -73,7 +72,6 @@ class LibraryActivity() : AppCompatActivity() {
         }), "Học Phần")
         libraryAdapter.addFragment(FragmentFolderLibrary( object : GetBackAdapterFromViewPager{
             override fun onResult(view: View, items: MutableList<LibraryFolderAdapterItem>, adapter: LibraryFolderAdapter) {
-                Log.i("TAG", "onResult: FragmentFolderLibrary")
                 libraryAdapter.addAdapterForChild(items, adapter)
             }
         }), "Thư Mục")

@@ -1,28 +1,24 @@
 package com.example.final_android_quizlet.activity
 
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.example.final_android_quizlet.R
 import com.example.final_android_quizlet.adapter.*
-import com.example.final_android_quizlet.adapter.data.LibraryTopicAdapterItem
 import com.example.final_android_quizlet.adapter.data.RankingItem
 import com.example.final_android_quizlet.common.ActionTransition
 import com.example.final_android_quizlet.common.GetBackAdapterFromViewPager
+import com.example.final_android_quizlet.common.Session
 import com.example.final_android_quizlet.fragments.RankingFragment
-import com.example.final_android_quizlet.models.QuizWrite
-import com.example.final_android_quizlet.models.User
 import com.example.final_android_quizlet.service.*
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -68,6 +64,13 @@ class RankingActivity: AppCompatActivity() {
         tabLayout = findViewById(R.id.tab_ranking)
         viewPager = findViewById(R.id.viewPager_ranking)
         val imgBack = findViewById<ImageView>(R.id.imgBack_RankingActivity)
+
+
+        // Load data
+        val session = Session.getInstance(this)
+        if(session.user!!.avatar.isNotEmpty()){
+            Picasso.get().load(session.user!!.avatar).into(avatarTop)
+        }
 
         // Add TabLayout
         val tab1 = tabLayout.newTab()
@@ -115,7 +118,7 @@ class RankingActivity: AppCompatActivity() {
         recyclerView.adapter = mpRankingAdapter
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                val fetchMp = mpService.findChoiceTestByTopicId(topicId)
+                val fetchMp = mpService.getRankingChoiceTest(topicId)
                 if(fetchMp.status){
                     val topicsPassed = fetchMp.testChoices!!.filter {
                         it.optionExam.numberQues == it.totalQuestion && it.overall.toInt() > 0
@@ -151,7 +154,7 @@ class RankingActivity: AppCompatActivity() {
         recyclerView.adapter = wTRankingAdapter
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                val fetchWrite = wTService.findWritingTestByTopicId(topicId)
+                val fetchWrite = wTService.getRankingWritingTest(topicId)
                 if(fetchWrite.status){
                     val topicsPassed = fetchWrite.quizWrites!!.filter {
                         it.optionExam.numberQues == it.totalQuestion && it.overall.toInt() > 0

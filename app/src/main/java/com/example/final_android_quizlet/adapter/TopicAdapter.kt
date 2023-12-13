@@ -30,7 +30,6 @@ class TopicAdapter(private val flow: EOrientationRecyclerView, private val items
 //            itemView.setOnLongClickListener(this)
 //        }
         fun bind(item: LibraryTopicAdapterItem) {
-            Log.i("TAG", "bind: $item")
             tvTopicTitle.text = item.topic.title
             tvTotalTerm.text = "${item.topic.terms.size} thuật ngữ"
             tvUserName.text = item.user?.name

@@ -17,6 +17,7 @@ import com.example.final_android_quizlet.auth.ChangePassword
 import com.example.final_android_quizlet.auth.Login
 import com.example.final_android_quizlet.common.ActionTransition
 import com.example.final_android_quizlet.common.DialogClickedEvent
+import com.example.final_android_quizlet.common.Session
 import com.example.final_android_quizlet.fragments.dialog.DialogLogout
 import com.example.final_android_quizlet.fragments.dialog.UpdateNameDialog
 import com.example.final_android_quizlet.service.AuthService
@@ -38,10 +39,6 @@ class ProfileActivity : AppCompatActivity() {
     private val authService: AuthService = AuthService()
     private val actionTransition: ActionTransition = ActionTransition(this)
 
-    private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        Log.i("TAG", "Come back")
-
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,58 +47,60 @@ class ProfileActivity : AppCompatActivity() {
 
         if(!authService.isLogin()){
             startActivity(Intent(this, Login::class.java))
-        }
+        }else{
 
-        imgAvatar = findViewById(R.id.imgAvatar_profile)
-        tvUserName = findViewById(R.id.tvUserName_profile)
-        tvEmail = findViewById(R.id.tvEmail_profile)
-        tvChangePwd = findViewById(R.id.tvChangePwd_profile)
-        tvChangeName = findViewById(R.id.tvChangeName_profile)
-        layoutLogout = findViewById(R.id.imgLogout_profile)
+            imgAvatar = findViewById(R.id.imgAvatar_profile)
+            tvUserName = findViewById(R.id.tvUserName_profile)
+            tvEmail = findViewById(R.id.tvEmail_profile)
+            tvChangePwd = findViewById(R.id.tvChangePwd_profile)
+            tvChangeName = findViewById(R.id.tvChangeName_profile)
+            layoutLogout = findViewById(R.id.imgLogout_profile)
 
+            val session = Session.getInstance(this)
 
-        lifecycleScope.launch {
-            val user = authService.getUserLogin().user!!
+            val user = session.user!!
             tvUserName!!.text = user.name
             tvEmail!!.text = user.email
-            if(user.avatar!!.isNotEmpty()){
-                Log.i("TAG", "AVATAR: $${user.avatar}")
+            if(user.avatar.isNotEmpty()){
                 Picasso.get().load(user.avatar).into(imgAvatar)
             }
 
-        }
-
-        tvChangeName!!.setOnClickListener {
-            val updateNameDialog = UpdateNameDialog(this, tvUserName?.text.toString()) { newName ->
-                lifecycleScope.launch {
-                    val uid = authService.getCurrentUser().uid
-                    val res = userService.updateUserName(uid, newName)
-                    if (res.status) {
-                        tvUserName?.text = newName
+            tvChangeName!!.setOnClickListener {
+                val updateNameDialog = UpdateNameDialog(this, tvUserName?.text.toString()) { newName ->
+                    lifecycleScope.launch {
+                        val res = userService.updateUserName(user.uid, newName)
+                        if (res.status) {
+                            val user1 = session.user!!
+                            user1.name = newName
+                            session.user = user1
+                            tvUserName?.text = newName
+                        }
                     }
                 }
+                updateNameDialog.show()
             }
-            updateNameDialog.show()
-        }
 
-        tvChangePwd!!.setOnClickListener {
-            val intent = Intent(this, ChangePassword::class.java)
-            startActivity(intent)
-            actionTransition.moveNextTransition()
-        }
+            tvChangePwd!!.setOnClickListener {
+                val intent = Intent(this, ChangePassword::class.java)
+                startActivity(intent)
+                actionTransition.moveNextTransition()
+            }
 
-        layoutLogout!!.setOnClickListener {
-            openLogoutDialog()
-        }
-        imgAvatar!!.setOnClickListener {
-            CropImage.activity().setAspectRatio(1, 1).start(this)
-        }
+            layoutLogout!!.setOnClickListener {
+                openLogoutDialog()
+            }
+            imgAvatar!!.setOnClickListener {
+                CropImage.activity().setAspectRatio(1, 1).start(this)
+            }
 
+        }
 
     }
 
     private fun openLogoutDialog() {
-        val folder = DialogLogout(this, this, object : DialogClickedEvent {})
+        val folder = DialogLogout(this, this, object : DialogClickedEvent {
+
+        })
         folder.show(supportFragmentManager, "Logout Dialog")
     }
 
@@ -116,13 +115,14 @@ class ProfileActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        val session = Session.getInstance(this)
+
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
             val result = CropImage.getActivityResult(data)!!
             val imageUri = result.uri
             imgAvatar!!.setImageURI(imageUri)
             lifecycleScope.launch{
-                val uid = authService.getCurrentUser().uid
-                uploadAvatar(uid, imageUri)
+                uploadAvatar(session.user!!.uid, imageUri)
             }
         }
     }

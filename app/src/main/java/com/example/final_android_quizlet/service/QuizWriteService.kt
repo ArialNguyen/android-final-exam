@@ -44,11 +44,12 @@ class QuizWriteService {
     suspend fun getDocumentIdByField(field: String, value: Any): String {
         return db.collection("writing_test").whereEqualTo(field, value).get().await().documents[0].id
     }
-    suspend fun findWritingTestByTopicId(topicId: String): ResponseObject {
+    suspend fun getRankingWritingTest(topicId: String): ResponseObject {
         val res: ResponseObject = ResponseObject()
         try {
             val data = db.collection("writing_test")
                 .whereEqualTo("topicId", topicId)
+                .whereEqualTo("termType", ETermList.NORMAL_TERMS.name)
                 .orderBy("overall", Query.Direction.DESCENDING)
                 .orderBy("createdAt", Query.Direction.ASCENDING)
                 .get().await()

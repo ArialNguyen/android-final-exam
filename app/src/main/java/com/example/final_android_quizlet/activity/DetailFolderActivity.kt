@@ -72,14 +72,12 @@ class DetailFolderActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail_folder)
-
         if (!authService.isLogin()) {
             startActivity(Intent(this, Login::class.java))
         }
 
         // Get intent
         folder = intent.getSerializableExtra("folder") as Folder
-        Log.i("TAG", "Receivie Folder: $folder")
 
         tvFolderName = findViewById(R.id.tvFolderName)
         tvTotalTerm = findViewById(R.id.tvTotalTerm)
@@ -129,29 +127,34 @@ class DetailFolderActivity : AppCompatActivity() {
                 }
             }
         }
-
+        val session = Session.getInstance(this)
         // Handle CallBack
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                val user = authService.getUserLogin().user!!
+                val user = session.user
                 runOnUiThread {
-                    tvUserName.text = user.name
+                    tvUserName.text = user!!.name
                     Picasso.get().load(user.avatar).into(imgAvatar)
                 }
-                val folderFetch = folderService.FolderForUserLogged().getFolderById(folder.uid)
-                if (folderFetch.status) {
-                    if (folderFetch.folder!!.topics.isNotEmpty()) {
-                        val topicsId = folderFetch.folder!!.topics
-                        val fetchTopics = topicService.TopicForUserLogged()
-                            .getTopicsByQuerys(mutableListOf(MyFBQuery("uid", topicsId, MyFBQueryMethod.IN)))
-                        items.addAll(fetchTopics.topics!!.map { LibraryTopicAdapterItem(it, user) })
-                        runOnUiThread { adapter.notifyDataSetChanged() }
-                    }
-                } else {
-                    runOnUiThread {
-                        Toast.makeText(this@DetailFolderActivity, folderFetch.data.toString(), Toast.LENGTH_LONG).show()
-                    }
-                }
+//                val folderFetch = folderService.FolderForUserLogged().getFolderById(folder.uid)
+//                if (folderFetch.status) {
+//                    if (folderFetch.folder!!.topics.isNotEmpty()) {
+//                        val topicsId = folderFetch.folder!!.topics
+//                        val fetchTopics = topicService.TopicForUserLogged()
+//                            .getTopicsByQuerys(mutableListOf(MyFBQuery("uid", topicsId, MyFBQueryMethod.IN)))
+//                        items.addAll(fetchTopics.topics!!.map { LibraryTopicAdapterItem(it, user) })
+//                        runOnUiThread { adapter.notifyDataSetChanged() }
+//                    }
+//                } else {
+//                    runOnUiThread {
+//                        Toast.makeText(this@DetailFolderActivity, folderFetch.data.toString(), Toast.LENGTH_LONG).show()
+//                    }
+//                }
+                val topicsId = folder.topics
+                val topics = session.topicsOfUser!!.filter { topicsId.contains(it.uid) }.toMutableList()
+                topics.addAll(session.topicsOfUserSaved!!.filter { topicsId.contains(it.uid) })
+                items.addAll(topics.map { LibraryTopicAdapterItem(it, user) })
+                runOnUiThread { adapter.notifyDataSetChanged() }
             }
         }
     }
@@ -219,15 +222,18 @@ class DetailFolderActivity : AppCompatActivity() {
         builder.setPositiveButton("Yes") { dialog, which ->
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
-                    val deleteFolderResult = folderService.deleteFolder(folder!!.uid)
+                    val deleteFolderResult = folderService.deleteFolder(folder.uid)
                     runOnUiThread {
                         if (deleteFolderResult.status) {
+                            val intentBack = Intent()
                             Toast.makeText(this@DetailFolderActivity, "Folder deleted successfully", Toast.LENGTH_LONG)
                                 .show()
+                            intentBack.putExtra("folderId", folder.uid)
+                            setResult(2, intentBack)
                             finish()
+                            actionTransition.rollBackTransition()
                         } else {
-                            Toast.makeText(this@DetailFolderActivity, "Failed to delete folder", Toast.LENGTH_LONG)
-                                .show()
+                            Toast.makeText(this@DetailFolderActivity, "Failed to delete folder", Toast.LENGTH_LONG).show()
                         }
                     }
                 }
@@ -246,4 +252,8 @@ class DetailFolderActivity : AppCompatActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
     }
+
+//    override fun onResume() {
+//
+//    }
 }

@@ -30,10 +30,7 @@ import com.example.final_android_quizlet.adapter.TermStarAdapter
 import com.example.final_android_quizlet.adapter.TermStarAdapterItem
 import com.example.final_android_quizlet.adapter.VPCommunityAdapter
 import com.example.final_android_quizlet.auth.Login
-import com.example.final_android_quizlet.common.ActionTransition
-import com.example.final_android_quizlet.common.FileAction
-import com.example.final_android_quizlet.common.GetBackAdapterFromViewPager
-import com.example.final_android_quizlet.common.ManageScopeApi
+import com.example.final_android_quizlet.common.*
 import com.example.final_android_quizlet.fragments.DefaultFragmentRv
 import com.example.final_android_quizlet.models.EModeTopic
 import com.example.final_android_quizlet.models.Enum.ETermList
@@ -119,6 +116,7 @@ class DetailTopic : AppCompatActivity() {
             actionTransition.rollBackTransition()
         }
         // Handle preData
+        val session = Session.getInstance(this)
         topicIdIntent = intent.getStringExtra("topicId")!!
         currentUserId = authService.getCurrentUser().uid
 
@@ -157,10 +155,6 @@ class DetailTopic : AppCompatActivity() {
 
 
         cvFlashCard!!.setOnClickListener {
-//            val intent = Intent(this, MainQuizActivity::class.java)
-//            intent.putExtra("classDestination", FlashcardActivity::class.simpleName)
-//            intent.putExtra("topicId", currentTopic.uid)
-//            startActivity(intent)
             val intent = Intent(this, OptionExam::class.java)
             intent.putExtra("topic", currentTopic)
             intent.putExtra("exam", FlashcardActivity::class.simpleName)
@@ -307,11 +301,14 @@ class DetailTopic : AppCompatActivity() {
                     if(fetchUser.status){
                         items.addAll(currentTopic.terms)
                         runOnUiThread {
+                            if (session.user!!.avatar.isNotEmpty()) {
+                                Picasso.get().load(session.user!!.avatar).into(avatarUser)
+                            }
                             Picasso.get().load(fetchUser.user!!.avatar).into(avatarUser)
                             tvTopicName!!.text = currentTopic.title
                             tvDecription!!.text = currentTopic.description
                             tvTotalTerm!!.text = "${currentTopic.terms.size} thuật ngữ"
-                            tvUserName!!.text = fetchUser.user!!.name
+                            tvUserName!!.text = session.user!!.name
                             tvMode.text = currentTopic.mode.name[0].toString() + currentTopic.mode.name.substring(1).lowercase()
                             adapter.notifyDataSetChanged()
                         }

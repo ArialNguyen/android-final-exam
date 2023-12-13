@@ -1,24 +1,16 @@
 package com.example.final_android_quizlet.service
 
-import android.util.JsonReader
 import android.util.Log
 import com.example.final_android_quizlet.dao.ResponseObject
 import com.example.final_android_quizlet.mapper.ChoiceTestMapper
-import com.example.final_android_quizlet.mapper.FlashCardMapper
 import com.example.final_android_quizlet.models.Enum.ETermList
-import com.example.final_android_quizlet.models.FlashCard
 import com.example.final_android_quizlet.models.MultipleChoice
-import com.example.final_android_quizlet.models.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.tasks.await
-import java.io.StringReader
 import kotlin.reflect.full.memberProperties
 
 class MultipleChoiceService {
@@ -53,25 +45,24 @@ class MultipleChoiceService {
         }
         return res
     }
-    suspend fun findChoiceTestByTopicId(topicId: String): ResponseObject {
+    suspend fun getRankingChoiceTest(topicId: String): ResponseObject {
         val res: ResponseObject = ResponseObject()
         try {
             val data = db.collection("choice_test")
                 .whereEqualTo("topicId", topicId)
                 .orderBy("overall", Query.Direction.DESCENDING)
                 .orderBy("createdAt", Query.Direction.ASCENDING)
+                .whereEqualTo("termType", ETermList.NORMAL_TERMS.name)
                 .get().await()
 
-            Log.i("TAG", "data.documents.size: ${data.documents.size}")
             if (data.documents.size == 0) {
                 throw Exception("Not Found ChoiceTest")
             } else {
                 res.status = true
                 res.testChoices = choiceMapper.convertToChoicesTest(data.documents)
-                Log.i("TAG", "findChoiceTestByTopicId: ${ res.testChoice  }")
             }
         } catch (e: Exception) {
-            Log.i("TAG", "findChoiceTestByTopicId: ${e.message}")
+            Log.i("TAG", "ERROr: ${e.message}")
             res.data = e.message.toString()
             res.status = false
         }
