@@ -24,11 +24,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
-class FragmentAddTopic_CreateFolder(private val getBackAdapterFromViewPager: GetBackAdapterFromViewPager) : Fragment() {
+class FragmentAddTopic_CreateFolder(private val getBackAdapterFromViewPager: GetBackAdapterFromViewPager?) : Fragment() {
+    constructor(): this(null)
     // Service
     private val authService: AuthService = AuthService()
     private val topicService: TopicService = TopicService()
-    private val topicMapper: TopicMapper = TopicMapper()
 
     // Adapter
     private var items: MutableList<LibraryTopicAdapterItem> = mutableListOf()
@@ -60,10 +60,11 @@ class FragmentAddTopic_CreateFolder(private val getBackAdapterFromViewPager: Get
                 val fetchTopics = topicService.TopicForUserLogged()
                     .getTopicsByQuerys(mutableListOf())
                 if (fetchTopics.status) {
-                    Log.i("TAG", "onCreateView: ${fetchTopics.topics}")
                     if(fetchTopics.topics!!.isNotEmpty()){
                         val positionStart: Int = items.size
-                        fetchTopics.topics!!.forEachIndexed { index, topic -> if(folder.topics.contains(topic.uid)) itemsChosen.add(items.size + index) }
+                        fetchTopics.topics!!.forEachIndexed { index, topic ->
+                            if(folder.topics.contains(topic.uid)) itemsChosen.add(items.size + index)
+                        }
                         items.addAll(fetchTopics.topics!!.map { LibraryTopicAdapterItem(it, user) })
 
                         activity.runOnUiThread {
@@ -77,7 +78,7 @@ class FragmentAddTopic_CreateFolder(private val getBackAdapterFromViewPager: Get
                 }
             }
         }
-        getBackAdapterFromViewPager.onResult(view, items, itemsChosen, adapter)
+        getBackAdapterFromViewPager?.onResult(view, items, itemsChosen, adapter)
         return view
     }
 }

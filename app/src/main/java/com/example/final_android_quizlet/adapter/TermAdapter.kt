@@ -1,22 +1,16 @@
 package com.example.final_android_quizlet.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.Filter
-import android.widget.Filterable
 import android.widget.PopupMenu
-import android.widget.TextView
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.RecyclerView
 import com.example.final_android_quizlet.R
 import com.example.final_android_quizlet.activity.CreateTermActivity
 import com.example.final_android_quizlet.models.Term
-import kotlin.math.log
 
 class TermAdapter(private val terms: ArrayList<Term>) : RecyclerView.Adapter<TermAdapter.ViewHolder>() {
 
@@ -53,7 +47,7 @@ class TermAdapter(private val terms: ArrayList<Term>) : RecyclerView.Adapter<Ter
 
         private fun showPopupMenu(view: View?) {
             val popupMenu = PopupMenu(view?.context, view)
-            popupMenu.inflate(R.menu.menu_delete)
+            popupMenu.inflate(R.menu.menu_right_click_item)
             popupMenu.setOnMenuItemClickListener(this)
             popupMenu.show()
         }

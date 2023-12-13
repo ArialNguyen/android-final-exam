@@ -1,5 +1,6 @@
 package com.example.final_android_quizlet.activity
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
@@ -8,6 +9,7 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
+import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.ImageView
@@ -15,14 +17,20 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.PopupMenu
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.final_android_quizlet.R
+import com.example.final_android_quizlet.adapter.AddToFolderAdapter
+import com.example.final_android_quizlet.adapter.LibraryFolderAdapter
 import com.example.final_android_quizlet.adapter.TopicAdapter
+import com.example.final_android_quizlet.adapter.data.LibraryFolderAdapterItem
 import com.example.final_android_quizlet.adapter.data.LibraryTopicAdapterItem
 import com.example.final_android_quizlet.auth.Login
 import com.example.final_android_quizlet.common.*
+import com.example.final_android_quizlet.fragments.dialog.DialogFolder
 import com.example.final_android_quizlet.models.Folder
 import com.example.final_android_quizlet.service.AuthService
 import com.example.final_android_quizlet.service.FolderService
@@ -32,17 +40,18 @@ import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.*
 
 
 class DetailFolderActivity : AppCompatActivity() {
 
-    private var imgMenuFolder: ImageView? = null
-    private var imgBack: ImageView? = null
+    private lateinit var imgMenuFolder: ImageView
+    private lateinit var imgBack: ImageView
 
-    private var tvFolderName: TextView? = null
-    private var tvTotalTerm: TextView? = null
-    private var tvUserName: TextView? = null
-    private var imgAvatar: CircleImageView? = null
+    private lateinit var tvFolderName: TextView
+    private lateinit var tvTotalTerm: TextView
+    private lateinit var tvUserName: TextView
+    private lateinit var imgAvatar: CircleImageView
 
     // Service
     private val folderService: FolderService = FolderService()
@@ -56,7 +65,7 @@ class DetailFolderActivity : AppCompatActivity() {
     private var items: MutableList<LibraryTopicAdapterItem> = mutableListOf()
 
     // Data for intent
-    private var folder: Folder? = null
+    private lateinit var folder: Folder
 
     private lateinit var adapter: TopicAdapter
 
@@ -64,7 +73,7 @@ class DetailFolderActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail_folder)
 
-        if(!authService.isLogin()){
+        if (!authService.isLogin()) {
             startActivity(Intent(this, Login::class.java))
         }
 
@@ -81,16 +90,16 @@ class DetailFolderActivity : AppCompatActivity() {
         imgBack = findViewById(R.id.imgBack_DetailFolderActivity)
 
         // Load draw data
-        tvFolderName!!.text = folder!!.name
-        tvTotalTerm!!.text = "${folder!!.topics.size} học phần"
+        tvFolderName.text = folder.name
+        tvTotalTerm.text = "${folder.topics.size} học phần"
 //        tvUserName!!.text = getSharedPreferences()
 
         // Handle Event Listener
-        imgMenuFolder!!.setOnClickListener {
+        imgMenuFolder.setOnClickListener {
             showMenuDetailFolder()
         }
 
-        imgBack!!.setOnClickListener {
+        imgBack.setOnClickListener {
             onBackPressed()
         }
         // Adapter
@@ -105,23 +114,40 @@ class DetailFolderActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        adapter.setOnItemLongClickListener { item, position ->
+            lifecycleScope.launch {
+                withContext(Dispatchers.IO){
+                    val deleteTopicInFolder = folderService.FolderForUserLogged().removeTopicFromFolder(folder.uid, item.topic.uid)
+                    runOnUiThread {
+                        if(deleteTopicInFolder.status){
+                            tvTotalTerm.text = "${items.size} học phần"
+                            Toast.makeText(this@DetailFolderActivity, "Deleted", Toast.LENGTH_LONG).show()
+                        }else{
+                            Toast.makeText(this@DetailFolderActivity, deleteTopicInFolder.data.toString(), Toast.LENGTH_LONG).show()
+                        }
+                    }
+                }
+            }
+        }
+
         // Handle CallBack
         lifecycleScope.launch {
-            withContext(Dispatchers.IO){
+            withContext(Dispatchers.IO) {
                 val user = authService.getUserLogin().user!!
                 runOnUiThread {
-                    tvUserName!!.text = user.name
+                    tvUserName.text = user.name
                     Picasso.get().load(user.avatar).into(imgAvatar)
                 }
-                val folderFetch = folderService.FolderForUserLogged().getFolderById(folder!!.uid)
-                if(folderFetch.status){
-                    if(folderFetch.folder!!.topics.isNotEmpty()){
+                val folderFetch = folderService.FolderForUserLogged().getFolderById(folder.uid)
+                if (folderFetch.status) {
+                    if (folderFetch.folder!!.topics.isNotEmpty()) {
                         val topicsId = folderFetch.folder!!.topics
-                        val fetchTopics = topicService.TopicForUserLogged().getTopicsByQuerys(mutableListOf(MyFBQuery("uid", topicsId, MyFBQueryMethod.IN)))
+                        val fetchTopics = topicService.TopicForUserLogged()
+                            .getTopicsByQuerys(mutableListOf(MyFBQuery("uid", topicsId, MyFBQueryMethod.IN)))
                         items.addAll(fetchTopics.topics!!.map { LibraryTopicAdapterItem(it, user) })
                         runOnUiThread { adapter.notifyDataSetChanged() }
                     }
-                }else{
+                } else {
                     runOnUiThread {
                         Toast.makeText(this@DetailFolderActivity, folderFetch.data.toString(), Toast.LENGTH_LONG).show()
                     }
@@ -129,6 +155,7 @@ class DetailFolderActivity : AppCompatActivity() {
             }
         }
     }
+
 
     private fun showMenuDetailFolder() {
         val dialog = Dialog(this)
@@ -141,14 +168,29 @@ class DetailFolderActivity : AppCompatActivity() {
         val cancelDetailFolder: ImageView = dialog.findViewById(R.id.imgCancel_DetailFolderActivity)
 
         editDetailFolder.setOnClickListener {
-            actionDialog.openCreateFolderDialog(null)
-            dialog.dismiss()
+            val folder = DialogFolder(this, object : DialogClickedEvent {
+                override fun setSuccessButton(folderName: String, des: String) {
+                    lifecycleScope.launch {
+                        withContext(Dispatchers.IO) {
+                            val update = folderService.FolderForUserLogged().updateBaseInfo(folder.uid, folderName, des)
+                            runOnUiThread {
+                                if(update.status){
+                                    tvFolderName.text = folderName
+                                    Toast.makeText(this@DetailFolderActivity, "Updated", Toast.LENGTH_LONG).show()
+                                }else{
+                                    Toast.makeText(this@DetailFolderActivity, update.data.toString(), Toast.LENGTH_LONG).show()
+                                }
+                            }
+                        }
+                    }
+                }
+            }, this.folder.name, this.folder.description)
+            folder.show(supportFragmentManager, "Folder Dialog")
         }
 
         addTopicDetailFolder.setOnClickListener {
             val intent = Intent(this, AddTopicFolderActivity::class.java)
-            Log.i("TAG", "INTENT: $folder")
-            intent.putExtra("folder", folder!!)
+            intent.putExtra("folder", folder)
             startActivity(intent)
             dialog.dismiss()
         }
@@ -180,10 +222,12 @@ class DetailFolderActivity : AppCompatActivity() {
                     val deleteFolderResult = folderService.deleteFolder(folder!!.uid)
                     runOnUiThread {
                         if (deleteFolderResult.status) {
-                            Toast.makeText(this@DetailFolderActivity, "Folder deleted successfully", Toast.LENGTH_LONG).show()
+                            Toast.makeText(this@DetailFolderActivity, "Folder deleted successfully", Toast.LENGTH_LONG)
+                                .show()
                             finish()
                         } else {
-                            Toast.makeText(this@DetailFolderActivity, "Failed to delete folder", Toast.LENGTH_LONG).show()
+                            Toast.makeText(this@DetailFolderActivity, "Failed to delete folder", Toast.LENGTH_LONG)
+                                .show()
                         }
                     }
                 }

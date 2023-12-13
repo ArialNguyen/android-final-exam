@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import com.example.final_android_quizlet.R
 import com.example.final_android_quizlet.common.GetBackAdapterFromViewPager
 
-class FragmentAddTopic_LearnFolder(private val getBackAdapterFromViewPager: GetBackAdapterFromViewPager): Fragment() {
-
+class FragmentAddTopic_LearnFolder(private val getBackAdapterFromViewPager: GetBackAdapterFromViewPager?): Fragment() {
+    constructor(): this(null)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

@@ -80,7 +80,7 @@ class ActionDialog(private val ctx: Context, private val lifecycleScope: Lifecyc
                     }
                 }
             }
-        })
+        }, "", "")
         folder.show((ctx as FragmentActivity?)!!.supportFragmentManager, "Folder Dialog")
     }
 }

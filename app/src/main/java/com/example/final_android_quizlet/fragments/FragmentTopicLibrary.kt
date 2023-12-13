@@ -3,7 +3,6 @@ package com.example.final_android_quizlet.fragments
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,7 +29,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class FragmentTopicLibrary(private val getBackAdapterFromViewPager: GetBackAdapterFromViewPager) : Fragment() {
+class FragmentTopicLibrary(private val getBackAdapterFromViewPager: GetBackAdapterFromViewPager?) : Fragment() {
+    constructor(): this(null)
     // Service
     private val userService: UserService = UserService()
     private var items: MutableList<LibraryTopicAdapterItem> = mutableListOf()
@@ -126,7 +126,7 @@ class FragmentTopicLibrary(private val getBackAdapterFromViewPager: GetBackAdapt
             itemsSaved.addAll(itemsSavedTemp.filter { it.topic.title.contains(text!!, ignoreCase = true) }.toMutableList())
             topicSavedAdapter.notifyDataSetChanged()
         }
-        getBackAdapterFromViewPager.onResult(view, items, adapter)
+        getBackAdapterFromViewPager?.onResult(view, items, adapter)
         return view
     }
 }

@@ -167,15 +167,54 @@ class FolderService {
                 val documentId = getDocumentIdByFields(
                     query
                 )
-                Log.i("TAG", "documentId: $documentId")
                 val topicIds = topics.map { it.uid }
-                Log.i("TAG", "topicIds: $topicIds")
 
                 db.collection("folders").document(documentId)
                     .update("topics", FieldValue.arrayUnion(*topicIds.toTypedArray())).await()
                 res.status = true
             } catch (e: Exception) {
                 Log.i("TAG", "ERROR: ${e.message}")
+                res.data = e.message.toString()
+                res.status = false
+            }
+            return res
+        }
+
+        suspend fun removeTopicFromFolder(folderId: String, topicId: String): ResponseObject {
+            val res: ResponseObject = ResponseObject()
+            try {
+                val query = mutableListOf<MyFBQuery>()
+                query.add(MyFBQuery("userId", firebaseAuth.currentUser!!.uid, MyFBQueryMethod.EQUAL))
+                query.add(MyFBQuery("uid", folderId, MyFBQueryMethod.EQUAL))
+                val documentId = getDocumentIdByFields(
+                    query
+                )
+
+                db.collection("folders").document(documentId)
+                    .update("topics", FieldValue.arrayRemove(topicId)).await()
+                res.status = true
+            } catch (e: Exception) {
+                res.data = e.message.toString()
+                res.status = false
+            }
+            return res
+        }
+
+        suspend fun updateBaseInfo(folderId: String, folderName: String, des: String): ResponseObject {
+            val res: ResponseObject = ResponseObject()
+            try {
+                val query = mutableListOf<MyFBQuery>()
+                query.add(MyFBQuery("userId", firebaseAuth.currentUser!!.uid, MyFBQueryMethod.EQUAL))
+                query.add(MyFBQuery("uid", folderId, MyFBQueryMethod.EQUAL))
+                val documentId = getDocumentIdByFields(
+                    query
+                )
+
+                db.collection("folders").document(documentId)
+                    .update("name", folderName, "description", des)
+                    .await()
+                res.status = true
+            } catch (e: Exception) {
                 res.data = e.message.toString()
                 res.status = false
             }

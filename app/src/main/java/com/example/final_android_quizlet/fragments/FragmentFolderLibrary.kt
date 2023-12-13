@@ -1,7 +1,6 @@
 package com.example.final_android_quizlet.fragments
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -24,9 +23,9 @@ import com.example.final_android_quizlet.service.FolderService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.math.log
 
-class FragmentFolderLibrary(private val getBackAdapterFromViewPager: GetBackAdapterFromViewPager) : Fragment() {
+class FragmentFolderLibrary(private val getBackAdapterFromViewPager: GetBackAdapterFromViewPager?) : Fragment() {
+    constructor(): this(null)
     private var items: MutableList<LibraryFolderAdapterItem> = mutableListOf()
     private val authService: AuthService = AuthService()
     private val folderService: FolderService = FolderService()
@@ -74,7 +73,7 @@ class FragmentFolderLibrary(private val getBackAdapterFromViewPager: GetBackAdap
             Log.i("TAG", "SEND INTENT: ${item.folder}")
             startActivity(intent)
         }
-        getBackAdapterFromViewPager.onResult(view, items, adapter)
+        getBackAdapterFromViewPager?.onResult(view, items, adapter)
         return view
     }
 }
