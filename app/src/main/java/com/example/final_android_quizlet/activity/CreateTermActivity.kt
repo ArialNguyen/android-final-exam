@@ -158,7 +158,6 @@ class CreateTermActivity : AppCompatActivity() {
             val newItem = Term(UUID.randomUUID().toString(), "", "")
             termList.add(newItem)
             adapter.notifyItemInserted(termList.size - 1)
-            updateTopicWithTerms()
         }
 
 
@@ -184,54 +183,58 @@ class CreateTermActivity : AppCompatActivity() {
         layoutDescription.setOnClickListener {
             etDescription.visibility = if (etDescription.isGone) View.VISIBLE else View.GONE
         }
-
-        imgFinish.setOnClickListener {
-            val title = etTitle.text.toString()
-            val description = etDescription.text.toString()
-            loaderFull.visibility = View.VISIBLE
-            if(title.isEmpty()){
-                Toast.makeText(this@CreateTermActivity, "Title must be required", Toast.LENGTH_LONG).show()
-            }else if (getUsefulTerm().size < 2){
-                Toast.makeText(this@CreateTermActivity, "Must provide at least 2 Term", Toast.LENGTH_LONG).show()
-            }else if (termLang == null || definitionLang == null){
-                Toast.makeText(this@CreateTermActivity, "Must provide Language For Term", Toast.LENGTH_LONG).show()
-            }else{
-                lifecycleScope.launch {
-                    withContext(Dispatchers.IO){
-                        val res = topicService.createTopic(
-                            Topic(
-                                UUID.randomUUID().toString(),
-                                title, description, getUsefulTerm(),
-                                mutableListOf(), currentUser.uid,
-                                accessMode, ELearnTopicStatus.NOT_LEARN,
-                                termLang!!.toLanguageTag(), definitionLang!!.toLanguageTag()
+        if (intent.getBooleanExtra("isEditAction", false)){
+            updateTopicWithTerms()
+        }else{
+            imgFinish.setOnClickListener {
+                val title = etTitle.text.toString()
+                val description = etDescription.text.toString()
+                loaderFull.visibility = View.VISIBLE
+                if(title.isEmpty()){
+                    Toast.makeText(this@CreateTermActivity, "Title must be required", Toast.LENGTH_LONG).show()
+                }else if (getUsefulTerm().size < 2){
+                    Toast.makeText(this@CreateTermActivity, "Must provide at least 2 Term", Toast.LENGTH_LONG).show()
+                }else if (termLang == null || definitionLang == null){
+                    Toast.makeText(this@CreateTermActivity, "Must provide Language For Term", Toast.LENGTH_LONG).show()
+                }else{
+                    lifecycleScope.launch {
+                        withContext(Dispatchers.IO){
+                            val res = topicService.createTopic(
+                                Topic(
+                                    UUID.randomUUID().toString(),
+                                    title, description, getUsefulTerm(),
+                                    mutableListOf(), currentUser.uid,
+                                    accessMode, ELearnTopicStatus.NOT_LEARN,
+                                    termLang!!.toLanguageTag(), definitionLang!!.toLanguageTag()
+                                )
                             )
-                        )
-                        if(res.status){
-                            if(intent.getStringExtra("className") != null && intent.getStringExtra("className")!!.isNotEmpty()){
-                                Log.i("TAG", "COME TO create Term check intent")
-                                val resIntent = Intent()
-                                resIntent.putExtra("extra_topic", res.topic!!)
-                                setResult(Activity.RESULT_OK, resIntent)
-                            }
-                            runOnUiThread {
-                                Toast.makeText(this@CreateTermActivity, "Success!!", Toast.LENGTH_LONG).show()
-                            }
-                            finish()
-                            actionTransition.rollBackTransition()
-                        }else{
-                            runOnUiThread {
-                                Toast.makeText(this@CreateTermActivity, res.data.toString(), Toast.LENGTH_LONG).show()
+                            if(res.status){
+                                if(intent.getStringExtra("className") != null && intent.getStringExtra("className")!!.isNotEmpty()){
+                                    Log.i("TAG", "COME TO create Term check intent")
+                                    val resIntent = Intent()
+                                    resIntent.putExtra("extra_topic", res.topic!!)
+                                    setResult(Activity.RESULT_OK, resIntent)
+                                }
+                                runOnUiThread {
+                                    Toast.makeText(this@CreateTermActivity, "Success!!", Toast.LENGTH_LONG).show()
+                                }
+                                finish()
+                                actionTransition.rollBackTransition()
+                            }else{
+                                runOnUiThread {
+                                    Toast.makeText(this@CreateTermActivity, res.data.toString(), Toast.LENGTH_LONG).show()
+                                }
                             }
                         }
                     }
                 }
+                loaderFull.visibility = View.GONE
             }
-            loaderFull.visibility = View.GONE
         }
+
     }
 
-    fun updateTopicWithTerms() {
+    private fun updateTopicWithTerms() {
         imgFinish.setOnClickListener {
             val title = etTitle.text.toString()
             val description = etDescription.text.toString()

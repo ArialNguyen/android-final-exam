@@ -152,7 +152,9 @@ class DetailFolderActivity : AppCompatActivity() {
 //                }
                 val topicsId = folder.topics
                 val topics = session.topicsOfUser!!.filter { topicsId.contains(it.uid) }.toMutableList()
-                topics.addAll(session.topicsOfUserSaved!!.filter { topicsId.contains(it.uid) })
+                if(session.topicsOfUserSaved != null){
+                    topics.addAll(session.topicsOfUserSaved!!.filter { topicsId.contains(it.uid) })
+                }
                 items.addAll(topics.map { LibraryTopicAdapterItem(it, user) })
                 runOnUiThread { adapter.notifyDataSetChanged() }
             }

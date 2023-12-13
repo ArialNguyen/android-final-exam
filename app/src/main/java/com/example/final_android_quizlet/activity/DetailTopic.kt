@@ -18,7 +18,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
 import androidx.core.view.marginBottom
-import androidx.core.view.setMargins
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
@@ -158,7 +157,7 @@ class DetailTopic : AppCompatActivity() {
             val intent = Intent(this, OptionExam::class.java)
             intent.putExtra("topic", currentTopic)
             intent.putExtra("exam", FlashcardActivity::class.simpleName)
-            intent.putExtra("typeTerm", if (currentTab == 0)  ETermList.NORMAL_TERMS else ETermList.STAR_TERMS)
+            intent.putExtra("typeTerm", if (currentTab == 0) ETermList.NORMAL_TERMS else ETermList.STAR_TERMS)
             intent.putExtra("changeLayout", true)
             startActivity(intent)
             actionTransition.moveNextTransition()
@@ -170,7 +169,7 @@ class DetailTopic : AppCompatActivity() {
             currentTopic.starList.addAll(termsStarItem.map { it.term })
             intent.putExtra("topic", currentTopic)
             intent.putExtra("exam", ChoiceTest::class.simpleName)
-            intent.putExtra("typeTerm", if (currentTab == 0)  ETermList.NORMAL_TERMS else ETermList.STAR_TERMS)
+            intent.putExtra("typeTerm", if (currentTab == 0) ETermList.NORMAL_TERMS else ETermList.STAR_TERMS)
             startActivity(intent)
             actionTransition.moveNextTransition()
         }
@@ -181,7 +180,7 @@ class DetailTopic : AppCompatActivity() {
             currentTopic.starList.addAll(termsStarItem.map { it.term })
             intent.putExtra("topic", currentTopic)
             intent.putExtra("exam", WriteQuizActivity::class.simpleName)
-            intent.putExtra("typeTerm", if (currentTab == 0)  ETermList.NORMAL_TERMS else ETermList.STAR_TERMS)
+            intent.putExtra("typeTerm", if (currentTab == 0) ETermList.NORMAL_TERMS else ETermList.STAR_TERMS)
             startActivity(intent)
             actionTransition.moveNextTransition()
         }
@@ -234,18 +233,18 @@ class DetailTopic : AppCompatActivity() {
             }
         }.attach() // Connect viewPager and Tab
 
-        termAdapterAll.setOnItemStarClickListener { it , position ->
+        termAdapterAll.setOnItemStarClickListener { it, position ->
             Log.i("TAG", "Handle click: $it")
             lifecycleScope.launch {
-                withContext(Dispatchers.IO){
-                    if(it.selected){
+                withContext(Dispatchers.IO) {
+                    if (it.selected) {
                         termsStarItem.add(it)
                         runOnUiThread {
                             tabDetailTopic.getTabAt(1)!!.text = "Học ${termsStarItem.size}"
                             termAdapterStar.notifyItemInserted(termsStarItem.size)
                         }
                         topicService.addTermToStarTopic(currentTopic.uid, it.term)
-                    }else{
+                    } else {
                         // Remove
                         val idxStar = termsStarItem.indexOfFirst { it1 -> it.term.uid == it1.term.uid }
                         termsStarItem.removeAt(idxStar)
@@ -263,7 +262,7 @@ class DetailTopic : AppCompatActivity() {
         }
         termAdapterStar.setOnItemStarClickListener { it, i ->
             lifecycleScope.launch {
-                withContext(Dispatchers.IO){
+                withContext(Dispatchers.IO) {
                     termsStarItem.removeAt(i)
                     val idxOfTermAll = termsItem.indexOfFirst { it1 -> it1.term.uid == it.term.uid }
                     termsItem[idxOfTermAll].selected = false
@@ -282,25 +281,26 @@ class DetailTopic : AppCompatActivity() {
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
                 val fetchTopic = topicService.getTopicById(topicIdIntent)
-                if(fetchTopic.status){
+                if (fetchTopic.status) {
                     currentTopic = fetchTopic.topic!!
                     termsItem.addAll(currentTopic.terms.map {
                         TermStarAdapterItem(it, currentTopic.starList.firstOrNull { it2 -> it2.uid == it.uid } != null)
                     })
                     termsStarItem.addAll(currentTopic.starList.map { TermStarAdapterItem(it, true) })
                     runOnUiThread {
-                        if(::termAdapterAll.isInitialized){
+                        if (::termAdapterAll.isInitialized) {
                             termAdapterAll.notifyDataSetChanged()
                         }
-                        if(::termAdapterStar.isInitialized){
+                        if (::termAdapterStar.isInitialized) {
                             tabDetailTopic.getTabAt(1)!!.text = "Học ${termsStarItem.size}"
                             termAdapterStar.notifyDataSetChanged()
                         }
                     }
                     val fetchUser = userService.getUserByField("uid", currentTopic.userId)
-                    if(fetchUser.status){
-                        items.addAll(currentTopic.terms)
-                        runOnUiThread {
+                    runOnUiThread {
+                        if (fetchUser.status) {
+                            items.addAll(currentTopic.terms)
+
                             if (session.user!!.avatar.isNotEmpty()) {
                                 Picasso.get().load(session.user!!.avatar).into(avatarUser)
                             }
@@ -309,24 +309,29 @@ class DetailTopic : AppCompatActivity() {
                             tvDecription!!.text = currentTopic.description
                             tvTotalTerm!!.text = "${currentTopic.terms.size} thuật ngữ"
                             tvUserName!!.text = session.user!!.name
-                            tvMode.text = currentTopic.mode.name[0].toString() + currentTopic.mode.name.substring(1).lowercase()
+                            tvMode.text =
+                                currentTopic.mode.name[0].toString() + currentTopic.mode.name.substring(1).lowercase()
                             adapter.notifyDataSetChanged()
+
+                        } else {
+                            Toast.makeText(this@DetailTopic, fetchUser.data.toString(), Toast.LENGTH_LONG).show()
                         }
-                    }else{
-                        Toast.makeText(this@DetailTopic, fetchUser.data.toString(), Toast.LENGTH_LONG).show()
                     }
-                }else{
-                    Toast.makeText(this@DetailTopic, fetchTopic.data.toString(), Toast.LENGTH_LONG).show()
+                } else {
+                    runOnUiThread {
+                        Toast.makeText(this@DetailTopic, fetchTopic.data.toString(), Toast.LENGTH_LONG).show()
+                    }
                 }
             }
         }
 
     }
-    private fun actionOnTermAll(view: View){
+
+    private fun actionOnTermAll(view: View) {
         recyclerViewLeft = view.findViewById(R.id.recyclerViewUser_defaultFG)
         recyclerViewLeft.adapter = termAdapterAll
         recyclerViewLeft.layoutManager = LinearLayoutManager(this)
-        if(termsItem.isNotEmpty()){
+        if (termsItem.isNotEmpty()) {
             recyclerViewLeft.setItemViewCacheSize(termsItem.size)
             termAdapterAll.notifyDataSetChanged()
         }
@@ -346,7 +351,10 @@ class DetailTopic : AppCompatActivity() {
                 val itemCount = adapter.itemCount
                 if (itemCount > 0) {
                     val child = adapter.createViewHolder(recyclerViewLeft, adapter.getItemViewType(0)).itemView
-                    child.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
+                    child.measure(
+                        View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                        View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+                    )
                     val itemHeight = child.measuredHeight
                     recyclerViewLeft.layoutParams.height = itemHeight * itemCount
                     recyclerViewLeft.requestLayout()
@@ -354,11 +362,12 @@ class DetailTopic : AppCompatActivity() {
             }
         })
     }
-    private fun actionOnTermStar(view: View){
+
+    private fun actionOnTermStar(view: View) {
         recyclerViewRight = view.findViewById(R.id.recyclerViewUser_defaultFG)
         recyclerViewRight.adapter = termAdapterStar
         recyclerViewRight.layoutManager = LinearLayoutManager(this)
-        if(termsStarItem.isNotEmpty()){
+        if (termsStarItem.isNotEmpty()) {
             termAdapterStar.notifyDataSetChanged()
         }
         termAdapterStar.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
@@ -377,7 +386,10 @@ class DetailTopic : AppCompatActivity() {
                 val itemCount = adapter.itemCount
                 if (itemCount > 0) {
                     val child = adapter.createViewHolder(recyclerViewRight, adapter.getItemViewType(0)).itemView
-                    child.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
+                    child.measure(
+                        View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                        View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+                    )
                     val itemHeight = child.measuredHeight
                     recyclerViewRight.layoutParams.height = itemHeight * itemCount * child.marginBottom
                     recyclerViewRight.requestLayout()
@@ -392,28 +404,30 @@ class DetailTopic : AppCompatActivity() {
         dialog.setContentView(R.layout.dialog_menu_topic)
         val cancelDetailTopic: ImageView = dialog.findViewById(R.id.imgCancel_DetailTopic)
         val liExportToCsv: LinearLayout = dialog.findViewById(R.id.liExportToCsv_DetailTopic)
-        if(currentTopic.userId != currentUserId){
+        if (currentTopic.userId != currentUserId) {
             dialog.findViewById<LinearLayout>(R.id.llForOwner_menuTopic).visibility = View.GONE
             dialog.findViewById<LinearLayout>(R.id.llForGuest_menuTopic).visibility = View.VISIBLE
             val saveTopic: LinearLayout = dialog.findViewById(R.id.llSaveForGuest_DetailTopic)
 
             saveTopic.setOnClickListener {
                 lifecycleScope.launch {
-                    withContext(Dispatchers.IO){
-                        val saveTopic = userService.updateProfile(currentUserId, hashMapOf(
-                           "topicSaved" to FieldValue.arrayUnion(currentTopic.uid)
-                        ))
+                    withContext(Dispatchers.IO) {
+                        val saveTopic = userService.updateProfile(
+                            currentUserId, hashMapOf(
+                                "topicSaved" to FieldValue.arrayUnion(currentTopic.uid)
+                            )
+                        )
                         runOnUiThread {
-                            if(saveTopic.status){
+                            if (saveTopic.status) {
                                 Toast.makeText(this@DetailTopic, "Save Topic Successfully!!", Toast.LENGTH_LONG).show()
-                            }else{
+                            } else {
                                 Toast.makeText(this@DetailTopic, saveTopic.data.toString(), Toast.LENGTH_LONG).show()
                             }
                         }
                     }
                 }
             }
-        }else{
+        } else {
             val addInFolder: LinearLayout = dialog.findViewById(R.id.liAddInFolder_DetailTopic)
             val editDetailTopic: LinearLayout = dialog.findViewById(R.id.liEdit_DetailTopic)
             val statusDetailTopic: LinearLayout = dialog.findViewById(R.id.liEditStatus_DetailTopic)
@@ -459,7 +473,7 @@ class DetailTopic : AppCompatActivity() {
         dialog.window?.setGravity(Gravity.BOTTOM)
     }
 
-    private fun openDialogAskFileName(){
+    private fun openDialogAskFileName() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.dialog_export_csv)
 
@@ -519,7 +533,9 @@ class DetailTopic : AppCompatActivity() {
                     runOnUiThread {
                         if (deleteTopicResult.status) {
                             Toast.makeText(this@DetailTopic, "Topic deleted successfully", Toast.LENGTH_LONG).show()
+                            setResult(2, Intent().putExtra("topicId", topicIdIntent))
                             finish()
+                            actionTransition.rollBackTransition()
                         } else {
                             Toast.makeText(this@DetailTopic, "Failed to delete topic", Toast.LENGTH_LONG).show()
                         }
@@ -562,10 +578,10 @@ class DetailTopic : AppCompatActivity() {
                     val updateMode =
                         topicService.TopicForUserLogged().updateInfo(currentTopic.uid, hashMapOf("mode" to mode))
                     runOnUiThread {
-                        if(updateMode.status){
+                        if (updateMode.status) {
                             tvMode.text = mode[0] + mode.substring(1).lowercase()
                             Toast.makeText(this@DetailTopic, "Update Successfully", Toast.LENGTH_LONG).show()
-                        }else{
+                        } else {
                             Toast.makeText(this@DetailTopic, updateMode.data.toString(), Toast.LENGTH_LONG).show()
                         }
                     }

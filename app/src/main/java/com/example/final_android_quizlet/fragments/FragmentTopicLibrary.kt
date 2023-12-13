@@ -3,10 +3,12 @@ package com.example.final_android_quizlet.fragments
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -40,9 +42,27 @@ class FragmentTopicLibrary(private val getBackAdapterFromViewPager: GetBackAdapt
 
     private val authService: AuthService = AuthService()
     private val topicService: TopicService = TopicService()
-    private val topicMapper: TopicMapper = TopicMapper()
+    private lateinit var adapter: TopicAdapter
+    private lateinit var session: Session
 
     private var etSearchTopic: EditText? = null
+
+    var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == 2) {
+            val topicId = result.data!!.getStringExtra("topicId")
+            val idx = items.indexOfFirst { it.topic.uid == topicId }
+
+            items.removeAt(idx)
+            adapter.notifyItemRemoved(idx)
+            // Handle Session
+            val listTmp =  session.topicsOfUser!!
+            val idx2 = listTmp.indexOfFirst { it.uid == topicId }
+
+            listTmp.removeAt(idx2)
+            session.topicsOfUser = listTmp
+            Log.i("TAG", "session: ${session.topicsOfUser!!.size}")
+        }
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -56,14 +76,14 @@ class FragmentTopicLibrary(private val getBackAdapterFromViewPager: GetBackAdapt
         }else{
             etSearchTopic = view.findViewById(R.id.etFilterTopic_library)
             // Topic Owner
-            val adapter = TopicAdapter(EOrientationRecyclerView.VERTICAL, items)
+            adapter = TopicAdapter(EOrientationRecyclerView.VERTICAL, items)
             val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView_library)
             recyclerView.layoutManager = LinearLayoutManager(context)
             recyclerView.adapter = adapter
             adapter.setOnItemClickListener { item ->
                 val intent = Intent(context, DetailTopic::class.java)
                 intent.putExtra("topicId", item.topic.uid)
-                startActivity(intent)
+                resultLauncher.launch(intent)
             }
 
             // Saved Topic
@@ -76,7 +96,7 @@ class FragmentTopicLibrary(private val getBackAdapterFromViewPager: GetBackAdapt
                 intent.putExtra("topicId", item.topic.uid)
                 startActivity(intent)
             }
-            val session = Session.getInstance(requireContext())
+            session = Session.getInstance(requireContext())
             lifecycleScope.launch {
                 withContext(Dispatchers.IO){
                     // Fetch topic owner

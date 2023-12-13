@@ -26,7 +26,18 @@ class Session(private val context: Context) {
             val user = sharedPreferences.getString("user", null)
             return gson.fromJson(user, User::class.java)
         }
-
+    var users: MutableList<User>?
+        set(userP){
+            with(sharedPreferences.edit()) {
+                putString("users", gson.toJson(userP))
+                apply()
+            }
+        }
+        get() {
+            val users = sharedPreferences.getString("users", null)
+            val type = object : TypeToken<List<User>>() {}.type
+            return gson.fromJson(users, type)
+        }
     var topicsOfUser: MutableList<Topic>?
         set(topics){
             with(sharedPreferences.edit()) {

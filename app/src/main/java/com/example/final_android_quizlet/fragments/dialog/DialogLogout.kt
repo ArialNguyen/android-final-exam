@@ -17,6 +17,7 @@ import com.example.final_android_quizlet.R
 import com.example.final_android_quizlet.auth.Login
 import com.example.final_android_quizlet.common.ActionTransition
 import com.example.final_android_quizlet.common.DialogClickedEvent
+import com.example.final_android_quizlet.common.Session
 import com.example.final_android_quizlet.service.AuthService
 import com.google.android.material.button.MaterialButton
 
@@ -29,6 +30,7 @@ class DialogLogout(private val activity: Activity, private val ctx: Context, pri
 
         rootView.findViewById<MaterialButton>(R.id.btnDialogLogout).setOnClickListener {
             authService.logout()
+            Session.getInstance(ctx).clearData()
             startActivity(Intent(ctx, MainActivity::class.java))
             actionTransition.moveNextTransition()
         }
