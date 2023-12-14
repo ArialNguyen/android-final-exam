@@ -55,6 +55,7 @@ class MainActivity : AppCompatActivity() {
     private val topicsItem: MutableList<LibraryTopicAdapterItem> = mutableListOf()
     private lateinit var topicAdapter: TopicAdapter
 
+    private lateinit var session: Session
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -112,7 +113,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             // Load data
-            val session = Session.getInstance(this@MainActivity)
+            session = Session.getInstance(this@MainActivity)
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
                     if(session.user == null){
@@ -184,8 +185,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        Log.i("TAG", "onResume: ${Session.getInstance(this).topicsOfUserSaved}")
-        Log.i("TAG", "onResume: ${Session.getInstance(this).foldersOfUser}")
-
+        if(session.topicsOfUser != null){
+            if(session.topicsOfUser!!.size != topicsItem.size){
+                topicsItem.clear()
+                topicsItem.addAll(session.topicsOfUser!!.map { LibraryTopicAdapterItem(it, session.user) })
+                topicAdapter.notifyDataSetChanged()
+            }
+        }
+        tvName.text = session.user!!.name
     }
 }

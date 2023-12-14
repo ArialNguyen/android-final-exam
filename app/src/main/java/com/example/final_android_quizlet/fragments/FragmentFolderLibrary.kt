@@ -41,6 +41,8 @@ class FragmentFolderLibrary(private val getBackAdapterFromViewPager: GetBackAdap
     private val DETAIL_FOLDER_DELETE = 2
     private val DETAIL_FOLDER_ADD_TOPIC = 1
 
+    private lateinit var session: Session
+
     private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == DETAIL_FOLDER_ADD_TOPIC) {
             // Handle add topic
@@ -63,7 +65,7 @@ class FragmentFolderLibrary(private val getBackAdapterFromViewPager: GetBackAdap
         if (!authService.isLogin()) {
             startActivity(Intent(requireContext(), Login::class.java))
         } else {
-            val session = Session.getInstance(requireContext())
+            session = Session.getInstance(requireContext())
             adapter = LibraryFolderAdapter(items)
             val recyclerView = view.findViewById<RecyclerView>(R.id.folderRecyclerView)
             recyclerView.layoutManager = LinearLayoutManager(context)
@@ -104,5 +106,14 @@ class FragmentFolderLibrary(private val getBackAdapterFromViewPager: GetBackAdap
         }
 
         return view
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if(session.foldersOfUser != null){
+            items.clear()
+            items.addAll(session.foldersOfUser!!.map { LibraryFolderAdapterItem(it, it.topics.size, session.user!!) })
+            adapter.notifyDataSetChanged()
+        }
     }
 }

@@ -28,17 +28,15 @@ class TermAdapter(private val terms: ArrayList<Term>) : RecyclerView.Adapter<Ter
             val position = adapterPosition
             etTerm.addTextChangedListener {
                 terms[position].term = etTerm.text.toString()
-                updateTopicWithTerms()
             }
             etDefinition.addTextChangedListener {
                 terms[position].definition = etDefinition.text.toString()
-                updateTopicWithTerms()
             }
         }
-        private fun updateTopicWithTerms() {
-            val activity = itemView.context as CreateTermActivity
-            activity.updateTopicWithTerms()
-        }
+//        private fun updateTopicWithTerms() {
+//            val activity = itemView.context as CreateTermActivity
+//            activity.updateTopicWithTerms()
+//        }
 
         override fun onLongClick(v: View?): Boolean {
             showPopupMenu(v)
@@ -59,7 +57,6 @@ class TermAdapter(private val terms: ArrayList<Term>) : RecyclerView.Adapter<Ter
                     if (position != RecyclerView.NO_POSITION) {
                         terms.removeAt(position)
                         notifyItemRemoved(position)
-                        updateTopicWithTerms()
                     }
                     true
                 }

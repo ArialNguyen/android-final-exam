@@ -16,9 +16,11 @@ import com.example.final_android_quizlet.adapter.UserAdapter
 import com.example.final_android_quizlet.adapter.VPCommunityAdapter
 import com.example.final_android_quizlet.adapter.data.LibraryTopicAdapterItem
 import com.example.final_android_quizlet.adapter.data.UserItem
+import com.example.final_android_quizlet.auth.Login
 import com.example.final_android_quizlet.common.ActionTransition
 import com.example.final_android_quizlet.common.EOrientationRecyclerView
 import com.example.final_android_quizlet.common.GetBackAdapterFromViewPager
+import com.example.final_android_quizlet.common.Session
 import com.example.final_android_quizlet.fragments.DefaultFragmentRv
 import com.example.final_android_quizlet.models.Topic
 import com.example.final_android_quizlet.models.User
@@ -58,16 +60,23 @@ class SearchCommunity : AppCompatActivity() {
     private val allUser: MutableList<User> = mutableListOf()
     private lateinit var keywordIntent: String
     private lateinit var userIdAuth: String
+
+    // Session
+    private lateinit var session: Session
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search_community)
 
+        if(!authService.isLogin()){
+            startActivity(Intent(this, Login::class.java))
+        }
         // Hand postData
         if (intent.getStringExtra("keyword") == null) {
             Toast.makeText(this, "Oops something wrong, try again!!!", Toast.LENGTH_LONG).show()
             finish()
             actionTransition.rollBackTransition()
         }
+        session = Session.getInstance(this)
         keywordIntent = intent.getStringExtra("keyword").toString()
         userIdAuth = authService.getCurrentUser().uid
         // get View
@@ -96,7 +105,8 @@ class SearchCommunity : AppCompatActivity() {
         }
         topicAdapter.setOnItemClickListener {
             val intent = Intent(this, DetailTopic::class.java)
-            intent.putExtra("topicId", it.topic.uid)
+            intent.putExtra("topic", it.topic)
+            intent.putExtra("ownUser", false)
             startActivity(intent)
             actionTransition.moveNextTransition()
         }
@@ -176,11 +186,16 @@ class SearchCommunity : AppCompatActivity() {
             withContext(Dispatchers.IO) {
                 val fetchTopics = topicService.getPublicTopic()
                 if (allUser.isEmpty()) {
-                    allUser.addAll(userService.getUsers().users!!.filter {
-                        it.uid != userIdAuth
-                    })
+                    val fetchUsers = userService.getUsers()
+                    if (fetchUsers.status){
+                        allUser.addAll(fetchUsers.users!!.filter {
+                            it.uid != userIdAuth
+                        })
+                        session.users = fetchUsers.users!!.toMutableList()
+                    }
                 }
                 if (fetchTopics.status) {
+                    session.topicsPublic = fetchTopics.topics!!.toMutableList()
                     allPublicTopic.addAll(fetchTopics.topics!!.filter {
                         it.userId != userIdAuth
                     })
@@ -205,9 +220,13 @@ class SearchCommunity : AppCompatActivity() {
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
                 if (allUser.isEmpty()) {
-                    allUser.addAll(userService.getUsers().users!!.filter {
-                        it.uid != userIdAuth
-                    })
+                    val fetchUsers = userService.getUsers()
+                    if (fetchUsers.status){
+                        allUser.addAll(fetchUsers.users!!.filter {
+                            it.uid != userIdAuth
+                        })
+                        session.users = fetchUsers.users!!.toMutableList()
+                    }
                 }
                 userItems.clear()
                 userItems.addAll(allUser.map { user -> UserItem(

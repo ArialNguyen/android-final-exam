@@ -22,6 +22,7 @@ import com.example.final_android_quizlet.adapter.data.LibraryFolderAdapterItem
 import com.example.final_android_quizlet.adapter.data.LibraryTopicAdapterItem
 import com.example.final_android_quizlet.auth.Login
 import com.example.final_android_quizlet.common.ActionDialog
+import com.example.final_android_quizlet.common.ActionTransition
 import com.example.final_android_quizlet.common.GetBackAdapterFromViewPager
 import com.example.final_android_quizlet.common.Session
 import com.example.final_android_quizlet.fragments.FragmentFolderLibrary
@@ -35,9 +36,10 @@ import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.launch
 
 
-class LibraryActivity() : AppCompatActivity() {
+class LibraryActivity : AppCompatActivity() {
     private val authService: AuthService = AuthService()
     private val actionDialog: ActionDialog = ActionDialog(this, lifecycleScope)
+    private val actionTransition: ActionTransition = ActionTransition(this)
 
 
     private lateinit var tabLibrary: TabLayout
@@ -45,6 +47,25 @@ class LibraryActivity() : AppCompatActivity() {
     private var optionsAddInMenu: Number = 0
 
     private lateinit var libraryAdapter: LibraryAdapter
+    private lateinit var session: Session
+
+    private val INTENT_ADD_TOPIC = 1
+    private val INTENT_REMOVE_TOPIC = 2
+
+
+
+    var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == INTENT_ADD_TOPIC) {
+            val topic = result.data!!.getSerializableExtra("extra_topic") as Topic
+            Log.i("TAG", "BACk: $topic")
+            (libraryAdapter.getAdapter(0).items as MutableList<LibraryTopicAdapterItem>)
+                .add(LibraryTopicAdapterItem(topic, session.user))
+            (libraryAdapter.getAdapter(0).adapter as TopicAdapter).notifyDataSetChanged()
+            val listTmp =  session.topicsOfUser!!
+            listTmp.add(topic)
+            session.topicsOfUser = listTmp
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_library)
@@ -52,13 +73,13 @@ class LibraryActivity() : AppCompatActivity() {
             startActivity(Intent(this, Login::class.java))
         }
 
+        session = Session.getInstance(this)
+        Log.i("TAG", "session: ${session.topicsOfUser!!.size}")
+
         tabLibrary = findViewById(R.id.tabLibrary)
         viewPager = findViewById(R.id.viewPager_library)
         val toolbar = findViewById<Toolbar>(R.id.toolbar_library)
         setSupportActionBar(toolbar)
-
-
-//        tabLibrary.setupWithViewPager(viewPager)
 
         libraryAdapter = LibraryAdapter(this)
         libraryAdapter.addFragment(FragmentTopicLibrary( object : GetBackAdapterFromViewPager{
@@ -77,12 +98,11 @@ class LibraryActivity() : AppCompatActivity() {
         }), "Thư Mục")
         viewPager.adapter = libraryAdapter
 
-        TabLayoutMediator(tabLibrary, viewPager){tab, position ->
+        TabLayoutMediator(tabLibrary, viewPager){ tab, position ->
             tab.text = libraryAdapter.getTabTitle(position)
             tab.view.setOnClickListener {
                 optionsAddInMenu = position
             }
-
         }.attach() // Connect viewPager and Tab
     }
 
@@ -108,15 +128,14 @@ class LibraryActivity() : AppCompatActivity() {
         }
     }
 
-    var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        lifecycleScope.launch {
-            if (result.resultCode == Activity.RESULT_OK) {
-                val topic = result.data!!.getSerializableExtra("extra_topic") as Topic
-                Log.i("TAG", "Received TOPIC: $topic")
-                (libraryAdapter.getAdapter(0).items as MutableList<LibraryTopicAdapterItem>)
-                    .add(LibraryTopicAdapterItem(topic, authService.getUserLogin().user!!))
-                (libraryAdapter.getAdapter(0).adapter as TopicAdapter).notifyDataSetChanged()
-            }
-        }
+    override fun onBackPressed() {
+        finish()
+        actionTransition.rollBackTransition()
     }
+
+    override fun onResume() {
+        super.onResume()
+
+    }
+
 }

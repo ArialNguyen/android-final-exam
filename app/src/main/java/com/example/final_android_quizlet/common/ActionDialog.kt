@@ -25,6 +25,7 @@ class ActionDialog(private val ctx: Context, private val lifecycleScope: Lifecyc
     private val authService: AuthService = AuthService()
 
     public fun openCreateFolderDialog(adapterAndItems: AdapterAndItems?) {
+        val session = Session.getInstance(ctx)
         Log.i("TAG", "openCreateFolderDialog: ")
         val folder = DialogFolder(ctx, object : DialogClickedEvent {
             override fun setSuccessButton(folderName: String, des: String) {
@@ -35,7 +36,7 @@ class ActionDialog(private val ctx: Context, private val lifecycleScope: Lifecyc
                                 UUID.randomUUID().toString(),
                                 folderName,
                                 des,
-                                listOf(),
+                                mutableListOf(),
                                 authService.getCurrentUser().uid
                             )
                         )
@@ -50,6 +51,9 @@ class ActionDialog(private val ctx: Context, private val lifecycleScope: Lifecyc
                                         val adapter = adapterAndItems.adapter as LibraryFolderAdapter
                                         val items = adapterAndItems.items as MutableList<LibraryFolderAdapterItem>
                                         val position: Int = items.size
+                                        val foldersSession = session.foldersOfUser
+                                        foldersSession!!.add(fetch1.folder!!)
+                                        session.foldersOfUser = foldersSession
                                         items.add(
                                             LibraryFolderAdapterItem(
                                                 fetch1.folder!!, fetch1.folder!!.topics.size,

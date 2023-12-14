@@ -16,6 +16,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.FragmentActivity
@@ -32,6 +33,7 @@ import com.example.final_android_quizlet.auth.Login
 import com.example.final_android_quizlet.common.*
 import com.example.final_android_quizlet.fragments.dialog.DialogFolder
 import com.example.final_android_quizlet.models.Folder
+import com.example.final_android_quizlet.models.Topic
 import com.example.final_android_quizlet.service.AuthService
 import com.example.final_android_quizlet.service.FolderService
 import com.example.final_android_quizlet.service.TopicService
@@ -55,11 +57,8 @@ class DetailFolderActivity : AppCompatActivity() {
 
     // Service
     private val folderService: FolderService = FolderService()
-    private val topicService: TopicService = TopicService()
-    private val manageScopeApi: ManageScopeApi = ManageScopeApi()
     private val actionTransition: ActionTransition = ActionTransition(this)
     private val authService: AuthService = AuthService()
-    private val actionDialog: ActionDialog = ActionDialog(this, lifecycleScope)
 
     // Adapter
     private var items: MutableList<LibraryTopicAdapterItem> = mutableListOf()
@@ -69,6 +68,20 @@ class DetailFolderActivity : AppCompatActivity() {
 
     private lateinit var adapter: TopicAdapter
 
+    private lateinit var session: Session
+
+    private val DETAIL_FOLDER_ADD_TOPIC = 1
+
+    private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == DETAIL_FOLDER_ADD_TOPIC) {
+            // Handle add topic
+            val topics = result.data!!.getSerializableExtra("topics") as MutableList<Topic>
+            tvTotalTerm.text = "${folder.topics.size + topics.size} học phần"
+            val positionStart = items.size
+            items.addAll(topics.map { LibraryTopicAdapterItem(it, session.user) })
+            adapter.notifyItemRangeInserted(positionStart, items.size)
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail_folder)
@@ -78,7 +91,7 @@ class DetailFolderActivity : AppCompatActivity() {
 
         // Get intent
         folder = intent.getSerializableExtra("folder") as Folder
-
+        session = Session.getInstance(this)
         tvFolderName = findViewById(R.id.tvFolderName)
         tvTotalTerm = findViewById(R.id.tvTotalTerm)
         tvUserName = findViewById(R.id.tvUserName)
@@ -101,14 +114,14 @@ class DetailFolderActivity : AppCompatActivity() {
             onBackPressed()
         }
         // Adapter
-        val adapter = TopicAdapter(EOrientationRecyclerView.VERTICAL, items)
+        adapter = TopicAdapter(EOrientationRecyclerView.VERTICAL, items)
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView_DetailFolder)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
 
         adapter.setOnItemClickListener { item ->
             val intent = Intent(this, DetailTopic::class.java)
-            intent.putExtra("topicId", item.topic.uid) // should be move to topic
+            intent.putExtra("topic", item.topic) // should be move to topic
             startActivity(intent)
         }
 
@@ -118,6 +131,11 @@ class DetailFolderActivity : AppCompatActivity() {
                     val deleteTopicInFolder = folderService.FolderForUserLogged().removeTopicFromFolder(folder.uid, item.topic.uid)
                     runOnUiThread {
                         if(deleteTopicInFolder.status){
+                            val foldersSession = session.foldersOfUser!!
+                            val folder = foldersSession.first { it.uid == folder.uid }
+                            folder.topics.removeAt(folder.topics.indexOfFirst { it == item.topic.uid })
+                            session.foldersOfUser = foldersSession
+
                             tvTotalTerm.text = "${items.size} học phần"
                             Toast.makeText(this@DetailFolderActivity, "Deleted", Toast.LENGTH_LONG).show()
                         }else{
@@ -138,7 +156,7 @@ class DetailFolderActivity : AppCompatActivity() {
                         Picasso.get().load(it.avatar).into(imgAvatar)
                     }
                 }
-//                val folderFetch = folderService.FolderForUserLogged().getFolderById(folder.uid)
+                val folderFetch = folderService.FolderForUserLogged().getFolderById(folder.uid)
 //                if (folderFetch.status) {
 //                    if (folderFetch.folder!!.topics.isNotEmpty()) {
 //                        val topicsId = folderFetch.folder!!.topics
@@ -152,9 +170,11 @@ class DetailFolderActivity : AppCompatActivity() {
 //                        Toast.makeText(this@DetailFolderActivity, folderFetch.data.toString(), Toast.LENGTH_LONG).show()
 //                    }
 //                }
-                val topicsId = folder.topics
+                val topicsId = folderFetch.folder!!.topics
                 val topics = session.topicsOfUser!!.filter { topicsId.contains(it.uid) }.toMutableList()
-                topics.addAll(session.topicsOfUserSaved!!.filter { topicsId.contains(it.uid) })
+                if(session.topicsOfUserSaved != null){
+                    topics.addAll(session.topicsOfUserSaved!!.filter { topicsId.contains(it.uid) })
+                }
                 items.addAll(topics.map { LibraryTopicAdapterItem(it, user) })
                 runOnUiThread { adapter.notifyDataSetChanged() }
             }
@@ -196,7 +216,7 @@ class DetailFolderActivity : AppCompatActivity() {
         addTopicDetailFolder.setOnClickListener {
             val intent = Intent(this, AddTopicFolderActivity::class.java)
             intent.putExtra("folder", folder)
-            startActivity(intent)
+            resultLauncher.launch(intent)
             dialog.dismiss()
         }
 
@@ -227,6 +247,10 @@ class DetailFolderActivity : AppCompatActivity() {
                     val deleteFolderResult = folderService.deleteFolder(folder.uid)
                     runOnUiThread {
                         if (deleteFolderResult.status) {
+                            val foldersSession = session.foldersOfUser!!
+                            foldersSession.removeAt(foldersSession.indexOfFirst { it.uid == folder.uid })
+                            session.foldersOfUser = foldersSession
+
                             val intentBack = Intent()
                             Toast.makeText(this@DetailFolderActivity, "Folder deleted successfully", Toast.LENGTH_LONG)
                                 .show()

@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.final_android_quizlet.R
 import com.example.final_android_quizlet.adapter.data.LibraryTopicAdapterItem
 import com.example.final_android_quizlet.common.EOrientationRecyclerView
+import com.example.final_android_quizlet.common.Session
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 
@@ -18,7 +19,6 @@ class TopicAdapter(private val flow: EOrientationRecyclerView, private val items
     RecyclerView.Adapter<TopicAdapter.ViewHolder>() {
     private var itemClickListener: ((LibraryTopicAdapterItem) -> Unit)? = null
     private var itemLongClickListener: ((LibraryTopicAdapterItem, Int) -> Unit)? = null
-
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnLongClickListener, PopupMenu.OnMenuItemClickListener {
         val tvTopicTitle: TextView = if (flow.name == EOrientationRecyclerView.VERTICAL.name) itemView.findViewById(R.id.tvTitleName_library) else itemView.findViewById(R.id.tvTitleName_itemTopicHorizon)

@@ -17,6 +17,7 @@ import com.example.final_android_quizlet.auth.Login
 import com.example.final_android_quizlet.common.ActionDialog
 import com.example.final_android_quizlet.common.ActionTransition
 import com.example.final_android_quizlet.common.GetBackAdapterFromViewPager
+import com.example.final_android_quizlet.common.Session
 import com.example.final_android_quizlet.fragments.FragmentAddTopic_CreateFolder
 import com.example.final_android_quizlet.fragments.FragmentAddTopic_LearnFolder
 import com.example.final_android_quizlet.models.Folder
@@ -27,6 +28,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.Serializable
 
 class AddTopicFolderActivity : AppCompatActivity() {
     // Service
@@ -45,7 +47,8 @@ class AddTopicFolderActivity : AppCompatActivity() {
     private lateinit var addTopicToFolderAdapter: AddTopicToFolderAdapter
 
     // data receive from intent
-    public var folder: Folder? = null
+    public lateinit var folder: Folder
+    private lateinit var session: Session
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +57,7 @@ class AddTopicFolderActivity : AppCompatActivity() {
         if (!authService.isLogin()) {
             startActivity(Intent(this, Login::class.java))
         }
+        session = Session.getInstance(this)
         if (intent.getSerializableExtra("folder") == null) {
             Toast.makeText(this, "Something wrong, please try again!!!", Toast.LENGTH_LONG).show()
             finish()
@@ -89,7 +93,7 @@ class AddTopicFolderActivity : AppCompatActivity() {
                             items.filterIndexed { index, libraryTopicAdapterItem -> itemsChosen.contains(index) }
                                 .map { it.topic }
                         val addTopics = folderService.FolderForUserLogged()
-                            .addTopicsToFolder(folder!!.uid, chosenItems.toMutableList())
+                            .addTopicsToFolder(folder.uid, chosenItems.toMutableList())
                         if (addTopics.status) {
                             runOnUiThread {
                                 Toast.makeText(
@@ -98,6 +102,13 @@ class AddTopicFolderActivity : AppCompatActivity() {
                                     Toast.LENGTH_LONG
                                 ).show()
                             }
+                            val newTopics = chosenItems.filter { !folder.topics.contains(it.uid) }
+                            // Update Session
+                            val foldersSession = session.foldersOfUser!!
+                            foldersSession[foldersSession.indexOfFirst { it.uid == folder.uid }].topics.addAll(newTopics.map { it.uid })
+                            session.foldersOfUser = foldersSession
+
+                            setResult(1, Intent().putExtra("topics", newTopics as Serializable))
                             finish()
                             actionTransition.rollBackTransition()
                         } else {

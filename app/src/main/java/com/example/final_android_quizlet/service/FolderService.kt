@@ -18,7 +18,6 @@ import kotlinx.coroutines.tasks.await
 class FolderService {
     private val db = Firebase.firestore
     private val folderMapper: FolderMapper = FolderMapper()
-    private val topicService: TopicService = TopicService()
 
     suspend fun createFolder(folder: Folder): ResponseObject {
         val res: ResponseObject = ResponseObject()
@@ -213,6 +212,26 @@ class FolderService {
                 db.collection("folders").document(documentId)
                     .update("name", folderName, "description", des)
                     .await()
+                res.status = true
+            } catch (e: Exception) {
+                res.data = e.message.toString()
+                res.status = false
+            }
+            return res
+        }
+
+        suspend fun removeTopic(topicId: String): ResponseObject {
+            val res: ResponseObject = ResponseObject()
+            try {
+                val documentIds = db.collection("folders")
+                    .whereArrayContains("topics", topicId)
+                    .get().await()
+
+
+                val batch = db.batch()
+                documentIds.forEach {
+                    batch.update(it.reference, "topics", FieldValue.arrayRemove(topicId))
+                }
                 res.status = true
             } catch (e: Exception) {
                 res.data = e.message.toString()

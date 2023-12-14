@@ -3,10 +3,12 @@ package com.example.final_android_quizlet.fragments
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -40,9 +42,28 @@ class FragmentTopicLibrary(private val getBackAdapterFromViewPager: GetBackAdapt
 
     private val authService: AuthService = AuthService()
     private val topicService: TopicService = TopicService()
-    private val topicMapper: TopicMapper = TopicMapper()
+    private lateinit var adapter: TopicAdapter
+    private lateinit var topicSavedAdapter: TopicAdapter
+    private lateinit var session: Session
 
     private var etSearchTopic: EditText? = null
+
+    var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == 2) {
+            val topicId = result.data!!.getStringExtra("topicId")
+            val idx = items.indexOfFirst { it.topic.uid == topicId }
+
+            items.removeAt(idx)
+            adapter.notifyItemRemoved(idx)
+            // Handle Session
+//            val listTmp =  session.topicsOfUser!!
+//            val idx2 = listTmp.indexOfFirst { it.uid == topicId }
+//
+//            listTmp.removeAt(idx2)
+//            session.topicsOfUser = listTmp
+            Log.i("TAG", "session: ${session.topicsOfUser!!.size}")
+        }
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -56,31 +77,32 @@ class FragmentTopicLibrary(private val getBackAdapterFromViewPager: GetBackAdapt
         }else{
             etSearchTopic = view.findViewById(R.id.etFilterTopic_library)
             // Topic Owner
-            val adapter = TopicAdapter(EOrientationRecyclerView.VERTICAL, items)
+            adapter = TopicAdapter(EOrientationRecyclerView.VERTICAL, items)
             val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView_library)
             recyclerView.layoutManager = LinearLayoutManager(context)
             recyclerView.adapter = adapter
             adapter.setOnItemClickListener { item ->
                 val intent = Intent(context, DetailTopic::class.java)
-                intent.putExtra("topicId", item.topic.uid)
-                startActivity(intent)
+                intent.putExtra("topic", item.topic)
+                resultLauncher.launch(intent)
             }
 
             // Saved Topic
-            val topicSavedAdapter = TopicAdapter(EOrientationRecyclerView.VERTICAL, itemsSaved)
+            topicSavedAdapter = TopicAdapter(EOrientationRecyclerView.VERTICAL, itemsSaved)
             val recyclerViewSaved = view.findViewById<RecyclerView>(R.id.recyclerViewSaved_library)
             recyclerView.layoutManager = LinearLayoutManager(context)
             recyclerViewSaved.adapter = topicSavedAdapter
             topicSavedAdapter.setOnItemClickListener { item ->
                 val intent = Intent(context, DetailTopic::class.java)
-                intent.putExtra("topicId", item.topic.uid)
+                intent.putExtra("topic", item.topic)
+                intent.putExtra("ownUser", false)
                 startActivity(intent)
             }
-            val session = Session.getInstance(requireContext())
+            session = Session.getInstance(requireContext())
             lifecycleScope.launch {
                 withContext(Dispatchers.IO){
                     // Fetch topic owner
-                    val user = session.user
+                    val user = session.user!!
                     val topics = session.topicsOfUser
                     if(topics!!.isNotEmpty()){
                         val list =  topics.map {
@@ -93,19 +115,21 @@ class FragmentTopicLibrary(private val getBackAdapterFromViewPager: GetBackAdapt
                         }
                     }
                     // Fetch Topic Saved
-                    if(user!!.topicSaved.isNotEmpty()){
+                    if(user.topicSaved.isNotEmpty()){
+                        Log.i("TAG", "user.topicSaved: ${user.topicSaved}")
                         dialogLoading.showDialog("Loading...")
-                        if (session.topicsOfUserSaved == null){
-                            val topicsSaved = topicService.getTopicsByQuerys(mutableListOf(
-                                MyFBQuery("uid", user.topicSaved, MyFBQueryMethod.IN)
-                            ))
-                            session.topicsOfUserSaved = topicsSaved.topics!!.toMutableList()
-                        }
+                        val topicsSaved = topicService.getTopicsByQuerys(mutableListOf(
+                            MyFBQuery("uid", user.topicSaved, MyFBQueryMethod.IN)
+                        ))
+                        session.topicsOfUserSaved = topicsSaved.topics!!.toMutableList()
+
                         val fetchUserInTopic = userService.getUsersInListUserId(session.topicsOfUserSaved!!.map { it.userId }.distinct())
                         if(fetchUserInTopic.status){
                             val list =  session.topicsOfUserSaved!!.map {
                                 LibraryTopicAdapterItem(it, fetchUserInTopic.users!!.first { us -> us.uid == it.userId })
                             }.toMutableList()
+                            itemsSaved.clear()
+                            itemsSavedTemp.clear()
                             itemsSavedTemp.addAll(list)
                             itemsSaved.addAll(list)
                             (context as Activity).runOnUiThread {
@@ -133,4 +157,30 @@ class FragmentTopicLibrary(private val getBackAdapterFromViewPager: GetBackAdapt
         }
         return view
     }
+
+    override fun onResume() {
+        super.onResume()
+        if(session.topicsOfUserSaved != null){
+            if(session.topicsOfUserSaved!!.size != itemsSaved.size){
+                lifecycleScope.launch {
+                    withContext(Dispatchers.IO){
+                        val fetchUserInTopic = userService.getUsersInListUserId(session.topicsOfUserSaved!!.map { it.userId }.distinct())
+                        if(fetchUserInTopic.status){
+                            val list =  session.topicsOfUserSaved!!.map {
+                                LibraryTopicAdapterItem(it, fetchUserInTopic.users!!.first { us -> us.uid == it.userId })
+                            }.toMutableList()
+                            itemsSaved.clear()
+                            itemsSavedTemp.clear()
+                            itemsSavedTemp.addAll(list)
+                            itemsSaved.addAll(list)
+                            requireActivity().runOnUiThread {
+                                topicSavedAdapter.notifyDataSetChanged()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 }
