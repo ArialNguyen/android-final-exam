@@ -97,4 +97,23 @@ class FlashCardService {
         }
         return res
     }
+
+    suspend fun findFlashCardByUserId(userId: String): ResponseObject {
+        val res = ResponseObject()
+        try {
+            val data = db.collection("flashcard")
+                .whereEqualTo("userId", userId)
+                .get().await()
+            res.status = true
+            if (data.documents.size == 0) {
+                res.flashCard = null
+            } else {
+                res.flashCard = flashCardMapper.convertToFlashCard(data.documents[0].data!!)
+            }
+        } catch (e: Exception) {
+            res.data = e.message.toString()
+            res.status = false
+        }
+        return res
+    }
 }

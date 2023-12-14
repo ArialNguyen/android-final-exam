@@ -132,9 +132,11 @@ class DetailFolderActivity : AppCompatActivity() {
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
                 val user = session.user
-                runOnUiThread {
-                    tvUserName.text = user!!.name
-                    Picasso.get().load(user.avatar).into(imgAvatar)
+                user?.let {
+                    runOnUiThread {
+                        tvUserName.text = it.name
+                        Picasso.get().load(it.avatar).into(imgAvatar)
+                    }
                 }
 //                val folderFetch = folderService.FolderForUserLogged().getFolderById(folder.uid)
 //                if (folderFetch.status) {
