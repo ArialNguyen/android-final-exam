@@ -96,6 +96,8 @@ class Session(private val context: Context) {
     fun clearData(type: Type) {
         if (type == User::class.java) sharedPreferences.edit().remove("user").apply()
         else if (type == object : TypeToken<List<Topic>>() {}.type) sharedPreferences.edit().remove("topics").apply()
+        else if (type == object : TypeToken<List<Folder>>() {}.type) sharedPreferences.edit().remove("foldersOfUser").apply()
+
     }
 
 

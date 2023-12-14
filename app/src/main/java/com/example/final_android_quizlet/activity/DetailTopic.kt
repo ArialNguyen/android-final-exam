@@ -31,16 +31,20 @@ import com.example.final_android_quizlet.adapter.VPCommunityAdapter
 import com.example.final_android_quizlet.auth.Login
 import com.example.final_android_quizlet.common.*
 import com.example.final_android_quizlet.fragments.DefaultFragmentRv
+import com.example.final_android_quizlet.fragments.dialog.DialogLoading
 import com.example.final_android_quizlet.models.EModeTopic
 import com.example.final_android_quizlet.models.Enum.ETermList
+import com.example.final_android_quizlet.models.Folder
 import com.example.final_android_quizlet.models.Term
 import com.example.final_android_quizlet.models.Topic
 import com.example.final_android_quizlet.service.AuthService
+import com.example.final_android_quizlet.service.FolderService
 import com.example.final_android_quizlet.service.TopicService
 import com.example.final_android_quizlet.service.UserService
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.firestore.FieldValue
+import com.google.gson.reflect.TypeToken
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.Dispatchers
@@ -52,8 +56,10 @@ import me.relex.circleindicator.CircleIndicator2
 class DetailTopic : AppCompatActivity() {
     // Service
     private val topicService: TopicService = TopicService()
-    private val manageScopeApi: ManageScopeApi = ManageScopeApi()
+    private val folderService: FolderService = FolderService()
+
     private val actionTransition: ActionTransition = ActionTransition(this)
+    private val dialogLoading: DialogLoading = DialogLoading(this)
     private val authService: AuthService = AuthService()
     private val userService: UserService = UserService()
     private val fileAction: FileAction = FileAction(this)
@@ -88,12 +94,13 @@ class DetailTopic : AppCompatActivity() {
     private val items: MutableList<Term> = mutableListOf()
 
     // Intent
-    private lateinit var topicIdIntent: String
 
     // Info Current
+    private var ownUser: Boolean = true
     private lateinit var currentTopic: Topic
     private lateinit var currentUserId: String
     private var currentTab: Int = 0
+    private lateinit var session: Session
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -103,20 +110,24 @@ class DetailTopic : AppCompatActivity() {
             startActivity(Intent(this, Login::class.java))
             actionTransition.moveNextTransition()
         }
+        ownUser = intent.getBooleanExtra("ownUser", true)
+
 
         // Handle intent
         if (intent.getStringExtra("openExamChoice") != null) {
 
         }
 
-        if (intent.getStringExtra("topicId") == null || intent.getStringExtra("topicId")!!.isEmpty()) {
+        if (
+            intent.getSerializableExtra("topic") == null
+            ) {
             Toast.makeText(this, "Something error... Try again!", Toast.LENGTH_LONG).show()
             finish()
             actionTransition.rollBackTransition()
         }
         // Handle preData
-        val session = Session.getInstance(this)
-        topicIdIntent = intent.getStringExtra("topicId")!!
+        currentTopic = intent.getSerializableExtra("topic") as Topic
+        session = Session.getInstance(this)
         currentUserId = authService.getCurrentUser().uid
 
         toolbar = findViewById(R.id.toolbar_detail_hocphan)
@@ -140,7 +151,7 @@ class DetailTopic : AppCompatActivity() {
         val imgBack = findViewById<ImageView>(R.id.imgBack_DetailTopic)
 
         imgRanking.setOnClickListener {
-            startActivity(Intent(this, RankingActivity::class.java).putExtra("topicId", topicIdIntent))
+            startActivity(Intent(this, RankingActivity::class.java).putExtra("topicId", currentTopic.uid))
             actionTransition.moveNextTransition()
         }
 
@@ -184,7 +195,7 @@ class DetailTopic : AppCompatActivity() {
             startActivity(intent)
             actionTransition.moveNextTransition()
         }
-
+        session = Session.getInstance(this)
         // Recycler View
         val adapter = DetailTopicHoriAdapter(items)
         recyclerViewHorizontal = findViewById(R.id.recyclerView_DetailTopic)
@@ -234,7 +245,6 @@ class DetailTopic : AppCompatActivity() {
         }.attach() // Connect viewPager and Tab
 
         termAdapterAll.setOnItemStarClickListener { it, position ->
-            Log.i("TAG", "Handle click: $it")
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
                     if (it.selected) {
@@ -280,48 +290,69 @@ class DetailTopic : AppCompatActivity() {
         // Fetch data
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                val fetchTopic = topicService.getTopicById(topicIdIntent)
-                if (fetchTopic.status) {
-                    currentTopic = fetchTopic.topic!!
-                    termsItem.addAll(currentTopic.terms.map {
-                        TermStarAdapterItem(it, currentTopic.starList.firstOrNull { it2 -> it2.uid == it.uid } != null)
-                    })
-                    termsStarItem.addAll(currentTopic.starList.map { TermStarAdapterItem(it, true) })
-                    runOnUiThread {
-                        if (::termAdapterAll.isInitialized) {
-                            termAdapterAll.notifyDataSetChanged()
-                        }
-                        if (::termAdapterStar.isInitialized) {
-                            tabDetailTopic.getTabAt(1)!!.text = "Học ${termsStarItem.size}"
-                            termAdapterStar.notifyDataSetChanged()
-                        }
-                    }
-                    val fetchUser = userService.getUserByField("uid", currentTopic.userId)
-                    runOnUiThread {
-                        if (fetchUser.status) {
-                            items.addAll(currentTopic.terms)
-
-                            if (session.user!!.avatar.isNotEmpty()) {
-                                Picasso.get().load(session.user!!.avatar).into(avatarUser)
+                if (session.topicsOfUser != null) {
+                    val topicInSession = session.topicsOfUser!!.firstOrNull { it.uid == currentTopic.uid }
+                    if (topicInSession != null) {
+                        currentTopic = topicInSession
+                    } else {
+                        dialogLoading.showDialog("Loading...")
+                        val fetchTopic1 = topicService.getTopicById(currentTopic.uid)
+                        if (fetchTopic1.status) {
+                            currentTopic = fetchTopic1.topic!!
+                            if(session.topicsOfUserSaved != null){
+                                val isTopicSaved = session.topicsOfUserSaved!!.indexOfFirst { it.uid == currentTopic.uid }
+                                if(isTopicSaved != -1){
+                                    val topicsSavedSession = session.topicsOfUserSaved!!
+                                    Log.i("TAG", "topicsSavedSession: ${ topicsSavedSession[isTopicSaved]}")
+                                    topicsSavedSession[isTopicSaved] = currentTopic
+                                    Log.i("TAG", "topicsSavedSession: ${ topicsSavedSession[isTopicSaved]}")
+                                    session.topicsOfUserSaved = topicsSavedSession
+                                }
                             }
-                            Picasso.get().load(fetchUser.user!!.avatar).into(avatarUser)
-                            tvTopicName!!.text = currentTopic.title
-                            tvDecription!!.text = currentTopic.description
-                            tvTotalTerm!!.text = "${currentTopic.terms.size} thuật ngữ"
-                            tvUserName!!.text = session.user!!.name
-                            tvMode.text =
-                                currentTopic.mode.name[0].toString() + currentTopic.mode.name.substring(1).lowercase()
-                            adapter.notifyDataSetChanged()
-
                         } else {
-                            Toast.makeText(this@DetailTopic, fetchUser.data.toString(), Toast.LENGTH_LONG).show()
+                            runOnUiThread {
+                                Toast.makeText(this@DetailTopic, fetchTopic1.data.toString(), Toast.LENGTH_LONG).show()
+                            }
                         }
+                        dialogLoading.hideDialog()
                     }
-                } else {
-                    runOnUiThread {
-                        Toast.makeText(this@DetailTopic, fetchTopic.data.toString(), Toast.LENGTH_LONG).show()
+
+                }
+                termsItem.addAll(currentTopic.terms.map {
+                    TermStarAdapterItem(it, currentTopic.starList.firstOrNull { it2 -> it2.uid == it.uid } != null)
+                })
+                termsStarItem.addAll(currentTopic.starList.map { TermStarAdapterItem(it, true) })
+                runOnUiThread {
+                    if (::termAdapterAll.isInitialized) {
+                        termAdapterAll.notifyDataSetChanged()
+                    }
+                    if (::termAdapterStar.isInitialized) {
+                        tabDetailTopic.getTabAt(1)!!.text = "Học ${termsStarItem.size}"
+                        termAdapterStar.notifyDataSetChanged()
                     }
                 }
+                val fetchUser = userService.getUserByField("uid", currentTopic.userId)
+                runOnUiThread {
+                    if (fetchUser.status) {
+                        items.addAll(currentTopic.terms)
+
+                        if (session.user!!.avatar.isNotEmpty()) {
+                            Picasso.get().load(session.user!!.avatar).into(avatarUser)
+                        }
+                        Picasso.get().load(fetchUser.user!!.avatar).into(avatarUser)
+                        tvTopicName!!.text = currentTopic.title
+                        tvDecription!!.text = currentTopic.description
+                        tvTotalTerm!!.text = "${currentTopic.terms.size} thuật ngữ"
+                        tvUserName!!.text = session.user!!.name
+                        tvMode.text =
+                            currentTopic.mode.name[0].toString() + currentTopic.mode.name.substring(1).lowercase()
+                        adapter.notifyDataSetChanged()
+
+                    } else {
+                        Toast.makeText(this@DetailTopic, fetchUser.data.toString(), Toast.LENGTH_LONG).show()
+                    }
+                }
+
             }
         }
 
@@ -407,26 +438,76 @@ class DetailTopic : AppCompatActivity() {
         if (currentTopic.userId != currentUserId) {
             dialog.findViewById<LinearLayout>(R.id.llForOwner_menuTopic).visibility = View.GONE
             dialog.findViewById<LinearLayout>(R.id.llForGuest_menuTopic).visibility = View.VISIBLE
-            val saveTopic: LinearLayout = dialog.findViewById(R.id.llSaveForGuest_DetailTopic)
-
-            saveTopic.setOnClickListener {
-                lifecycleScope.launch {
-                    withContext(Dispatchers.IO) {
-                        val saveTopic = userService.updateProfile(
-                            currentUserId, hashMapOf(
-                                "topicSaved" to FieldValue.arrayUnion(currentTopic.uid)
+            val tvSaveOrUnSave = dialog.findViewById<TextView>(R.id.tvSaveOrUnSave_menu_topic)
+            val saveOrUnSave: LinearLayout = dialog.findViewById(R.id.llSaveForGuest_DetailTopic)
+            if(session.user!!.topicSaved.contains(currentTopic.uid)){
+                tvSaveOrUnSave.text = "Bỏ lưu"
+                saveOrUnSave.setOnClickListener {
+                    lifecycleScope.launch {
+                        withContext(Dispatchers.IO) {
+                            val user = session.user!!
+                            if(user.topicSaved.contains(currentTopic.uid)){
+                                user.topicSaved.remove(currentTopic.uid)
+                                session.user = user
+                            }
+                            val saveTopic = userService.updateProfile(
+                                currentUserId, hashMapOf(
+                                    "topicSaved" to FieldValue.arrayRemove(currentTopic.uid)
+                                )
                             )
-                        )
-                        runOnUiThread {
-                            if (saveTopic.status) {
-                                Toast.makeText(this@DetailTopic, "Save Topic Successfully!!", Toast.LENGTH_LONG).show()
-                            } else {
-                                Toast.makeText(this@DetailTopic, saveTopic.data.toString(), Toast.LENGTH_LONG).show()
+                            runOnUiThread {
+                                if (saveTopic.status) {
+                                    if(session.topicsOfUserSaved != null){
+                                        val topicsSavedSs = session.topicsOfUserSaved!!
+                                        val idx = topicsSavedSs.indexOfFirst { it.uid == currentTopic.uid }
+                                        if ( idx != -1)
+                                            topicsSavedSs.removeAt(idx)
+                                        session.topicsOfUserSaved = topicsSavedSs
+                                    }
+
+                                    Toast.makeText(this@DetailTopic, "UnSave Topic Successfully!!", Toast.LENGTH_LONG).show()
+                                } else {
+                                    Toast.makeText(this@DetailTopic, saveTopic.data.toString(), Toast.LENGTH_LONG).show()
+                                }
+                                dialog.dismiss()
+                            }
+                        }
+                    }
+                }
+            }else{
+                saveOrUnSave.setOnClickListener {
+                    lifecycleScope.launch {
+                        withContext(Dispatchers.IO) {
+                            val user = session.user!!
+                            if(!user.topicSaved.contains(currentTopic.uid)){
+                                user.topicSaved.add(currentTopic.uid)
+                                session.user = user
+                            }
+                            val saveTopic = userService.updateProfile(
+                                currentUserId, hashMapOf(
+                                    "topicSaved" to FieldValue.arrayUnion(currentTopic.uid)
+                                )
+                            )
+                            runOnUiThread {
+                                if (saveTopic.status) {
+                                    if(session.topicsOfUserSaved != null){
+                                        val topicsSavedSs = session.topicsOfUserSaved!!
+                                        if (topicsSavedSs.firstOrNull { it.uid == currentTopic.uid } == null)
+                                            topicsSavedSs.add(currentTopic)
+                                        session.topicsOfUserSaved = topicsSavedSs
+                                    }
+
+                                    Toast.makeText(this@DetailTopic, "Save Topic Successfully!!", Toast.LENGTH_LONG).show()
+                                } else {
+                                    Toast.makeText(this@DetailTopic, saveTopic.data.toString(), Toast.LENGTH_LONG).show()
+                                }
+                                dialog.dismiss()
                             }
                         }
                     }
                 }
             }
+
         } else {
             val addInFolder: LinearLayout = dialog.findViewById(R.id.liAddInFolder_DetailTopic)
             val editDetailTopic: LinearLayout = dialog.findViewById(R.id.liEdit_DetailTopic)
@@ -490,7 +571,7 @@ class DetailTopic : AppCompatActivity() {
                 progressDialog.show()
 
                 lifecycleScope.launch {
-                    val fetchTopic = topicService.getTopicById(topicIdIntent)
+                    val fetchTopic = topicService.getTopicById(currentTopic.uid)
                     if (fetchTopic.status) {
                         val res = fileAction.writeTopicToCsv(fileName, fetchTopic.topic!!)
                         runOnUiThread {
@@ -530,10 +611,17 @@ class DetailTopic : AppCompatActivity() {
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
                     val deleteTopicResult = topicService.deleteTopic(currentTopic.uid)
+                    session.clearData(object : TypeToken<List<Folder>>() {}.type)
+                    val tmpList = session.topicsOfUser!!
+                    val idx = tmpList.indexOfFirst { it.uid == currentTopic.uid }
+                    if (idx != -1) {
+                        tmpList.removeAt(idx)
+                    }
+                    session.topicsOfUser = tmpList
                     runOnUiThread {
                         if (deleteTopicResult.status) {
                             Toast.makeText(this@DetailTopic, "Topic deleted successfully", Toast.LENGTH_LONG).show()
-                            setResult(2, Intent().putExtra("topicId", topicIdIntent))
+                            setResult(2, Intent().putExtra("topicId", currentTopic.uid))
                             finish()
                             actionTransition.rollBackTransition()
                         } else {

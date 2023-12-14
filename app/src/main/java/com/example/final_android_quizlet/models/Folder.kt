@@ -6,11 +6,11 @@ class Folder(
     var uid: String,
     var name: String,
     var description: String,
-    var topics: List<String>,
+    var topics: MutableList<String>,
     var userId: String
 ) : Serializable{
     constructor() : this(
-        "", "", "", listOf(), ""
+        "", "", "", mutableListOf(), ""
     )
     constructor(folder: Folder) : this() {
         uid = folder.uid

@@ -22,6 +22,7 @@ import com.example.final_android_quizlet.adapter.data.LibraryFolderAdapterItem
 import com.example.final_android_quizlet.adapter.data.LibraryTopicAdapterItem
 import com.example.final_android_quizlet.auth.Login
 import com.example.final_android_quizlet.common.ActionDialog
+import com.example.final_android_quizlet.common.ActionTransition
 import com.example.final_android_quizlet.common.GetBackAdapterFromViewPager
 import com.example.final_android_quizlet.common.Session
 import com.example.final_android_quizlet.fragments.FragmentFolderLibrary
@@ -35,9 +36,10 @@ import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.launch
 
 
-class LibraryActivity() : AppCompatActivity() {
+class LibraryActivity : AppCompatActivity() {
     private val authService: AuthService = AuthService()
     private val actionDialog: ActionDialog = ActionDialog(this, lifecycleScope)
+    private val actionTransition: ActionTransition = ActionTransition(this)
 
 
     private lateinit var tabLibrary: TabLayout
@@ -55,6 +57,7 @@ class LibraryActivity() : AppCompatActivity() {
     var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == INTENT_ADD_TOPIC) {
             val topic = result.data!!.getSerializableExtra("extra_topic") as Topic
+            Log.i("TAG", "BACk: $topic")
             (libraryAdapter.getAdapter(0).items as MutableList<LibraryTopicAdapterItem>)
                 .add(LibraryTopicAdapterItem(topic, session.user))
             (libraryAdapter.getAdapter(0).adapter as TopicAdapter).notifyDataSetChanged()
@@ -95,12 +98,11 @@ class LibraryActivity() : AppCompatActivity() {
         }), "Thư Mục")
         viewPager.adapter = libraryAdapter
 
-        TabLayoutMediator(tabLibrary, viewPager){tab, position ->
+        TabLayoutMediator(tabLibrary, viewPager){ tab, position ->
             tab.text = libraryAdapter.getTabTitle(position)
             tab.view.setOnClickListener {
                 optionsAddInMenu = position
             }
-
         }.attach() // Connect viewPager and Tab
     }
 
@@ -126,5 +128,14 @@ class LibraryActivity() : AppCompatActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        finish()
+        actionTransition.rollBackTransition()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+    }
 
 }

@@ -105,7 +105,8 @@ class SearchCommunity : AppCompatActivity() {
         }
         topicAdapter.setOnItemClickListener {
             val intent = Intent(this, DetailTopic::class.java)
-            intent.putExtra("topicId", it.topic.uid)
+            intent.putExtra("topic", it.topic)
+            intent.putExtra("ownUser", false)
             startActivity(intent)
             actionTransition.moveNextTransition()
         }

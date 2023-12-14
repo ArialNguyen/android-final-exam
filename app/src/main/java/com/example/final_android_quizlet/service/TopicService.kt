@@ -1,5 +1,6 @@
 package com.example.final_android_quizlet.service
 
+import android.icu.text.CaseMap.Fold
 import android.util.Log
 import com.example.final_android_quizlet.common.MyFBQuery
 import com.example.final_android_quizlet.common.MyFBQueryMethod
@@ -21,6 +22,7 @@ import kotlin.reflect.full.memberProperties
 class TopicService {
     private val db = Firebase.firestore
     private val topicMapper: TopicMapper = TopicMapper()
+    private val folderService: FolderService = FolderService()
     inline fun <reified T : Any> T.asMap() : MutableMap<String, Any?> {
         val props = T::class.memberProperties.associateBy { it.name }
         return props.keys.associateWith { props[it]?.get(this) } as MutableMap<String, Any?>
@@ -90,7 +92,6 @@ class TopicService {
 
     suspend fun getTopicById(id: String): ResponseObject {
         val res: ResponseObject = ResponseObject()
-        Log.i("id", id)
         try {
             val data = db.collection("topics")
                 .whereEqualTo("uid", id)
@@ -114,8 +115,11 @@ class TopicService {
         try {
             val documentId = getDocumentIdByField("uid", topicId)
             db.collection("topics").document(documentId).delete().await()
+            val removeInFolder = folderService.FolderForUserLogged().removeTopic(topicId)
+
             res.status = true
         } catch (e: Exception) {
+            Log.i("TAG", "deleteTopic: ${e.message}")
             res.data = e.message.toString()
             res.status = false
         }

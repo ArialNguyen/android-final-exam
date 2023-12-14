@@ -213,7 +213,7 @@ class CreateTermActivity : AppCompatActivity() {
                                     Log.i("TAG", "COME TO create Term check intent")
                                     val resIntent = Intent()
                                     resIntent.putExtra("extra_topic", res.topic!!)
-                                    setResult(Activity.RESULT_OK, resIntent)
+                                    setResult(1, resIntent)
                                 }
                                 runOnUiThread {
                                     Toast.makeText(this@CreateTermActivity, "Success!!", Toast.LENGTH_LONG).show()
