@@ -1,5 +1,6 @@
 package com.example.final_android_quizlet.activity
 
+import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -22,6 +23,7 @@ import com.example.final_android_quizlet.common.EOrientationRecyclerView
 import com.example.final_android_quizlet.common.GetBackAdapterFromViewPager
 import com.example.final_android_quizlet.common.Session
 import com.example.final_android_quizlet.fragments.DefaultFragmentRv
+import com.example.final_android_quizlet.fragments.dialog.DialogLoading
 import com.example.final_android_quizlet.models.Topic
 import com.example.final_android_quizlet.models.User
 import com.example.final_android_quizlet.service.AuthService
@@ -39,6 +41,7 @@ class SearchCommunity : AppCompatActivity() {
     private val topicService: TopicService = TopicService()
     private val actionTransition: ActionTransition = ActionTransition(this)
     private val authService: AuthService = AuthService()
+    private val dialogLoading: DialogLoading = DialogLoading(this)
 
     // View
     private lateinit var searchView: SearchView
@@ -85,7 +88,7 @@ class SearchCommunity : AppCompatActivity() {
         viewPager = findViewById(R.id.viewPager_community)
 
         // LoadView
-        searchView.clearFocus()
+        searchView.setQuery(keywordIntent, false)
         // TabLayout
         val tab1 = tabLayout.newTab()
         tab1.setText("Học phần")
@@ -156,6 +159,7 @@ class SearchCommunity : AppCompatActivity() {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query!!.isNotEmpty()) {
                     // Topic
+                    dialogLoading.showDialog("Loading...")
                     topicItems.clear()
                     userItems.clear()
                     topicItems.addAll(allPublicTopic.filter { it.title.contains(query, ignoreCase = true) }.map { topic ->
@@ -168,6 +172,7 @@ class SearchCommunity : AppCompatActivity() {
                     )})
                     topicAdapter.notifyDataSetChanged()
                     userAdapter.notifyDataSetChanged()
+                    dialogLoading.hideDialog()
                     return true
                 }
                 return false
@@ -184,6 +189,7 @@ class SearchCommunity : AppCompatActivity() {
         recyclerView.adapter = topicAdapter
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
+                dialogLoading.showDialog("Loading...")
                 val fetchTopics = topicService.getPublicTopic()
                 if (allUser.isEmpty()) {
                     val fetchUsers = userService.getUsers()
@@ -207,6 +213,7 @@ class SearchCommunity : AppCompatActivity() {
                         })
                     runOnUiThread {
                         topicAdapter.notifyDataSetChanged()
+                        dialogLoading.hideDialog()
                     }
                 }
             }
@@ -219,6 +226,7 @@ class SearchCommunity : AppCompatActivity() {
         recyclerView.adapter = userAdapter
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
+                dialogLoading.showDialog("Loading...")
                 if (allUser.isEmpty()) {
                     val fetchUsers = userService.getUsers()
                     if (fetchUsers.status){
@@ -234,6 +242,7 @@ class SearchCommunity : AppCompatActivity() {
                 )})
                 runOnUiThread {
                     userAdapter.notifyDataSetChanged()
+                    dialogLoading.hideDialog()
                 }
             }
         }
