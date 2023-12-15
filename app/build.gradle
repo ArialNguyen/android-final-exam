@@ -38,48 +38,48 @@ android {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-reflect"
+    implementation "org.jetbrains.kotlin:kotlin-reflect" //
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'com.google.firebase:firebase-firestore-ktx:24.8.1'
-    implementation 'com.google.firebase:firebase-auth-ktx:22.1.2'
+    implementation 'com.google.firebase:firebase-firestore-ktx:24.8.1' //
+    implementation 'com.google.firebase:firebase-auth-ktx:22.1.2' //
     implementation 'me.relex:circleindicator:2.1.6'
     implementation 'com.intuit.sdp:sdp-android:1.1.0'
-    implementation 'com.mikhaellopez:circularprogressbar:3.1.0'
+    implementation 'com.mikhaellopez:circularprogressbar:3.1.0' //
     // View Pager
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
     // Image
-    implementation 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
-    implementation 'com.squareup.picasso:picasso:2.8'
-    implementation 'de.hdodenhof:circleimageview:3.1.0'
+    implementation 'com.theartofdev.edmodo:android-image-cropper:2.8.0' //
+    implementation 'com.squareup.picasso:picasso:2.8' //
+    implementation 'de.hdodenhof:circleimageview:3.1.0' //
     // SharedPreferences
     implementation "androidx.preference:preference-ktx:1.1.1"
     // Gson
-    implementation 'com.google.code.gson:gson:2.8.9'
+    implementation 'com.google.code.gson:gson:2.8.9' //
     // Button Loading
     implementation 'com.github.leandroborgesferreira:loading-button-android:2.3.0'
     // card View
     implementation "androidx.cardview:cardview:1.0.0"
     // Progress bar
-    implementation 'com.github.ybq:Android-SpinKit:1.4.0'
+    implementation 'com.github.ybq:Android-SpinKit:1.4.0' //
     // LifeCycle
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.4.0"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.4.0" //
     // ModelMapper
     implementation 'org.modelmapper:modelmapper:2.4.4'
     // FireBase
     // Import the Firebase BoM
-    implementation(platform("com.google.firebase:firebase-bom:32.4.0"))
+    implementation(platform("com.google.firebase:firebase-bom:32.4.0")) //
     // Dynamic link
-    implementation 'com.google.firebase:firebase-dynamic-links-ktx'
+    implementation 'com.google.firebase:firebase-dynamic-links-ktx' //
     // Add the dependency for the Firebase SDK for Google Analytics
-    implementation("com.google.firebase:firebase-analytics-ktx")
-    implementation("com.google.firebase:firebase-auth-ktx")
-    implementation('com.google.firebase:firebase-storage')
-    implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation("com.google.firebase:firebase-analytics-ktx") //
+    implementation("com.google.firebase:firebase-auth-ktx") //
+    implementation('com.google.firebase:firebase-storage') //
+    implementation("com.google.firebase:firebase-firestore-ktx") //
     // Read CSV
-    implementation("org.apache.commons:commons-csv:1.10.0")
+    implementation("org.apache.commons:commons-csv:1.10.0") //
     // Reload Activity
 //    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     // Scroll Choice
