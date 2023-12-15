@@ -676,6 +676,10 @@ class DetailTopic : AppCompatActivity() {
                     runOnUiThread {
                         if (updateMode.status) {
                             tvMode.text = mode[0] + mode.substring(1).lowercase()
+                            currentTopic.mode = EModeTopic.valueOf(mode)
+                            val topicsSession = session.topicsOfUser!!
+                            topicsSession.first { it.uid == currentTopic.uid }.mode = currentTopic.mode
+                            session.topicsOfUser = topicsSession
                             Toast.makeText(this@DetailTopic, "Update Successfully", Toast.LENGTH_LONG).show()
                         } else {
                             Toast.makeText(this@DetailTopic, updateMode.data.toString(), Toast.LENGTH_LONG).show()

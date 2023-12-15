@@ -62,6 +62,7 @@ class MainActivity : AppCompatActivity() {
         if (!authService.isLogin()) {
             startActivity(Intent(this, Login::class.java).putExtra("checkLogin", this@MainActivity::class.java.name))
         } else {
+            session = Session.getInstance(this)
 
             // Get View
             etSearchTopic = findViewById(R.id.etSearchTopic_main)
@@ -112,7 +113,6 @@ class MainActivity : AppCompatActivity() {
             }
 
             // Load data
-            session = Session.getInstance(this@MainActivity)
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
                     if(session.user == null){

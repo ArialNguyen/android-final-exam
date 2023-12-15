@@ -44,7 +44,7 @@ class FragmentAddTopic_LearnFolder(private val getBackAdapterFromViewPager: GetB
 //        return inflater.inflate(R.layout.fragment_add_topic__learn_folder, container, false)
         val view = inflater.inflate(R.layout.fragment_add_topic__learn_folder, container, false)
         // Get date from intent
-        val folder = (context as AddTopicFolderActivity).folder!!
+        val folder = (context as AddTopicFolderActivity).folder
         // View
         recyclerView = view.findViewById(R.id.recyclerView_FragmentAddTopic_LearnFolder)
 
