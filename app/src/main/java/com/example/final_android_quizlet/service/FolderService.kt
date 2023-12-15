@@ -226,11 +226,12 @@ class FolderService {
                 val documentIds = db.collection("folders")
                     .whereArrayContains("topics", topicId)
                     .get().await()
-
                 val batch = db.batch()
+
                 documentIds.forEach {
                     batch.update(it.reference, "topics", FieldValue.arrayRemove(topicId))
                 }
+                batch.commit()
                 res.status = true
             } catch (e: Exception) {
                 res.data = e.message.toString()

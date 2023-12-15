@@ -619,6 +619,7 @@ class DetailTopic : AppCompatActivity() {
         builder.setPositiveButton("Yes") { dialog, which ->
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
+                    dialogLoading.showDialog("Loading...")
                     val deleteTopicResult = topicService.deleteTopic(currentTopic.uid)
 
                     runOnUiThread {
@@ -646,6 +647,7 @@ class DetailTopic : AppCompatActivity() {
                         } else {
                             Toast.makeText(this@DetailTopic, "Failed to delete topic", Toast.LENGTH_LONG).show()
                         }
+                        dialogLoading.hideDialog()
                     }
                 }
             }

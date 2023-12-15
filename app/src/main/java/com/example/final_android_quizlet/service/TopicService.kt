@@ -134,13 +134,12 @@ class TopicService {
     suspend fun updateTopicWithTerms(topic: Topic): ResponseObject {
         val res = ResponseObject()
         try {
-            val topicId = topic.uid ?: throw Exception("Topic ID is missing!")
+            val topicId = topic.uid
             val documentId = getDocumentIdByField("uid", topicId)
             val topicMap = topic.asMap()
 
             topicMap.remove("uid")
             db.collection("topics").document(documentId).update(topicMap).await()
-
             res.status = true
         } catch (e: Exception) {
             res.data = e.message.toString()

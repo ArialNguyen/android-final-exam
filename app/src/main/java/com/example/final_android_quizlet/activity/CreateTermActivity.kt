@@ -26,6 +26,7 @@ import com.example.final_android_quizlet.auth.Login
 import com.example.final_android_quizlet.common.ActionTransition
 import com.example.final_android_quizlet.common.FileAction
 import com.example.final_android_quizlet.common.ManageScopeApi
+import com.example.final_android_quizlet.common.Session
 import com.example.final_android_quizlet.dao.ResponseObject
 import com.example.final_android_quizlet.db.CallbackInterface
 import com.example.final_android_quizlet.models.ELearnTopicStatus
@@ -69,7 +70,7 @@ class CreateTermActivity : AppCompatActivity() {
     private var termLang: Locale? = null
     private var definitionLang: Locale? = null
     private var accessMode: EModeTopic = EModeTopic.PRIVATE
-
+    private lateinit var session: Session
     // Intent Request
     private val INTENT_SETTING = 2
     // Intent
@@ -86,6 +87,12 @@ class CreateTermActivity : AppCompatActivity() {
 
                     this@CreateTermActivity.runOnUiThread {
                         if (res.status) {
+                            // Update Topics Session
+                            Log.i("TAG", "data : ${res.topics}")
+                            val topicsSession = session.topicsOfUser!!
+                            topicsSession.addAll(res.topics!!)
+                            session.topicsOfUser = topicsSession
+                            Log.i("TAG", "session size: ${session.topicsOfUser!!.size}")
                             Toast.makeText(this@CreateTermActivity, "Import Successfully", Toast.LENGTH_LONG).show()
                             finish()
                             actionTransition.rollBackTransition()
@@ -113,6 +120,7 @@ class CreateTermActivity : AppCompatActivity() {
         if(!authService.isLogin()){
             startActivity(Intent(this, Login::class.java))
         }
+        session = Session.getInstance(this)
         Locale.getAvailableLocales()[0].displayName
         val currentUser = authService.getCurrentUser()
         // Get View
@@ -199,16 +207,22 @@ class CreateTermActivity : AppCompatActivity() {
                 }else{
                     lifecycleScope.launch {
                         withContext(Dispatchers.IO){
+                            val topic = Topic(
+                                UUID.randomUUID().toString(),
+                                title, description, getUsefulTerm(),
+                                mutableListOf(), currentUser.uid,
+                                accessMode, ELearnTopicStatus.NOT_LEARN,
+                                termLang!!.toLanguageTag(), definitionLang!!.toLanguageTag()
+                            )
                             val res = topicService.createTopic(
-                                Topic(
-                                    UUID.randomUUID().toString(),
-                                    title, description, getUsefulTerm(),
-                                    mutableListOf(), currentUser.uid,
-                                    accessMode, ELearnTopicStatus.NOT_LEARN,
-                                    termLang!!.toLanguageTag(), definitionLang!!.toLanguageTag()
-                                )
+                                topic
                             )
                             if(res.status){
+                                // Update Session
+                                val listTmp =  session.topicsOfUser!!
+                                listTmp.add(topic)
+                                session.topicsOfUser = listTmp
+
                                 if(intent.getStringExtra("className") != null && intent.getStringExtra("className")!!.isNotEmpty()){
                                     Log.i("TAG", "COME TO create Term check intent")
                                     val resIntent = Intent()
@@ -218,6 +232,7 @@ class CreateTermActivity : AppCompatActivity() {
                                 runOnUiThread {
                                     Toast.makeText(this@CreateTermActivity, "Success!!", Toast.LENGTH_LONG).show()
                                 }
+
                                 finish()
                                 actionTransition.rollBackTransition()
                             }else{
@@ -258,15 +273,19 @@ class CreateTermActivity : AppCompatActivity() {
                 withContext(Dispatchers.IO) {
                     val res = topicService.updateTopicWithTerms(updatedTopic)
                     if (res.status) {
+                        // Update Session
+                        val topicsSession =  session.topicsOfUser!!
+                        topicsSession[topicsSession.indexOfFirst { it.uid == updatedTopic.uid }] = updatedTopic
+                        session.topicsOfUser = topicsSession
                         runOnUiThread {
                             Toast.makeText(
                                 this@CreateTermActivity,
                                 "Topic updated successfully!",
                                 Toast.LENGTH_LONG
                             ).show()
+                            finish()
+                            actionTransition.rollBackTransition()
                         }
-                        val mainActivityIntent = Intent(this@CreateTermActivity, MainActivity::class.java)
-                        startActivity(mainActivityIntent)
                     } else {
                         runOnUiThread {
                             Toast.makeText(
