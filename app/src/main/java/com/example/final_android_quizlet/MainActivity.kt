@@ -190,7 +190,7 @@ class MainActivity : AppCompatActivity() {
                 topicsItem.addAll(session.topicsOfUser!!.map { LibraryTopicAdapterItem(it, session.user!!) })
                 topicAdapter.notifyDataSetChanged()
             }
-        }
+        } //
         tvName.text = session.user!!.name
     }
 

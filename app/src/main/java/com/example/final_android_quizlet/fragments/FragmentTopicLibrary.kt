@@ -174,7 +174,7 @@ class FragmentTopicLibrary(private val getBackAdapterFromViewPager: GetBackAdapt
     override fun onResume() {
         super.onResume()
         // Load Session Current Topic Chosen
-        if (currentClickTopicIdx != -1 && session.topicsOfUser != null) { // Handle ownTopic
+        if (currentClickTopicIdx != -1 && session.topicsOfUser != null && currentClickTopicIdx < items.size) { // Handle ownTopic
             val topicSessionIdx =
                 session.topicsOfUser!!.indexOfFirst { it.uid == items[currentClickTopicIdx].topic.uid }
             items[currentClickTopicIdx].topic = session.topicsOfUser!![topicSessionIdx]
