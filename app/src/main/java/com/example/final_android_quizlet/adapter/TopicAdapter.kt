@@ -17,7 +17,7 @@ import de.hdodenhof.circleimageview.CircleImageView
 
 class TopicAdapter(private val flow: EOrientationRecyclerView, private val items: MutableList<LibraryTopicAdapterItem>) :
     RecyclerView.Adapter<TopicAdapter.ViewHolder>() {
-    private var itemClickListener: ((LibraryTopicAdapterItem) -> Unit)? = null
+    private var itemClickListener: ((LibraryTopicAdapterItem, Int) -> Unit)? = null
     private var itemLongClickListener: ((LibraryTopicAdapterItem, Int) -> Unit)? = null
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnLongClickListener, PopupMenu.OnMenuItemClickListener {
@@ -32,12 +32,12 @@ class TopicAdapter(private val flow: EOrientationRecyclerView, private val items
         fun bind(item: LibraryTopicAdapterItem) {
             tvTopicTitle.text = item.topic.title
             tvTotalTerm.text = "${item.topic.terms.size} thuật ngữ"
-            tvUserName.text = item.user?.name
-            if (item.user?.avatar!!.isNotEmpty()) {
+            tvUserName.text = item.user.name
+            if (item.user.avatar.isNotEmpty()) {
                 Picasso.get().load(item.user.avatar).into(imgAvatar)
             }
             itemView.setOnClickListener {
-                itemClickListener?.invoke(item)
+                itemClickListener?.invoke(item, adapterPosition)
             }
             itemView.setOnLongClickListener {
                 showPopupMenu(it)
@@ -89,7 +89,7 @@ class TopicAdapter(private val flow: EOrientationRecyclerView, private val items
         return items.size
     }
 
-    fun setOnItemClickListener(listener: (LibraryTopicAdapterItem) -> Unit) {
+    fun setOnItemClickListener(listener: (LibraryTopicAdapterItem, Int) -> Unit) {
         itemClickListener = listener
     }
     fun setOnItemLongClickListener(listener: (LibraryTopicAdapterItem, Int) -> Unit) {

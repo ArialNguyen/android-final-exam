@@ -59,11 +59,8 @@ class LibraryActivity : AppCompatActivity() {
             val topic = result.data!!.getSerializableExtra("extra_topic") as Topic
             Log.i("TAG", "BACk: $topic")
             (libraryAdapter.getAdapter(0).items as MutableList<LibraryTopicAdapterItem>)
-                .add(LibraryTopicAdapterItem(topic, session.user))
+                .add(LibraryTopicAdapterItem(topic, session.user!!))
             (libraryAdapter.getAdapter(0).adapter as TopicAdapter).notifyDataSetChanged()
-            val listTmp =  session.topicsOfUser!!
-            listTmp.add(topic)
-            session.topicsOfUser = listTmp
         }
     }
     override fun onCreate(savedInstanceState: Bundle?) {

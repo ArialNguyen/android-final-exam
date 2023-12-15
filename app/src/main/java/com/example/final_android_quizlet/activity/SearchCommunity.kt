@@ -103,7 +103,7 @@ class SearchCommunity : AppCompatActivity() {
 
         }
 
-        topicAdapter.setOnItemClickListener {
+        topicAdapter.setOnItemClickListener { it, position ->
             val intent = Intent(this, DetailTopic::class.java)
             intent.putExtra("topic", it.topic)
             intent.putExtra("ownUser", false)
@@ -139,7 +139,7 @@ class SearchCommunity : AppCompatActivity() {
             topicItems.addAll(
                 allPublicTopic.map { topic ->
                     LibraryTopicAdapterItem(
-                        topic, allUser.firstOrNull { topic.userId == it.uid }
+                        topic, allUser.first { topic.userId == it.uid }
                     )
                 }
             )
@@ -160,7 +160,7 @@ class SearchCommunity : AppCompatActivity() {
                     userItems.clear()
                     topicItems.addAll(allPublicTopic.filter { it.title.contains(query, ignoreCase = true) }.map { topic ->
                         LibraryTopicAdapterItem(
-                            topic, allUser.firstOrNull { topic.userId == it.uid }
+                            topic, allUser.first { topic.userId == it.uid }
                         )
                     })
                     userItems.addAll(allUser.map { user -> UserItem(
@@ -202,7 +202,7 @@ class SearchCommunity : AppCompatActivity() {
                     topicItems.addAll(allPublicTopic.filter { it.title.contains(keywordIntent, ignoreCase = true) }
                         .map { topic ->
                             LibraryTopicAdapterItem(
-                                topic, allUser.firstOrNull { topic.userId == it.uid }
+                                topic, allUser.first { topic.userId == it.uid }
                             )
                         })
                     runOnUiThread {

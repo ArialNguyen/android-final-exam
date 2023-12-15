@@ -75,7 +75,7 @@ class MainActivity : AppCompatActivity() {
 
             // Adapter
             topicAdapter = TopicAdapter(EOrientationRecyclerView.HORIZONTAL, topicsItem)
-            topicAdapter.setOnItemClickListener {
+            topicAdapter.setOnItemClickListener { it, position ->
                 val intent = Intent(this, DetailTopic::class.java)
                 intent.putExtra("topic", it.topic)
                 startActivity(intent)
@@ -140,7 +140,7 @@ class MainActivity : AppCompatActivity() {
                             }
                         }
                         if (session.topicsOfUser!!.isNotEmpty()) {
-                            topicsItem.addAll(session.topicsOfUser!!.map { LibraryTopicAdapterItem(it, user) })
+                            topicsItem.addAll(session.topicsOfUser!!.map { LibraryTopicAdapterItem(it, user!!) })
                             runOnUiThread {
                                 topicAdapter.notifyDataSetChanged()
                             }
@@ -187,7 +187,7 @@ class MainActivity : AppCompatActivity() {
         if(session.topicsOfUser != null){
             if(session.topicsOfUser!!.size != topicsItem.size){
                 topicsItem.clear()
-                topicsItem.addAll(session.topicsOfUser!!.map { LibraryTopicAdapterItem(it, session.user) })
+                topicsItem.addAll(session.topicsOfUser!!.map { LibraryTopicAdapterItem(it, session.user!!) })
                 topicAdapter.notifyDataSetChanged()
             }
         }

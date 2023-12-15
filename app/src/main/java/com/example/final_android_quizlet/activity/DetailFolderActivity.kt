@@ -80,7 +80,7 @@ class DetailFolderActivity : AppCompatActivity() {
             val topics = result.data!!.getSerializableExtra("topics") as MutableList<Topic>
             tvTotalTerm.text = "${folder.topics.size + topics.size} học phần"
             val positionStart = items.size
-            items.addAll(topics.map { LibraryTopicAdapterItem(it, session.user) })
+            items.addAll(topics.map { LibraryTopicAdapterItem(it, session.user!!) })
             adapter.notifyItemRangeInserted(positionStart, items.size)
         }
     }
@@ -121,7 +121,7 @@ class DetailFolderActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
 
-        adapter.setOnItemClickListener { item ->
+        adapter.setOnItemClickListener { item, position ->
             val intent = Intent(this, DetailTopic::class.java)
             intent.putExtra("topic", item.topic) // should be move to topic
             startActivity(intent)
@@ -178,7 +178,7 @@ class DetailFolderActivity : AppCompatActivity() {
                 if(session.topicsOfUserSaved != null){
                     topics.addAll(session.topicsOfUserSaved!!.filter { topicsId.contains(it.uid) })
                 }
-                items.addAll(topics.map { LibraryTopicAdapterItem(it, user) })
+                items.addAll(topics.map { LibraryTopicAdapterItem(it, user!!) })
                 runOnUiThread {
                     tvTotalTerm.text = "${topics.size} học phần"
                     dialogLoading.hideDialog()
