@@ -1,6 +1,7 @@
 package com.example.final_android_quizlet.activity
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
@@ -119,15 +120,16 @@ class RankingActivity: AppCompatActivity() {
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
                 val fetchMp = mpService.getRankingChoiceTest(topicId)
+                Log.i("TAG", "fetchMp: ${fetchMp.testChoices!!.size}")
                 if(fetchMp.status){
                     val topicsPassed = fetchMp.testChoices!!.filter {
                         it.optionExam.numberQues == it.totalQuestion && it.overall.toInt() > 0
-                    }.map { it.userId }
+                    }
                     if(topicsPassed.isNotEmpty()){
-                        val fetchUsers = userService.getUsersInListUserId(topicsPassed)
+                        val fetchUsers = userService.getUsersInListUserId(topicsPassed.map { it.userId })
                         if(fetchUsers.status){
                             mpRankingItem.addAll(
-                                fetchMp.testChoices!!.map {
+                                topicsPassed.map {
                                     RankingItem(fetchUsers.users!!.first { user -> user.uid == it.userId }, it, null)
                                 }
                             )
