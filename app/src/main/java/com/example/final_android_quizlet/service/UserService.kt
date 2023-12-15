@@ -156,6 +156,7 @@ class UserService {
             documentIds.forEach {
                 batch.update(it.reference, "topicSaved", FieldValue.arrayRemove(topicId))
             }
+            batch.commit()
             res.status = true
         }catch (e: Exception){
             res.data = e.message.toString()

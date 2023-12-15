@@ -6,7 +6,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.KeyEvent
 import android.view.ViewGroup
@@ -59,95 +58,94 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        session = Session.getInstance(this)
         if (!authService.isLogin()) {
             startActivity(Intent(this, Login::class.java).putExtra("checkLogin", this@MainActivity::class.java.name))
-        } else {
-            session = Session.getInstance(this)
+        }
+        // Get View
+        etSearchTopic = findViewById(R.id.etSearchTopic_main)
+        topicRV = findViewById(R.id.topicRV_Main)
+        tvViewAllTopic = findViewById(R.id.tvViewAllTopic_main)
+        plusIcon = findViewById(R.id.imageView5)
+        tvName = findViewById(R.id.txName_main)
+        profileButton = findViewById(R.id.imageView7)
+        libraryButton = findViewById(R.id.imageView6)
 
-            // Get View
-            etSearchTopic = findViewById(R.id.etSearchTopic_main)
-            topicRV = findViewById(R.id.topicRV_Main)
-            tvViewAllTopic = findViewById(R.id.tvViewAllTopic_main)
-            plusIcon = findViewById(R.id.imageView5)
-            tvName = findViewById(R.id.txName_main)
-            profileButton = findViewById(R.id.imageView7)
-            libraryButton = findViewById(R.id.imageView6)
+        // Adapter
+        topicAdapter = TopicAdapter(EOrientationRecyclerView.HORIZONTAL, topicsItem)
+        topicAdapter.setOnItemClickListener { it, position ->
+            val intent = Intent(this, DetailTopic::class.java)
+            intent.putExtra("topic", it.topic)
+            startActivity(intent)
+            actionTransition.moveNextTransition()
+        }
+        topicRV.adapter = topicAdapter
 
-            // Adapter
-            topicAdapter = TopicAdapter(EOrientationRecyclerView.HORIZONTAL, topicsItem)
-            topicAdapter.setOnItemClickListener { it, position ->
-                val intent = Intent(this, DetailTopic::class.java)
-                intent.putExtra("topic", it.topic)
-                startActivity(intent)
-                actionTransition.moveNextTransition()
-            }
-            topicRV.adapter = topicAdapter
-
-            // Handle event
-            etSearchTopic.setOnKeyListener { view, i, keyEvent ->
-                if ((keyEvent.action == KeyEvent.ACTION_DOWN) && (i == KeyEvent.KEYCODE_ENTER)) {
-                    val text = etSearchTopic.text.toString()
-                    if (text.isNotEmpty()) {
-                        val intent = Intent(this, SearchCommunity::class.java)
-                        intent.putExtra("keyword", text)
-                        startActivity(intent)
-                        return@setOnKeyListener true
-                    }
+        // Handle event
+        etSearchTopic.setOnKeyListener { view, i, keyEvent ->
+            if ((keyEvent.action == KeyEvent.ACTION_DOWN) && (i == KeyEvent.KEYCODE_ENTER)) {
+                val text = etSearchTopic.text.toString()
+                if (text.isNotEmpty()) {
+                    val intent = Intent(this, SearchCommunity::class.java)
+                    intent.putExtra("keyword", text)
+                    startActivity(intent)
+                    return@setOnKeyListener true
                 }
-                return@setOnKeyListener false
             }
-            tvViewAllTopic.setOnClickListener {
-                startActivity(Intent(this, LibraryActivity::class.java))
-            }
+            return@setOnKeyListener false
+        }
+        tvViewAllTopic.setOnClickListener {
+            startActivity(Intent(this, LibraryActivity::class.java))
+        }
 
-            plusIcon.setOnClickListener {
-                showBottomDialog()
-            }
-            profileButton.setOnClickListener {
-                val intent = Intent(this, ProfileActivity::class.java)
-                startActivity(intent)
-            }
-            libraryButton.setOnClickListener {
-                val intent = Intent(this, LibraryActivity::class.java)
-                startActivity(intent)
-            }
+        plusIcon.setOnClickListener {
+            showBottomDialog()
+        }
+        profileButton.setOnClickListener {
+            val intent = Intent(this, ProfileActivity::class.java)
+            startActivity(intent)
+        }
+        libraryButton.setOnClickListener {
+            val intent = Intent(this, LibraryActivity::class.java)
+            startActivity(intent)
+        }
 
-            // Load data
-            lifecycleScope.launch {
-                withContext(Dispatchers.IO) {
-                    if(session.user == null){
-                        startActivity(Intent(this@MainActivity, Login::class.java))
-                    }else{
-                        val user = session.user
+        // Load data
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                if (session.user == null) {
+                    startActivity(Intent(this@MainActivity, Login::class.java))
+                } else {
+                    val user = session.user
+                    runOnUiThread {
+                        tvName.text = user!!.name
+                    }
+                    // Fetch Topics
+
+                    if (session.topicsOfUser == null) {
+                        dialogLoading.showDialog("Loading...")
+
+                        val fetchTopics = topicService.getTopicsByUserId(user!!.uid)
+                        if (fetchTopics.status) {
+                            session.topicsOfUser = fetchTopics.topics!!.toMutableList()
+                        } else {
+                            runOnUiThread {
+                                Toast.makeText(this@MainActivity, fetchTopics.data.toString(), Toast.LENGTH_LONG).show()
+                            }
+                        }
                         runOnUiThread {
-                            tvName.text = user!!.name
+                            dialogLoading.hideDialog()
                         }
-                        // Fetch Topics
-
-                        if (session.topicsOfUser == null) {
-                            dialogLoading.showDialog("Loading...")
-
-                            val fetchTopics = topicService.getTopicsByUserId(user!!.uid)
-                            if (fetchTopics.status) {
-                                session.topicsOfUser = fetchTopics.topics!!.toMutableList()
-                            } else {
-                                runOnUiThread {
-                                    Toast.makeText(this@MainActivity, fetchTopics.data.toString(), Toast.LENGTH_LONG).show()
-                                }
-                            }
-                            runOnUiThread {
-                                dialogLoading.hideDialog()
-                            }
-                        }
-                        if (session.topicsOfUser!!.isNotEmpty()) {
-                            topicsItem.addAll(session.topicsOfUser!!.map { LibraryTopicAdapterItem(it, user!!) })
-                            runOnUiThread {
-                                topicAdapter.notifyDataSetChanged()
-                            }
+                    }
+                    if (session.topicsOfUser!!.isNotEmpty()) {
+                        topicsItem.addAll(session.topicsOfUser!!.map { LibraryTopicAdapterItem(it, user!!) })
+                        runOnUiThread {
+                            topicAdapter.notifyDataSetChanged()
                         }
                     }
                 }
             }
+
         }
     }
 
@@ -184,7 +182,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        if(session.topicsOfUser != null){
+        if (session.topicsOfUser != null) {
             topicsItem.clear()
             topicsItem.addAll(session.topicsOfUser!!.map { LibraryTopicAdapterItem(it, session.user!!) })
             topicAdapter.notifyDataSetChanged()
