@@ -83,6 +83,7 @@ class FragmentFolderLibrary(private val getBackAdapterFromViewPager: GetBackAdap
                             Toast.makeText(activity, fetch1.data.toString(), Toast.LENGTH_LONG).show()
                         }
                     }
+                    Log.i("TAG", "session.foldersOfUser: ${session.foldersOfUser}")
                     val folders = session.foldersOfUser
                     if(folders!!.isNotEmpty()){
                         val list =  folders.map {

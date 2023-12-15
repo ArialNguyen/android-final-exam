@@ -41,6 +41,9 @@ class ActionDialog(private val ctx: Context, private val lifecycleScope: Lifecyc
                             )
                         )
                         if (fetch1.status) {
+                            val foldersSession = session.foldersOfUser
+                            foldersSession!!.add(fetch1.folder!!)
+                            session.foldersOfUser = foldersSession
                             if (adapterAndItems == null) {
                                 (ctx as Activity).runOnUiThread {
                                     Toast.makeText(ctx, "Create Folder Successfully", Toast.LENGTH_LONG).show()
@@ -51,9 +54,7 @@ class ActionDialog(private val ctx: Context, private val lifecycleScope: Lifecyc
                                         val adapter = adapterAndItems.adapter as LibraryFolderAdapter
                                         val items = adapterAndItems.items as MutableList<LibraryFolderAdapterItem>
                                         val position: Int = items.size
-                                        val foldersSession = session.foldersOfUser
-                                        foldersSession!!.add(fetch1.folder!!)
-                                        session.foldersOfUser = foldersSession
+
                                         items.add(
                                             LibraryFolderAdapterItem(
                                                 fetch1.folder!!, fetch1.folder!!.topics.size,

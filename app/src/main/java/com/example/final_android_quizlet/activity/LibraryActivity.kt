@@ -57,7 +57,6 @@ class LibraryActivity : AppCompatActivity() {
     var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == INTENT_ADD_TOPIC) {
             val topic = result.data!!.getSerializableExtra("extra_topic") as Topic
-            Log.i("TAG", "BACk: $topic")
             (libraryAdapter.getAdapter(0).items as MutableList<LibraryTopicAdapterItem>)
                 .add(LibraryTopicAdapterItem(topic, session.user!!))
             (libraryAdapter.getAdapter(0).adapter as TopicAdapter).notifyDataSetChanged()

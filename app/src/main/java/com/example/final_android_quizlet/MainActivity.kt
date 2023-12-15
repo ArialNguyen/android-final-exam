@@ -185,11 +185,9 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         if(session.topicsOfUser != null){
-            if(session.topicsOfUser!!.size != topicsItem.size){
-                topicsItem.clear()
-                topicsItem.addAll(session.topicsOfUser!!.map { LibraryTopicAdapterItem(it, session.user!!) })
-                topicAdapter.notifyDataSetChanged()
-            }
+            topicsItem.clear()
+            topicsItem.addAll(session.topicsOfUser!!.map { LibraryTopicAdapterItem(it, session.user!!) })
+            topicAdapter.notifyDataSetChanged()
         } //
         tvName.text = session.user!!.name
     }

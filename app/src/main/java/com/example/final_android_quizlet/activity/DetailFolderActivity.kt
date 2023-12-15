@@ -208,6 +208,13 @@ class DetailFolderActivity : AppCompatActivity() {
                             runOnUiThread {
                                 if(update.status){
                                     tvFolderName.text = folderName
+                                    // Handle Folder Session
+                                    val foldersSession =session.foldersOfUser!!
+                                    val idx = foldersSession.indexOfFirst { it.uid == folder.uid }
+                                    foldersSession[idx].name = folderName
+                                    foldersSession[idx].description = des
+                                    session.foldersOfUser = foldersSession
+
                                     Toast.makeText(this@DetailFolderActivity, "Updated", Toast.LENGTH_LONG).show()
                                 }else{
                                     Toast.makeText(this@DetailFolderActivity, update.data.toString(), Toast.LENGTH_LONG).show()
@@ -218,6 +225,7 @@ class DetailFolderActivity : AppCompatActivity() {
                 }
             }, this.folder.name, this.folder.description)
             folder.show(supportFragmentManager, "Folder Dialog")
+            dialog.dismiss()
         }
 
         addTopicDetailFolder.setOnClickListener {
