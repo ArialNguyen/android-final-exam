@@ -93,7 +93,6 @@ class SearchCommunity : AppCompatActivity() {
         tab2.setText("Người dùng")
         tabLayout.addTab(tab1)
         tabLayout.addTab(tab2)
-
         // Adapter
         adapterVP = VPCommunityAdapter(this)
         userAdapter = UserAdapter(userItems)
@@ -103,6 +102,7 @@ class SearchCommunity : AppCompatActivity() {
         userAdapter.setOnItemClickListener {
 
         }
+
         topicAdapter.setOnItemClickListener {
             val intent = Intent(this, DetailTopic::class.java)
             intent.putExtra("topic", it.topic)

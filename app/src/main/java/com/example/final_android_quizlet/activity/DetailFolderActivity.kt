@@ -32,6 +32,7 @@ import com.example.final_android_quizlet.adapter.data.LibraryTopicAdapterItem
 import com.example.final_android_quizlet.auth.Login
 import com.example.final_android_quizlet.common.*
 import com.example.final_android_quizlet.fragments.dialog.DialogFolder
+import com.example.final_android_quizlet.fragments.dialog.DialogLoading
 import com.example.final_android_quizlet.models.Folder
 import com.example.final_android_quizlet.models.Topic
 import com.example.final_android_quizlet.service.AuthService
@@ -56,6 +57,7 @@ class DetailFolderActivity : AppCompatActivity() {
     private lateinit var imgAvatar: CircleImageView
 
     // Service
+    private val dialogLoading: DialogLoading = DialogLoading(this)
     private val folderService: FolderService = FolderService()
     private val actionTransition: ActionTransition = ActionTransition(this)
     private val authService: AuthService = AuthService()
@@ -150,6 +152,7 @@ class DetailFolderActivity : AppCompatActivity() {
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
                 val user = session.user
+                dialogLoading.showDialog("Loading...")
                 user?.let {
                     runOnUiThread {
                         tvUserName.text = it.name
@@ -176,7 +179,11 @@ class DetailFolderActivity : AppCompatActivity() {
                     topics.addAll(session.topicsOfUserSaved!!.filter { topicsId.contains(it.uid) })
                 }
                 items.addAll(topics.map { LibraryTopicAdapterItem(it, user) })
-                runOnUiThread { adapter.notifyDataSetChanged() }
+                runOnUiThread {
+                    tvTotalTerm.text = "${topics.size} học phần"
+                    dialogLoading.hideDialog()
+                    adapter.notifyDataSetChanged()
+                }
             }
         }
     }

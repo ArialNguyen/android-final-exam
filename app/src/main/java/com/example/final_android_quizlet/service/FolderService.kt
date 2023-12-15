@@ -227,7 +227,6 @@ class FolderService {
                     .whereArrayContains("topics", topicId)
                     .get().await()
 
-
                 val batch = db.batch()
                 documentIds.forEach {
                     batch.update(it.reference, "topics", FieldValue.arrayRemove(topicId))

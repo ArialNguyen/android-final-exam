@@ -51,16 +51,10 @@ class FragmentTopicLibrary(private val getBackAdapterFromViewPager: GetBackAdapt
     var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == 2) {
             val topicId = result.data!!.getStringExtra("topicId")
-            val idx = items.indexOfFirst { it.topic.uid == topicId }
 
+            val idx = items.indexOfFirst { it.topic.uid == topicId }
             items.removeAt(idx)
             adapter.notifyItemRemoved(idx)
-            // Handle Session
-//            val listTmp =  session.topicsOfUser!!
-//            val idx2 = listTmp.indexOfFirst { it.uid == topicId }
-//
-//            listTmp.removeAt(idx2)
-//            session.topicsOfUser = listTmp
             Log.i("TAG", "session: ${session.topicsOfUser!!.size}")
         }
     }
@@ -101,6 +95,11 @@ class FragmentTopicLibrary(private val getBackAdapterFromViewPager: GetBackAdapt
             session = Session.getInstance(requireContext())
             lifecycleScope.launch {
                 withContext(Dispatchers.IO){
+                    dialogLoading.showDialog("Loading...")
+                    // Fetch TopicSaved in User
+                    val fetchUser = authService.getUserLogin()
+                    session.user = fetchUser.user
+
                     // Fetch topic owner
                     val user = session.user!!
                     val topics = session.topicsOfUser
@@ -117,10 +116,12 @@ class FragmentTopicLibrary(private val getBackAdapterFromViewPager: GetBackAdapt
                     // Fetch Topic Saved
                     if(user.topicSaved.isNotEmpty()){
                         Log.i("TAG", "user.topicSaved: ${user.topicSaved}")
-                        dialogLoading.showDialog("Loading...")
+
+                        // Fetch Topics saved in User
                         val topicsSaved = topicService.getTopicsByQuerys(mutableListOf(
                             MyFBQuery("uid", user.topicSaved, MyFBQueryMethod.IN)
                         ))
+
                         session.topicsOfUserSaved = topicsSaved.topics!!.toMutableList()
 
                         val fetchUserInTopic = userService.getUsersInListUserId(session.topicsOfUserSaved!!.map { it.userId }.distinct())
@@ -136,9 +137,8 @@ class FragmentTopicLibrary(private val getBackAdapterFromViewPager: GetBackAdapt
                                 topicSavedAdapter.notifyDataSetChanged()
                             }
                         }
-                        dialogLoading.hideDialog()
                     }
-
+                    dialogLoading.hideDialog()
                 }
             }
 

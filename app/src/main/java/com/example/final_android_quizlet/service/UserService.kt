@@ -1,7 +1,9 @@
 package com.example.final_android_quizlet.service
 
+import android.content.Context
 import android.net.Uri
 import android.util.Log
+import com.example.final_android_quizlet.common.Session
 import com.example.final_android_quizlet.dao.ResponseObject
 import com.example.final_android_quizlet.mapper.UserMapper
 import com.example.final_android_quizlet.models.User
@@ -143,6 +145,24 @@ class UserService {
         }
         return res
     }
+    suspend fun removeTopicSaved(topicId: String): ResponseObject {
+        val res = ResponseObject()
+        try {
+            val documentIds = db.collection("users")
+                .whereArrayContains("topicSaved", topicId)
+                .get().await()
+
+            val batch = db.batch()
+            documentIds.forEach {
+                batch.update(it.reference, "topicSaved", FieldValue.arrayRemove(topicId))
+            }
+            res.status = true
+        }catch (e: Exception){
+            res.data = e.message.toString()
+            res.status = false
+        }
+        return res
+    }
 
     suspend fun checkPasscodeFGP(email: String, passcode: String): ResponseObject {
         val res: ResponseObject = ResponseObject()
@@ -202,6 +222,17 @@ class UserService {
             res.data = e.message.toString()
         }
         return res
+    }
+
+    companion object {
+        private var instance: UserService? = null
+        @Synchronized
+        fun getInstance(): UserService {
+            if (instance == null) {
+                instance = UserService()
+            }
+            return instance!!
+        }
     }
 
 }

@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
             topicAdapter = TopicAdapter(EOrientationRecyclerView.HORIZONTAL, topicsItem)
             topicAdapter.setOnItemClickListener {
                 val intent = Intent(this, DetailTopic::class.java)
-                intent.putExtra("topicId", it.topic.uid)
+                intent.putExtra("topic", it.topic)
                 startActivity(intent)
                 actionTransition.moveNextTransition()
             }
@@ -97,7 +97,6 @@ class MainActivity : AppCompatActivity() {
             }
             tvViewAllTopic.setOnClickListener {
                 startActivity(Intent(this, LibraryActivity::class.java))
-
             }
 
             plusIcon.setOnClickListener {
@@ -193,5 +192,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
         tvName.text = session.user!!.name
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Clear session just hold user
     }
 }

@@ -22,6 +22,7 @@ import kotlin.reflect.full.memberProperties
 class TopicService {
     private val db = Firebase.firestore
     private val topicMapper: TopicMapper = TopicMapper()
+    private val userService: UserService = UserService.getInstance()
     private val folderService: FolderService = FolderService()
     inline fun <reified T : Any> T.asMap() : MutableMap<String, Any?> {
         val props = T::class.memberProperties.associateBy { it.name }
@@ -114,12 +115,16 @@ class TopicService {
         val res = ResponseObject()
         try {
             val documentId = getDocumentIdByField("uid", topicId)
+            // Delete topic in topics
             db.collection("topics").document(documentId).delete().await()
-            val removeInFolder = folderService.FolderForUserLogged().removeTopic(topicId)
+            // Delete topic in folder
+            folderService.FolderForUserLogged().removeTopic(topicId)
+            // Delete topic in User Saved
+            userService.removeTopicSaved(topicId)
+            // Delete topic in flashCard, writingTest and ChoiceTest
 
             res.status = true
         } catch (e: Exception) {
-            Log.i("TAG", "deleteTopic: ${e.message}")
             res.data = e.message.toString()
             res.status = false
         }
@@ -249,24 +254,6 @@ class TopicService {
             return res
         }
 
-        suspend fun getTopicsByQuerys(myFBQuery: MutableList<MyFBQuery>): ResponseObject {
-            val res: ResponseObject = ResponseObject()
-            try {
-                myFBQuery.add(MyFBQuery("userId", firebaseAuth.currentUser!!.uid, MyFBQueryMethod.EQUAL))
-                val data = getDocumentsByFields(myFBQuery)
-                res.status = true
-                if (data.isEmpty()) {
-                    res.topics = listOf()
-                } else {
-                    res.topics = topicMapper.convertToTopics(data)
-                }
-            } catch (e: Exception) {
-                Log.i("ERROR", "getTopicsByQuerys: ${e.message}")
-                res.data = e.message.toString()
-                res.status = false
-            }
-            return res
-        }
         suspend fun updateInfo(topicId: String, topic: HashMap<String, Any>): ResponseObject {
             val res = ResponseObject()
             try {

@@ -60,9 +60,9 @@ class FragmentAddTopic_CreateFolder(private val getBackAdapterFromViewPager: Get
             withContext(Dispatchers.IO) {
                 val user = authService.getUserLogin().user!!
                 val fetchTopics = session.topicsOfUser!!
-                if (session.topicsOfUserSaved != null) {
-                    if (session.topicsOfUserSaved!!.isNotEmpty()) fetchTopics.addAll(session.topicsOfUserSaved!!)
-                }
+//                if (session.topicsOfUserSaved != null) {  // ----> Lock add topic of another user
+//                    if (session.topicsOfUserSaved!!.isNotEmpty()) fetchTopics.addAll(session.topicsOfUserSaved!!)
+//                }
                 if (fetchTopics.isNotEmpty()) {
                     val positionStart: Int = items.size
                     fetchTopics.forEachIndexed { index, topic ->

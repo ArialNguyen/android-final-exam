@@ -61,7 +61,7 @@ class DetailTopic : AppCompatActivity() {
     private val actionTransition: ActionTransition = ActionTransition(this)
     private val dialogLoading: DialogLoading = DialogLoading(this)
     private val authService: AuthService = AuthService()
-    private val userService: UserService = UserService()
+    private val userService: UserService = UserService.getInstance()
     private val fileAction: FileAction = FileAction(this)
 
 
@@ -611,15 +611,23 @@ class DetailTopic : AppCompatActivity() {
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
                     val deleteTopicResult = topicService.deleteTopic(currentTopic.uid)
-                    session.clearData(object : TypeToken<List<Folder>>() {}.type)
-                    val tmpList = session.topicsOfUser!!
-                    val idx = tmpList.indexOfFirst { it.uid == currentTopic.uid }
-                    if (idx != -1) {
-                        tmpList.removeAt(idx)
-                    }
-                    session.topicsOfUser = tmpList
+
                     runOnUiThread {
                         if (deleteTopicResult.status) {
+                            // Handle Session Topic in Folder
+                            val foldersSessionTmp = session.foldersOfUser!!
+                            for (folder in foldersSessionTmp){
+                                if(folder.topics.contains(currentTopic.uid)){
+                                    folder.topics.remove(currentTopic.uid)
+                                }
+                            }
+                            session.foldersOfUser = foldersSessionTmp
+
+                            // Handle Session Topic in  topicsOfUser
+                            val topicsSession = session.topicsOfUser!!
+                            topicsSession.removeAt(topicsSession.indexOfFirst { it.uid == currentTopic.uid })
+                            session.topicsOfUser = topicsSession
+
                             Toast.makeText(this@DetailTopic, "Topic deleted successfully", Toast.LENGTH_LONG).show()
                             setResult(2, Intent().putExtra("topicId", currentTopic.uid))
                             finish()
