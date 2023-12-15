@@ -160,12 +160,12 @@ class RankingActivity: AppCompatActivity() {
                 if(fetchWrite.status){
                     val topicsPassed = fetchWrite.quizWrites!!.filter {
                         it.optionExam.numberQues == it.totalQuestion && it.overall.toInt() > 0
-                    }.map { it.userId }
+                    }
                     if(topicsPassed.isNotEmpty()){
-                        val fetchUsers = userService.getUsersInListUserId(topicsPassed)
+                        val fetchUsers = userService.getUsersInListUserId(topicsPassed.map { it.userId })
                         if(fetchUsers.status){
                             wtRankingItem.addAll(
-                                fetchWrite.quizWrites!!.map {
+                                topicsPassed.map {
                                     RankingItem(fetchUsers.users!!.first { user -> user.uid == it.userId }, null, it)
                                 }
                             )
