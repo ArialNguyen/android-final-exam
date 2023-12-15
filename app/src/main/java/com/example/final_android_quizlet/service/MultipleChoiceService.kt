@@ -54,11 +54,10 @@ class MultipleChoiceService {
                 .orderBy("createdAt", Query.Direction.ASCENDING)
                 .whereEqualTo("termType", ETermList.NORMAL_TERMS.name)
                 .get().await()
-
+            res.status = true
             if (data.documents.size == 0) {
-                throw Exception("Not Found ChoiceTest")
+                res.testChoices = mutableListOf()
             } else {
-                res.status = true
                 res.testChoices = choiceMapper.convertToChoicesTest(data.documents)
             }
         } catch (e: Exception) {

@@ -53,11 +53,10 @@ class QuizWriteService {
                 .orderBy("overall", Query.Direction.DESCENDING)
                 .orderBy("createdAt", Query.Direction.ASCENDING)
                 .get().await()
-
+            res.status = true
             if (data.documents.size == 0) {
-                throw Exception("Not Found ChoiceTest")
+                res.quizWrites = mutableListOf()
             } else {
-                res.status = true
                 res.quizWrites = quizWriteMapper.convertToQuizWrites(data.documents)
             }
         } catch (e: Exception) {
