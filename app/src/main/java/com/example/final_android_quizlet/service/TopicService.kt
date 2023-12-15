@@ -232,7 +232,24 @@ class TopicService {
 
     inner class TopicForUserLogged{
         private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
-
+        suspend fun getTopicsByQuerys(myFBQuery: MutableList<MyFBQuery>): ResponseObject {
+            val res: ResponseObject = ResponseObject()
+            try {
+                myFBQuery.add(MyFBQuery("userId", firebaseAuth.currentUser!!.uid, MyFBQueryMethod.EQUAL))
+                val data = getDocumentsByFields(myFBQuery)
+                res.status = true
+                if (data.isEmpty()) {
+                    res.topics = listOf()
+                } else {
+                    res.topics = topicMapper.convertToTopics(data)
+                }
+            } catch (e: Exception) {
+                Log.i("ERROR", "getTopicsByQuerys: ${e.message}")
+                res.data = e.message.toString()
+                res.status = false
+            }
+            return res
+        }
         fun createTopics(topics: MutableList<Topic>): ResponseObject {
             val res = ResponseObject()
             try {
