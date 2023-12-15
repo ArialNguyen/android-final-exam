@@ -615,13 +615,15 @@ class DetailTopic : AppCompatActivity() {
                     runOnUiThread {
                         if (deleteTopicResult.status) {
                             // Handle Session Topic in Folder
-                            val foldersSessionTmp = session.foldersOfUser!!
-                            for (folder in foldersSessionTmp){
-                                if(folder.topics.contains(currentTopic.uid)){
-                                    folder.topics.remove(currentTopic.uid)
+                            if (session.foldersOfUser != null){
+                                val foldersSessionTmp = session.foldersOfUser!!
+                                for (folder in foldersSessionTmp){
+                                    if(folder.topics.contains(currentTopic.uid)){
+                                        folder.topics.remove(currentTopic.uid)
+                                    }
                                 }
+                                session.foldersOfUser = foldersSessionTmp
                             }
-                            session.foldersOfUser = foldersSessionTmp
 
                             // Handle Session Topic in  topicsOfUser
                             val topicsSession = session.topicsOfUser!!
