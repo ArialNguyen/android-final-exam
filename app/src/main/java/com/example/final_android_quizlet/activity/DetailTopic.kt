@@ -34,7 +34,6 @@ import com.example.final_android_quizlet.fragments.DefaultFragmentRv
 import com.example.final_android_quizlet.fragments.dialog.DialogLoading
 import com.example.final_android_quizlet.models.EModeTopic
 import com.example.final_android_quizlet.models.Enum.ETermList
-import com.example.final_android_quizlet.models.Folder
 import com.example.final_android_quizlet.models.Term
 import com.example.final_android_quizlet.models.Topic
 import com.example.final_android_quizlet.service.AuthService
@@ -44,7 +43,6 @@ import com.example.final_android_quizlet.service.UserService
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.firestore.FieldValue
-import com.google.gson.reflect.TypeToken
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.Dispatchers
@@ -110,7 +108,7 @@ class DetailTopic : AppCompatActivity() {
             startActivity(Intent(this, Login::class.java))
             actionTransition.moveNextTransition()
         }
-        ownUser = intent.getBooleanExtra("ownUser", true)
+//        ownUser = intent.getBooleanExtra("ownUser", true)
 
 
         // Handle intent
@@ -120,7 +118,7 @@ class DetailTopic : AppCompatActivity() {
 
         if (
             intent.getSerializableExtra("topic") == null
-            ) {
+        ) {
             Toast.makeText(this, "Something error... Try again!", Toast.LENGTH_LONG).show()
             finish()
             actionTransition.rollBackTransition()
@@ -299,13 +297,14 @@ class DetailTopic : AppCompatActivity() {
                         val fetchTopic1 = topicService.getTopicById(currentTopic.uid)
                         if (fetchTopic1.status) {
                             currentTopic = fetchTopic1.topic!!
-                            if(session.topicsOfUserSaved != null){
-                                val isTopicSaved = session.topicsOfUserSaved!!.indexOfFirst { it.uid == currentTopic.uid }
-                                if(isTopicSaved != -1){
+                            if (session.topicsOfUserSaved != null) {
+                                val isTopicSaved =
+                                    session.topicsOfUserSaved!!.indexOfFirst { it.uid == currentTopic.uid }
+                                if (isTopicSaved != -1) {
                                     val topicsSavedSession = session.topicsOfUserSaved!!
-                                    Log.i("TAG", "topicsSavedSession: ${ topicsSavedSession[isTopicSaved]}")
+                                    Log.i("TAG", "topicsSavedSession: ${topicsSavedSession[isTopicSaved]}")
                                     topicsSavedSession[isTopicSaved] = currentTopic
-                                    Log.i("TAG", "topicsSavedSession: ${ topicsSavedSession[isTopicSaved]}")
+                                    Log.i("TAG", "topicsSavedSession: ${topicsSavedSession[isTopicSaved]}")
                                     session.topicsOfUserSaved = topicsSavedSession
                                 }
                             }
@@ -316,7 +315,6 @@ class DetailTopic : AppCompatActivity() {
                         }
                         dialogLoading.hideDialog()
                     }
-
                 }
                 termsItem.addAll(currentTopic.terms.map {
                     TermStarAdapterItem(it, currentTopic.starList.firstOrNull { it2 -> it2.uid == it.uid } != null)
@@ -331,26 +329,32 @@ class DetailTopic : AppCompatActivity() {
                         termAdapterStar.notifyDataSetChanged()
                     }
                 }
-                val fetchUser = userService.getUserByField("uid", currentTopic.userId)
-                runOnUiThread {
-                    if (fetchUser.status) {
-                        items.addAll(currentTopic.terms)
 
+
+                if (currentTopic.userId == currentUserId) { // owner
+                    runOnUiThread {
                         if (session.user!!.avatar.isNotEmpty()) {
                             Picasso.get().load(session.user!!.avatar).into(avatarUser)
                         }
-                        Picasso.get().load(fetchUser.user!!.avatar).into(avatarUser)
-                        tvTopicName!!.text = currentTopic.title
-                        tvDecription!!.text = currentTopic.description
-                        tvTotalTerm!!.text = "${currentTopic.terms.size} thuật ngữ"
                         tvUserName!!.text = session.user!!.name
-                        tvMode.text =
-                            currentTopic.mode.name[0].toString() + currentTopic.mode.name.substring(1).lowercase()
-                        adapter.notifyDataSetChanged()
-
-                    } else {
-                        Toast.makeText(this@DetailTopic, fetchUser.data.toString(), Toast.LENGTH_LONG).show()
                     }
+                } else {
+                    val fetchUser = userService.getUserByField("uid", currentTopic.userId)
+                    if (fetchUser.status) {
+                        runOnUiThread {
+                            Picasso.get().load(fetchUser.user!!.avatar).into(avatarUser)
+                            tvUserName!!.text = fetchUser.user!!.name
+                        }
+                    }
+                }
+                runOnUiThread {
+                    items.addAll(currentTopic.terms)
+                    tvTopicName!!.text = currentTopic.title
+                    tvDecription!!.text = currentTopic.description
+                    tvTotalTerm!!.text = "${currentTopic.terms.size} thuật ngữ"
+                    tvMode.text =
+                        currentTopic.mode.name[0].toString() + currentTopic.mode.name.substring(1).lowercase()
+                    adapter.notifyDataSetChanged()
                 }
 
             }
@@ -438,15 +442,16 @@ class DetailTopic : AppCompatActivity() {
         if (currentTopic.userId != currentUserId) {
             dialog.findViewById<LinearLayout>(R.id.llForOwner_menuTopic).visibility = View.GONE
             dialog.findViewById<LinearLayout>(R.id.llForGuest_menuTopic).visibility = View.VISIBLE
+
             val tvSaveOrUnSave = dialog.findViewById<TextView>(R.id.tvSaveOrUnSave_menu_topic)
             val saveOrUnSave: LinearLayout = dialog.findViewById(R.id.llSaveForGuest_DetailTopic)
-            if(session.user!!.topicSaved.contains(currentTopic.uid)){
+            if (session.user!!.topicSaved.contains(currentTopic.uid)) {
                 tvSaveOrUnSave.text = "Bỏ lưu"
                 saveOrUnSave.setOnClickListener {
                     lifecycleScope.launch {
                         withContext(Dispatchers.IO) {
                             val user = session.user!!
-                            if(user.topicSaved.contains(currentTopic.uid)){
+                            if (user.topicSaved.contains(currentTopic.uid)) {
                                 user.topicSaved.remove(currentTopic.uid)
                                 session.user = user
                             }
@@ -457,29 +462,31 @@ class DetailTopic : AppCompatActivity() {
                             )
                             runOnUiThread {
                                 if (saveTopic.status) {
-                                    if(session.topicsOfUserSaved != null){
+                                    if (session.topicsOfUserSaved != null) {
                                         val topicsSavedSs = session.topicsOfUserSaved!!
                                         val idx = topicsSavedSs.indexOfFirst { it.uid == currentTopic.uid }
-                                        if ( idx != -1)
+                                        if (idx != -1)
                                             topicsSavedSs.removeAt(idx)
                                         session.topicsOfUserSaved = topicsSavedSs
                                     }
 
-                                    Toast.makeText(this@DetailTopic, "UnSave Topic Successfully!!", Toast.LENGTH_LONG).show()
+                                    Toast.makeText(this@DetailTopic, "UnSave Topic Successfully!!", Toast.LENGTH_LONG)
+                                        .show()
                                 } else {
-                                    Toast.makeText(this@DetailTopic, saveTopic.data.toString(), Toast.LENGTH_LONG).show()
+                                    Toast.makeText(this@DetailTopic, saveTopic.data.toString(), Toast.LENGTH_LONG)
+                                        .show()
                                 }
                                 dialog.dismiss()
                             }
                         }
                     }
                 }
-            }else{
+            } else {
                 saveOrUnSave.setOnClickListener {
                     lifecycleScope.launch {
                         withContext(Dispatchers.IO) {
                             val user = session.user!!
-                            if(!user.topicSaved.contains(currentTopic.uid)){
+                            if (!user.topicSaved.contains(currentTopic.uid)) {
                                 user.topicSaved.add(currentTopic.uid)
                                 session.user = user
                             }
@@ -490,16 +497,18 @@ class DetailTopic : AppCompatActivity() {
                             )
                             runOnUiThread {
                                 if (saveTopic.status) {
-                                    if(session.topicsOfUserSaved != null){
+                                    if (session.topicsOfUserSaved != null) {
                                         val topicsSavedSs = session.topicsOfUserSaved!!
                                         if (topicsSavedSs.firstOrNull { it.uid == currentTopic.uid } == null)
                                             topicsSavedSs.add(currentTopic)
                                         session.topicsOfUserSaved = topicsSavedSs
                                     }
 
-                                    Toast.makeText(this@DetailTopic, "Save Topic Successfully!!", Toast.LENGTH_LONG).show()
+                                    Toast.makeText(this@DetailTopic, "Save Topic Successfully!!", Toast.LENGTH_LONG)
+                                        .show()
                                 } else {
-                                    Toast.makeText(this@DetailTopic, saveTopic.data.toString(), Toast.LENGTH_LONG).show()
+                                    Toast.makeText(this@DetailTopic, saveTopic.data.toString(), Toast.LENGTH_LONG)
+                                        .show()
                                 }
                                 dialog.dismiss()
                             }
