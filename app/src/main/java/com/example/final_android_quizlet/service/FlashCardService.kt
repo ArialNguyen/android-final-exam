@@ -5,6 +5,7 @@ import com.example.final_android_quizlet.common.MyFBQuery
 import com.example.final_android_quizlet.common.MyFBQueryMethod
 import com.example.final_android_quizlet.dao.ResponseObject
 import com.example.final_android_quizlet.mapper.FlashCardMapper
+import com.example.final_android_quizlet.models.Enum.ETermList
 import com.example.final_android_quizlet.models.FlashCard
 import com.example.final_android_quizlet.models.Term
 import com.example.final_android_quizlet.models.Topic
@@ -38,16 +39,17 @@ class FlashCardService {
         }
         return res
     }
-    suspend fun findFlashCardByTopicId(topicId: String): ResponseObject {
+    suspend fun findFlashCardByTopicIdAndTermType(topicId: String, termType: ETermList): ResponseObject {
         val res: ResponseObject = ResponseObject()
         try {
             val data = db.collection("flashcard")
                 .whereEqualTo("userId", firebaseAuth.currentUser!!.uid)
                 .whereEqualTo("topicId", topicId)
+                .whereEqualTo("etermList", termType.name)
                 .get().await()
             res.status = true
             if (data.documents.size == 0) {
-                res.flashCard = null
+                throw Exception("Not Found FlashCard")
             } else {
                 res.flashCard = flashCardMapper.convertToFlashCard(data.documents[0].data!!)
             }

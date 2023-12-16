@@ -5,28 +5,20 @@ import TypeFlashCard
 import android.animation.AnimatorInflater
 import android.animation.AnimatorSet
 import android.content.Intent
-import android.media.Image
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.DragEvent
 import android.view.View
 import android.view.View.DRAG_FLAG_OPAQUE
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.lifecycleScope
 import com.example.final_android_quizlet.R
 import com.example.final_android_quizlet.auth.Login
-import com.example.final_android_quizlet.common.ActionDialog
 import com.example.final_android_quizlet.common.ActionTransition
-import com.example.final_android_quizlet.common.ManageScopeApi
-import com.example.final_android_quizlet.models.EAnswer
 import com.example.final_android_quizlet.models.Enum.ETermList
 import com.example.final_android_quizlet.models.FlashCard
 import com.example.final_android_quizlet.models.OptionExamData
@@ -34,8 +26,6 @@ import com.example.final_android_quizlet.models.Term
 import com.example.final_android_quizlet.models.Topic
 import com.example.final_android_quizlet.service.AuthService
 import com.example.final_android_quizlet.service.FlashCardService
-import com.example.final_android_quizlet.service.FolderService
-import com.example.final_android_quizlet.service.TopicService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -89,6 +79,8 @@ class FlashcardActivity : AppCompatActivity() {
     private val listIndexKnew: MutableList<Int> = mutableListOf()
     private var indexCurrentTerm: Int = 0
     private var userId: String? = null
+    private lateinit var termType: ETermList
+    private lateinit var optionData: OptionExamData
     // Drag
 
     // Shadow
@@ -156,28 +148,27 @@ class FlashcardActivity : AppCompatActivity() {
                     }
                 }
                 if (indexCurrentTerm == items.size) {
-                    val flashCard = if(flashCardIntent == null) saveFlashCard() else saveFlashCardIntent()
-                    Log.i("TAG", "flashCard: $flashCard")
+                    val flashCard = if (flashCardIntent == null) saveFlashCard() else saveFlashCardIntent()
                     tvTotalLearningResult.text = flashCard.termsLearning.size.toString()
                     tvTotalKnewResult.text = flashCard.termsKnew.size.toString()
+                    val size = if  (termType.name == ETermList.NORMAL_TERMS.name) topicIntent.terms.size else topicIntent.starList.size
                     tvTotalTermLeftResult.text =
-                        (topicIntent.terms.size - (flashCard.termsLearning.size + flashCard.termsKnew.size)).toString()
+                        ( size - (flashCard.termsLearning.size + flashCard.termsKnew.size)).toString()
 
-                    if(flashCard.termsLearning.size == 0){
+                    if (flashCard.termsLearning.size == 0) {
                         btnExamResult.setOnClickListener {
-                            val intent = Intent(this, DetailTopic::class.java)
-                            intent.putExtra("openExamChoice", "flashcard")
-                            startActivity(intent)
                             finish()
                             actionTransition.rollBackTransition()
                         }
                         btnExamResult.visibility = View.VISIBLE
                         btnLearningResult.visibility = View.GONE
-                    }else{
+                    } else {
                         btnLearningResult.setOnClickListener {
                             val intent = Intent(this, MainQuizActivity::class.java)
                             intent.putExtra("exercise_type", "flashcard")
+                            intent.putExtra("typeTerm", termType)
                             intent.putExtra("topicId", topicIntent.uid)
+                            intent.putExtra("data", optionData)
                             startActivity(intent)
                             finish()
                             actionTransition.moveNextTransition()
@@ -191,12 +182,13 @@ class FlashcardActivity : AppCompatActivity() {
 
                     tvResetFCResult.setOnClickListener {
                         lifecycleScope.launch {
-                            withContext(Dispatchers.IO){
+                            withContext(Dispatchers.IO) {
                                 flashCardService.resetFlashCard(flashCard.uid)
                                 finish()
                                 actionTransition.rollBackTransition()
                                 runOnUiThread {
-                                    Toast.makeText(this@FlashcardActivity,"Đã đặt lại thẻ ghi nhớ", Toast.LENGTH_LONG).show()
+                                    Toast.makeText(this@FlashcardActivity, "Đã đặt lại thẻ ghi nhớ", Toast.LENGTH_LONG)
+                                        .show()
                                 }
                             }
                         }
@@ -206,12 +198,8 @@ class FlashcardActivity : AppCompatActivity() {
                     // Update data in background
                     lifecycleScope.launch {
                         withContext(Dispatchers.IO) {
-                            if (flashCardIntent != null) {
-
-                            }
                             val saveFlashCardDb =
                                 if (flashCardIntent == null) flashCardService.createFlashCard(flashCard)
-//                                else if (flashCard.termsKnew.size == topicIntent.terms.size) flashCardService.resetFlashCard(flashCardIntent!!.uid)
                                 else flashCardService.updateFlashCard(flashCardIntent!!.uid, flashCard)
                             if (!saveFlashCardDb.status) {
                                 runOnUiThread {
@@ -249,12 +237,13 @@ class FlashcardActivity : AppCompatActivity() {
         val currentTermId = items[indexCurrentTerm - 1].uid
         return FlashCard(
             UUID.randomUUID().toString(), termsLearning,
-            termsKnew, currentTermId, topicIntent.uid, userId!!, ETermList.NORMAL_TERMS // NEed to change
+            termsKnew, currentTermId, topicIntent.uid, userId!!, termType
         )
     }
+
     private fun saveFlashCardIntent(): FlashCard {
         // add learning term or leftTerm to knew term
-        val termsKnew = items.filterIndexed { index, term ->  listIndexKnew.contains(index)  }
+        val termsKnew = items.filterIndexed { index, term -> listIndexKnew.contains(index) }
         val termsLearning = items.filterIndexed { index, term -> listIndexLearning.contains(index) }
         val listIdKnewDb = flashCardIntent!!.termsKnew.map { x -> x.uid }
         val list = termsKnew.filter {
@@ -274,6 +263,7 @@ class FlashcardActivity : AppCompatActivity() {
         flashCardIntent!!.termsKnew = flashCardIntent!!.termsKnew.filter {
             !termsLearning.map { x -> x.uid }.contains(it.uid)
         }.toMutableList()
+        flashCardIntent!!.eTermList = termType
         return this.flashCardIntent!!
     }
 
@@ -293,8 +283,7 @@ class FlashcardActivity : AppCompatActivity() {
         if (listIndexLearning.contains(indexCurrentTerm)) {
             listIndexLearning.remove(indexCurrentTerm)
             tvTotalLearning.text = listIndexLearning.size.toString()
-        }
-        else {
+        } else {
             listIndexKnew.remove(indexCurrentTerm)
             tvTotalKnew.text = listIndexKnew.size.toString()
         }
@@ -311,13 +300,16 @@ class FlashcardActivity : AppCompatActivity() {
         }
 
         if (intent.getSerializableExtra("topic") == null ||
-            intent.getSerializableExtra("remainTerms") == null) {
+            intent.getSerializableExtra("remainTerms") == null ||
+            intent.getSerializableExtra("termType") == null ||
+            intent.getSerializableExtra("optionExam") == null
+        ) {
             finish()
             actionTransition.rollBackTransition()
             Toast.makeText(this, "Some thing error, please try again!!!", Toast.LENGTH_LONG).show()
-
-            Log.i("TAG", "Topic received FlashCard: $topicIntent")
         }
+        termType = intent.getSerializableExtra("termType") as ETermList
+        optionData = intent.getSerializableExtra("optionExam") as OptionExamData
         // Learning layout
         imgExit = findViewById(R.id.img_exit_flashcard)
         layoutLearning = findViewById(R.id.layoutStudy_flashcard)
@@ -353,10 +345,10 @@ class FlashcardActivity : AppCompatActivity() {
 
 
         // TextToSpeech
-        textToSpeech = TextToSpeech(this){ status ->
-            if (status == TextToSpeech.SUCCESS){
+        textToSpeech = TextToSpeech(this) { status ->
+            if (status == TextToSpeech.SUCCESS) {
                 val result = textToSpeech.setLanguage(Locale.forLanguageTag(topicIntent.termLanguage!!))
-                if(result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED){
+                if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                     Toast.makeText(this, "Oops language not Supported!!!", Toast.LENGTH_LONG).show()
                 }
             }
@@ -416,11 +408,12 @@ class FlashcardActivity : AppCompatActivity() {
         }
         // Call Back
     }
-    fun speak(){
-        if(isFront){
+
+    fun speak() {
+        if (isFront) {
             textToSpeech.setLanguage(Locale.forLanguageTag(topicIntent.termLanguage!!))
             textToSpeech.speak(tvFront.text.trim().toString(), TextToSpeech.QUEUE_FLUSH, null)
-        }else{
+        } else {
             textToSpeech.setLanguage(Locale.forLanguageTag(topicIntent.definitionLanguage!!))
             textToSpeech.speak(tvBack.text.trim().toString(), TextToSpeech.QUEUE_FLUSH, null)
         }

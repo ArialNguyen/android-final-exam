@@ -78,6 +78,7 @@ class DetailTopic : AppCompatActivity() {
     private lateinit var recyclerViewLeft: RecyclerView
     private lateinit var recyclerViewRight: RecyclerView
 
+
     // Adapter For Term
     private lateinit var tabDetailTopic: TabLayout
     private lateinit var adapterVP: VPCommunityAdapter
@@ -93,7 +94,7 @@ class DetailTopic : AppCompatActivity() {
     // Intent
 
     // Info Current
-    private var ownUser: Boolean = true
+    private var currentTopicIdxSession: Int = -1
     private lateinit var currentTopic: Topic
     private lateinit var currentUserId: String
     private var currentTab: Int = 0
@@ -137,6 +138,8 @@ class DetailTopic : AppCompatActivity() {
         currentTopic = intent.getSerializableExtra("topic") as Topic
         session = Session.getInstance(this)
         currentUserId = authService.getCurrentUser().uid
+
+        currentTopicIdxSession = session.topicsOfUser!!.indexOfFirst { it.uid == currentTopic.uid }
 
         toolbar = findViewById(R.id.toolbar_detail_hocphan)
         imgRanking = findViewById(R.id.imgRank_DetailTopic)
@@ -261,7 +264,15 @@ class DetailTopic : AppCompatActivity() {
                             tabDetailTopic.getTabAt(1)!!.text = "Học ${termsStarItem.size}"
                             termAdapterStar.notifyItemInserted(termsStarItem.size)
                         }
-                        topicService.addTermToStarTopic(currentTopic.uid, it.term)
+                        val fetch = topicService.addTermToStarTopic(currentTopic.uid, it.term)
+                        if(fetch.status){
+                            // Update Session
+                            val topicsSession = session.topicsOfUser!!
+                            if (topicsSession[currentTopicIdxSession].starList.indexOfFirst { it1 ->  it1.uid == it.term.uid } == -1){
+                                topicsSession[currentTopicIdxSession].starList.add(it.term)
+                            }
+                            session.topicsOfUser = topicsSession
+                        }
                     } else {
                         // Remove
                         val idxStar = termsStarItem.indexOfFirst { it1 -> it.term.uid == it1.term.uid }
@@ -270,7 +281,16 @@ class DetailTopic : AppCompatActivity() {
                             tabDetailTopic.getTabAt(1)!!.text = "Học ${termsStarItem.size}"
                             termAdapterStar.notifyItemRemoved(idxStar)
                         }
-                        topicService.removeTermToStarTopic(currentTopic.uid, it.term)
+                        val fetch = topicService.removeTermToStarTopic(currentTopic.uid, it.term)
+                        if(fetch.status){
+                            // Update Session
+                            val topicsSession = session.topicsOfUser!!
+                            val idx = topicsSession[currentTopicIdxSession].starList.indexOfFirst { it1 ->  it1.uid == it.term.uid }
+                            if (idx != -1){
+                                topicsSession[currentTopicIdxSession].starList.removeAt(idx)
+                            }
+                            session.topicsOfUser = topicsSession
+                        }
                     }
                     runOnUiThread {
                         termAdapterAll.notifyItemChanged(position)
@@ -289,7 +309,16 @@ class DetailTopic : AppCompatActivity() {
                         tabDetailTopic.getTabAt(1)!!.text = "Học ${termsStarItem.size}"
                         termAdapterAll.notifyItemChanged(idxOfTermAll)
                     }
-                    topicService.removeTermToStarTopic(currentTopic.uid, it.term)
+                    val fetch = topicService.removeTermToStarTopic(currentTopic.uid, it.term)
+                    if(fetch.status){
+                        // Update Session
+                        val topicsSession = session.topicsOfUser!!
+                        val idx = topicsSession[currentTopicIdxSession].starList.indexOfFirst { it1 ->  it1.uid == it.term.uid }
+                        if (idx != -1){
+                            topicsSession[currentTopicIdxSession].starList.removeAt(idx)
+                        }
+                        session.topicsOfUser = topicsSession
+                    }
                 }
             }
         }
@@ -384,7 +413,7 @@ class DetailTopic : AppCompatActivity() {
         recyclerViewLeft.adapter = termAdapterAll
         recyclerViewLeft.layoutManager = LinearLayoutManager(this)
         if (termsItem.isNotEmpty()) {
-            recyclerViewLeft.setItemViewCacheSize(termsItem.size)
+//            recyclerViewLeft.setItemViewCacheSize(termsItem.size)
             termAdapterAll.notifyDataSetChanged()
         }
         termAdapterAll.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {

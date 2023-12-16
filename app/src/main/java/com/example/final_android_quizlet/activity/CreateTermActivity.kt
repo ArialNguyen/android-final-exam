@@ -1,6 +1,7 @@
 package com.example.final_android_quizlet.activity
 
 import android.app.Activity
+import android.app.Dialog
 import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
@@ -29,6 +30,7 @@ import com.example.final_android_quizlet.common.ManageScopeApi
 import com.example.final_android_quizlet.common.Session
 import com.example.final_android_quizlet.dao.ResponseObject
 import com.example.final_android_quizlet.db.CallbackInterface
+import com.example.final_android_quizlet.fragments.dialog.DialogLoading
 import com.example.final_android_quizlet.models.ELearnTopicStatus
 import com.example.final_android_quizlet.models.EModeTopic
 import com.example.final_android_quizlet.models.Term
@@ -49,7 +51,7 @@ class CreateTermActivity : AppCompatActivity() {
     private val actionTransition: ActionTransition = ActionTransition(this)
     private val authService: AuthService = AuthService()
     private val fileAction: FileAction = FileAction(this)
-
+    private val dialogLoading: DialogLoading = DialogLoading(this)
 
     // Adapter
     private val termList = ArrayList<Term>()
@@ -251,32 +253,31 @@ class CreateTermActivity : AppCompatActivity() {
 
     private fun updateTopicWithTerms() {
         imgFinish.setOnClickListener {
+
+            val receivedTopic = intent.getSerializableExtra("topicData") as Topic
             val title = etTitle.text.toString()
             val description = etDescription.text.toString()
             val usefulTerms = getUsefulTerm()
-            val currentUser = authService.getCurrentUser()
 
-            val receivedTopicSerializable = intent.getSerializableExtra("topicData")
-            val receivedTopic = receivedTopicSerializable as? Topic
+            val usefulTermId = usefulTerms.map { it.uid }
+
+            val starList = receivedTopic.starList.filter { usefulTermId.contains(it.uid) }.toMutableList()
 
             val updatedTopic =
-                receivedTopic?.copy(title = title, description = description, terms = usefulTerms)
-                    ?: Topic(
-                        UUID.randomUUID().toString(),
-                        title, description, usefulTerms, mutableListOf(),
-                        currentUser.uid,
-                        accessMode, ELearnTopicStatus.NOT_LEARN,
-                        termLang?.toLanguageTag() ?: "", definitionLang?.toLanguageTag() ?: ""
-                    )
+                receivedTopic.copy(title = title, description = description, terms = usefulTerms, starList = starList)
 
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
+                    dialogLoading.showDialog("Updating...")
                     val res = topicService.updateTopicWithTerms(updatedTopic)
                     if (res.status) {
+
                         // Update Session
                         val topicsSession =  session.topicsOfUser!!
                         topicsSession[topicsSession.indexOfFirst { it.uid == updatedTopic.uid }] = updatedTopic
                         session.topicsOfUser = topicsSession
+
+
                         runOnUiThread {
                             Toast.makeText(
                                 this@CreateTermActivity,
@@ -296,6 +297,7 @@ class CreateTermActivity : AppCompatActivity() {
                             ).show()
                         }
                     }
+                    dialogLoading.hideDialog()
                 }
             }
         }
