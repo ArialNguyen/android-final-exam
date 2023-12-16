@@ -70,7 +70,6 @@ class LibraryActivity : AppCompatActivity() {
         }
 
         session = Session.getInstance(this)
-        Log.i("TAG", "session: ${session.topicsOfUser!!.size}")
 
         tabLibrary = findViewById(R.id.tabLibrary)
         viewPager = findViewById(R.id.viewPager_library)

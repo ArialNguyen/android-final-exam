@@ -187,7 +187,9 @@ class MainActivity : AppCompatActivity() {
             topicsItem.addAll(session.topicsOfUser!!.map { LibraryTopicAdapterItem(it, session.user!!) })
             topicAdapter.notifyDataSetChanged()
         } //
-        tvName.text = session.user!!.name
+        if(session.user != null){
+            if(::tvName.isInitialized) tvName.text = session.user!!.name
+        }
     }
 
     override fun onDestroy() {

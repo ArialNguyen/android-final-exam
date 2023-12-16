@@ -55,10 +55,10 @@ class Register : AppCompatActivity() {
 
 
         btnRegister!!.setOnClickListener {
-            val name = etName!!.text.toString()
-            val email = etEmail!!.text.toString()
-            val password = etPwd!!.text.toString()
-            val password2 = etPwd2!!.text.toString()
+            val name = etName!!.text.toString().trim()
+            val email = etEmail!!.text.toString().trim()
+            val password = etPwd!!.text.toString().trim()
+            val password2 = etPwd2!!.text.toString().trim()
             manageScopeApi.getResponseWithCallback(
                 lifecycleScope,
                 { (authService::register)(name, email, password) },

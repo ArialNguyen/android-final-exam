@@ -66,8 +66,8 @@ class Login : AppCompatActivity() {
 
 
         btnLogin!!.setOnClickListener {
-            val email = tvUsername!!.text.toString()
-            val password = tvPwd!!.text.toString()
+            val email = tvUsername!!.text.toString().trim()
+            val password = tvPwd!!.text.toString().trim()
             manageScopeApi.getResponseWithCallback(
                 lifecycleScope,
                 { (authService::login)(email, password) },

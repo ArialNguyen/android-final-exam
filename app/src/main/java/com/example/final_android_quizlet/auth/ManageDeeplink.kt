@@ -25,16 +25,16 @@ class ManageDeeplink : AppCompatActivity() {
 
         lifecycleScope.launch{
             val checkMode = Uri.parse(intent.data!!.toString())
-            Log.i(TAG, "${checkMode.toString()}")
+            Log.i(TAG, "onCreate: ")
             if(checkMode.getQueryParameter("mode") == "verifyEmail"){
-              Log.i(TAG, "onCreate: ")
                 val intentBrowser = Intent(Intent.ACTION_VIEW)
                 val oobCode = checkMode.getQueryParameter("oobCode")
                 val apiKey = checkMode.getQueryParameter("apiKey")
+                Log.i(TAG, "$checkMode")
+
                 intentBrowser.setData(Uri.parse("https://android-finalpj.firebaseapp.com/__/auth/action?mode=verifyEmail&oobCode=$oobCode&apiKey=$apiKey&lang=en"))
                 startActivity(intentBrowser)
-
-//                finish()
+                finish()
             }else{
                 val continueUrlShortLink = checkMode.getQueryParameter("continueUrl")!!
                 val continueUrlLongLink = FirebaseDynamicLinks.getInstance().getDynamicLink(Uri.parse(continueUrlShortLink)).await()
@@ -47,7 +47,6 @@ class ManageDeeplink : AppCompatActivity() {
                 }else{
                     val verifyCode = userService.checkPasscodeFGP(email, passcode)
                     if(!verifyCode.status){
-                        Log.i("ERROR for check passcodeFGP", "${verifyCode.data}")
                         Toast.makeText(this@ManageDeeplink, "Sorry but seem the passcode to UI forgot password wrong here", Toast.LENGTH_SHORT).show()
                     }else{
                         val intentForgot = Intent(this@ManageDeeplink, ForgotPwd::class.java)
