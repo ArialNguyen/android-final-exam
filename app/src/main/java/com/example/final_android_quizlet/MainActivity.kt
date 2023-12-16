@@ -58,12 +58,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var session: Session
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.i("TAG", "onCreate: ")
         setContentView(R.layout.activity_main)
         session = Session.getInstance(this)
         if (!authService.isLogin()) {
             startActivity(Intent(this, Login::class.java).putExtra("checkLogin", this@MainActivity::class.java.name))
         }
+
         // Get View
         etSearchTopic = findViewById(R.id.etSearchTopic_main)
         topicRV = findViewById(R.id.topicRV_Main)
@@ -96,6 +96,7 @@ class MainActivity : AppCompatActivity() {
             }
             return@setOnKeyListener false
         }
+
         tvViewAllTopic.setOnClickListener {
             startActivity(Intent(this, LibraryActivity::class.java))
         }
@@ -193,7 +194,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        Log.i("TAG", "onStart: ")
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
                 if(session.user != null){
@@ -231,16 +231,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        Log.i("TAG", "onPause: ")
     }
 
     override fun onStop() {
         super.onStop()
-        Log.i("TAG", "onStop: ")
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        // Clear session just hold user
     }
 }

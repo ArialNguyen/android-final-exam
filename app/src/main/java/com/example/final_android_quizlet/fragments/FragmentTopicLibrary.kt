@@ -107,7 +107,7 @@ class FragmentTopicLibrary(private val getBackAdapterFromViewPager: GetBackAdapt
 
                     // Fetch topic owner
                     val user = session.user!!
-                    if(session.topicsOfUser == null){
+                    if(session.topicsOfUser != null){
                         val topics = session.topicsOfUser
                         if (topics!!.isNotEmpty()) {
                             val list = topics.map {
