@@ -141,6 +141,7 @@ class DetailTopic : AppCompatActivity() {
 
         currentTopicIdxSession = session.topicsOfUser!!.indexOfFirst { it.uid == currentTopic.uid }
 
+
         toolbar = findViewById(R.id.toolbar_detail_hocphan)
         imgRanking = findViewById(R.id.imgRank_DetailTopic)
         tvMode = findViewById(R.id.tvMode_DetailTopic)
@@ -267,11 +268,13 @@ class DetailTopic : AppCompatActivity() {
                         val fetch = topicService.addTermToStarTopic(currentTopic.uid, it.term)
                         if(fetch.status){
                             // Update Session
-                            val topicsSession = session.topicsOfUser!!
-                            if (topicsSession[currentTopicIdxSession].starList.indexOfFirst { it1 ->  it1.uid == it.term.uid } == -1){
-                                topicsSession[currentTopicIdxSession].starList.add(it.term)
+                            if(currentTopicIdxSession != -1){
+                                val topicsSession = session.topicsOfUser!!
+                                if (topicsSession[currentTopicIdxSession].starList.indexOfFirst { it1 ->  it1.uid == it.term.uid } == -1){
+                                    topicsSession[currentTopicIdxSession].starList.add(it.term)
+                                }
+                                session.topicsOfUser = topicsSession
                             }
-                            session.topicsOfUser = topicsSession
                         }
                     } else {
                         // Remove
@@ -284,12 +287,14 @@ class DetailTopic : AppCompatActivity() {
                         val fetch = topicService.removeTermToStarTopic(currentTopic.uid, it.term)
                         if(fetch.status){
                             // Update Session
-                            val topicsSession = session.topicsOfUser!!
-                            val idx = topicsSession[currentTopicIdxSession].starList.indexOfFirst { it1 ->  it1.uid == it.term.uid }
-                            if (idx != -1){
-                                topicsSession[currentTopicIdxSession].starList.removeAt(idx)
+                            if(currentTopicIdxSession != -1){
+                                val topicsSession = session.topicsOfUser!!
+                                val idx = topicsSession[currentTopicIdxSession].starList.indexOfFirst { it1 ->  it1.uid == it.term.uid }
+                                if (idx != -1){
+                                    topicsSession[currentTopicIdxSession].starList.removeAt(idx)
+                                }
+                                session.topicsOfUser = topicsSession
                             }
-                            session.topicsOfUser = topicsSession
                         }
                     }
                     runOnUiThread {
@@ -312,12 +317,14 @@ class DetailTopic : AppCompatActivity() {
                     val fetch = topicService.removeTermToStarTopic(currentTopic.uid, it.term)
                     if(fetch.status){
                         // Update Session
-                        val topicsSession = session.topicsOfUser!!
-                        val idx = topicsSession[currentTopicIdxSession].starList.indexOfFirst { it1 ->  it1.uid == it.term.uid }
-                        if (idx != -1){
-                            topicsSession[currentTopicIdxSession].starList.removeAt(idx)
+                        if(currentTopicIdxSession != -1){
+                            val topicsSession = session.topicsOfUser!!
+                            val idx = topicsSession[currentTopicIdxSession].starList.indexOfFirst { it1 ->  it1.uid == it.term.uid }
+                            if (idx != -1){
+                                topicsSession[currentTopicIdxSession].starList.removeAt(idx)
+                            }
+                            session.topicsOfUser = topicsSession
                         }
-                        session.topicsOfUser = topicsSession
                     }
                 }
             }

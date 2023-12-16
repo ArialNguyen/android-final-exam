@@ -156,7 +156,9 @@ class DetailFolderActivity : AppCompatActivity() {
                 user?.let {
                     runOnUiThread {
                         tvUserName.text = it.name
-                        Picasso.get().load(it.avatar).into(imgAvatar)
+                        if(it.avatar.isNotEmpty()){
+                            Picasso.get().load(it.avatar).into(imgAvatar)
+                        }
                     }
                 }
                 val folderFetch = folderService.FolderForUserLogged().getFolderById(folder.uid)
