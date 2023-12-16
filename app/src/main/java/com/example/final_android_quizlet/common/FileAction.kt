@@ -66,6 +66,7 @@ class FileAction(private val ctx: Context) {
                         if(it1 != ""){
                             val value = removeUTF8BOM(it1).split(",")
                             terms.add(Term(UUID.randomUUID().toString(), value[0].trim(), value[1].trim()))
+                            Log.i("TAG", "readFileCsvToTopics: ${i}")
                         }
                     } else {
                         try {
