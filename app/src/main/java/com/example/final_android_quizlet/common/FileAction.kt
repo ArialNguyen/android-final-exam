@@ -70,6 +70,7 @@ class FileAction(private val ctx: Context) {
                                 return@forEachIndexed
                             }
                             terms.add(Term(UUID.randomUUID().toString(), value[0].trim(), value[1].trim()))
+                            Log.i("TAG", "readFileCsvToTopics: ${i}")
                         }
                     } else {
                         try {
