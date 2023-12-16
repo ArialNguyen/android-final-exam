@@ -124,6 +124,7 @@ class MainQuizActivity : AppCompatActivity() {
                             .toMutableList() else fetchTopic.topic!!.starList.map { it.definition }.toMutableList()
                     // Answer Type
                     if (optionData.answer == EAnswer.TERM) {
+                        answers.clear()
                         answers.addAll(question.map { it.term })
                     }
 
