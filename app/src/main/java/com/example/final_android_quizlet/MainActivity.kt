@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.KeyEvent
 import android.view.ViewGroup
@@ -57,6 +58,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var session: Session
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.i("TAG", "onCreate: ")
         setContentView(R.layout.activity_main)
         session = Session.getInstance(this)
         if (!authService.isLogin()) {
@@ -113,9 +115,7 @@ class MainActivity : AppCompatActivity() {
         // Load data
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                if (session.user == null) {
-                    startActivity(Intent(this@MainActivity, Login::class.java))
-                } else {
+                if(session.user != null){
                     val user = session.user
                     runOnUiThread {
                         tvName.text = user!!.name
@@ -145,7 +145,6 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
-
         }
     }
 
@@ -187,9 +186,57 @@ class MainActivity : AppCompatActivity() {
             topicsItem.addAll(session.topicsOfUser!!.map { LibraryTopicAdapterItem(it, session.user!!) })
             topicAdapter.notifyDataSetChanged()
         } //
-        if(session.user != null){
-            if(::tvName.isInitialized) tvName.text = session.user!!.name
+        if (session.user != null) {
+            if (::tvName.isInitialized) tvName.text = session.user!!.name
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.i("TAG", "onStart: ")
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                if(session.user != null){
+                    val user = session.user
+                    runOnUiThread {
+                        tvName.text = user!!.name
+                    }
+                    // Fetch Topics
+
+                    if (session.topicsOfUser == null) {
+                        dialogLoading.showDialog("Loading...")
+
+                        val fetchTopics = topicService.getTopicsByUserId(user!!.uid)
+                        if (fetchTopics.status) {
+                            session.topicsOfUser = fetchTopics.topics!!.toMutableList()
+                        } else {
+                            runOnUiThread {
+                                Toast.makeText(this@MainActivity, fetchTopics.data.toString(), Toast.LENGTH_LONG).show()
+                            }
+                        }
+                        runOnUiThread {
+                            dialogLoading.hideDialog()
+                        }
+                    }
+                    if (session.topicsOfUser!!.isNotEmpty()) {
+                        topicsItem.addAll(session.topicsOfUser!!.map { LibraryTopicAdapterItem(it, user!!) })
+                        runOnUiThread {
+                            topicAdapter.notifyDataSetChanged()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.i("TAG", "onPause: ")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.i("TAG", "onStop: ")
     }
 
     override fun onDestroy() {
