@@ -14,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.*
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
@@ -24,10 +25,8 @@ import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.example.final_android_quizlet.R
-import com.example.final_android_quizlet.adapter.DetailTopicHoriAdapter
-import com.example.final_android_quizlet.adapter.TermStarAdapter
-import com.example.final_android_quizlet.adapter.TermStarAdapterItem
-import com.example.final_android_quizlet.adapter.VPCommunityAdapter
+import com.example.final_android_quizlet.adapter.*
+import com.example.final_android_quizlet.adapter.data.LibraryTopicAdapterItem
 import com.example.final_android_quizlet.auth.Login
 import com.example.final_android_quizlet.common.*
 import com.example.final_android_quizlet.fragments.DefaultFragmentRv
@@ -90,7 +89,7 @@ class DetailTopic : AppCompatActivity() {
     // Adapter
     private var recyclerViewHorizontal: RecyclerView? = null
     private val items: MutableList<Term> = mutableListOf()
-
+    private lateinit var adapter: DetailTopicHoriAdapter
     // Intent
 
     // Info Current
@@ -100,6 +99,18 @@ class DetailTopic : AppCompatActivity() {
     private var currentTab: Int = 0
     private lateinit var session: Session
 
+    private val INTENT_MODIFY_TOPIC = 1
+
+    var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == INTENT_MODIFY_TOPIC) {
+            val topic = result.data!!.getSerializableExtra("topic") as Topic
+            currentTopic = topic
+            lifecycleScope.launch{
+                loadTopicView()
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail_hocphan)
@@ -108,7 +119,6 @@ class DetailTopic : AppCompatActivity() {
             startActivity(Intent(this, Login::class.java))
             actionTransition.moveNextTransition()
         }
-//        ownUser = intent.getBooleanExtra("ownUser", true)
 
 
         // Handle intent
@@ -195,7 +205,7 @@ class DetailTopic : AppCompatActivity() {
         }
         session = Session.getInstance(this)
         // Recycler View
-        val adapter = DetailTopicHoriAdapter(items)
+        adapter = DetailTopicHoriAdapter(items)
         recyclerViewHorizontal = findViewById(R.id.recyclerView_DetailTopic)
         recyclerViewHorizontal!!.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         recyclerViewHorizontal!!.adapter = adapter
@@ -288,49 +298,9 @@ class DetailTopic : AppCompatActivity() {
         // Fetch data
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                if (session.topicsOfUser != null) {
-                    val topicInSession = session.topicsOfUser!!.firstOrNull { it.uid == currentTopic.uid }
-                    if (topicInSession != null) {
-                        currentTopic = topicInSession
-                    } else {
-                        dialogLoading.showDialog("Loading...")
-                        val fetchTopic1 = topicService.getTopicById(currentTopic.uid)
-                        if (fetchTopic1.status) {
-                            currentTopic = fetchTopic1.topic!!
-                            if (session.topicsOfUserSaved != null) {
-                                val isTopicSaved =
-                                    session.topicsOfUserSaved!!.indexOfFirst { it.uid == currentTopic.uid }
-                                if (isTopicSaved != -1) {
-                                    val topicsSavedSession = session.topicsOfUserSaved!!
-                                    Log.i("TAG", "topicsSavedSession: ${topicsSavedSession[isTopicSaved]}")
-                                    topicsSavedSession[isTopicSaved] = currentTopic
-                                    Log.i("TAG", "topicsSavedSession: ${topicsSavedSession[isTopicSaved]}")
-                                    session.topicsOfUserSaved = topicsSavedSession
-                                }
-                            }
-                        } else {
-                            runOnUiThread {
-                                Toast.makeText(this@DetailTopic, fetchTopic1.data.toString(), Toast.LENGTH_LONG).show()
-                            }
-                        }
-                        dialogLoading.hideDialog()
-                    }
-                }
-                termsItem.addAll(currentTopic.terms.map {
-                    TermStarAdapterItem(it, currentTopic.starList.firstOrNull { it2 -> it2.uid == it.uid } != null)
-                })
-                termsStarItem.addAll(currentTopic.starList.map { TermStarAdapterItem(it, true) })
-                runOnUiThread {
-                    if (::termAdapterAll.isInitialized) {
-                        termAdapterAll.notifyDataSetChanged()
-                    }
-                    if (::termAdapterStar.isInitialized) {
-                        tabDetailTopic.getTabAt(1)!!.text = "Học ${termsStarItem.size}"
-                        termAdapterStar.notifyDataSetChanged()
-                    }
-                }
-
-
+                // Load about topic
+                loadTopicView()
+                // Load about user
                 if (currentTopic.userId == currentUserId) { // owner
                     runOnUiThread {
                         if (session.user!!.avatar.isNotEmpty()) {
@@ -347,19 +317,66 @@ class DetailTopic : AppCompatActivity() {
                         }
                     }
                 }
-                runOnUiThread {
-                    items.addAll(currentTopic.terms)
-                    tvTopicName!!.text = currentTopic.title
-                    tvDecription!!.text = currentTopic.description
-                    tvTotalTerm!!.text = "${currentTopic.terms.size} thuật ngữ"
-                    tvMode.text =
-                        currentTopic.mode.name[0].toString() + currentTopic.mode.name.substring(1).lowercase()
-                    adapter.notifyDataSetChanged()
-                }
 
             }
         }
 
+    }
+
+    private suspend fun loadTopicView(){
+        if (session.topicsOfUser != null) {
+            val topicInSession = session.topicsOfUser!!.firstOrNull { it.uid == currentTopic.uid }
+            if (topicInSession != null) {
+                currentTopic = topicInSession
+            } else {
+                dialogLoading.showDialog("Loading...")
+                val fetchTopic1 = topicService.getTopicById(currentTopic.uid)
+                if (fetchTopic1.status) {
+                    currentTopic = fetchTopic1.topic!!
+                    if (session.topicsOfUserSaved != null) {
+                        val isTopicSaved =
+                            session.topicsOfUserSaved!!.indexOfFirst { it.uid == currentTopic.uid }
+                        if (isTopicSaved != -1) {
+                            val topicsSavedSession = session.topicsOfUserSaved!!
+                            Log.i("TAG", "topicsSavedSession: ${topicsSavedSession[isTopicSaved]}")
+                            topicsSavedSession[isTopicSaved] = currentTopic
+                            Log.i("TAG", "topicsSavedSession: ${topicsSavedSession[isTopicSaved]}")
+                            session.topicsOfUserSaved = topicsSavedSession
+                        }
+                    }
+                } else {
+                    runOnUiThread {
+                        Toast.makeText(this@DetailTopic, fetchTopic1.data.toString(), Toast.LENGTH_LONG).show()
+                    }
+                }
+                dialogLoading.hideDialog()
+            }
+        }
+        termsItem.clear()
+        termsItem.addAll(currentTopic.terms.map {
+            TermStarAdapterItem(it, currentTopic.starList.firstOrNull { it2 -> it2.uid == it.uid } != null)
+        })
+        termsStarItem.clear()
+        termsStarItem.addAll(currentTopic.starList.map { TermStarAdapterItem(it, true) })
+        runOnUiThread {
+            if (::termAdapterAll.isInitialized) {
+                termAdapterAll.notifyDataSetChanged()
+            }
+            if (::termAdapterStar.isInitialized) {
+                tabDetailTopic.getTabAt(1)!!.text = "Học ${termsStarItem.size}"
+                termAdapterStar.notifyDataSetChanged()
+            }
+        }
+        runOnUiThread {
+            tvTopicName!!.text = currentTopic.title
+            tvDecription!!.text = currentTopic.description
+            tvTotalTerm!!.text = "${currentTopic.terms.size} thuật ngữ"
+            tvMode.text =
+                currentTopic.mode.name[0].toString() + currentTopic.mode.name.substring(1).lowercase()
+            items.clear()
+            items.addAll(currentTopic.terms)
+            adapter.notifyDataSetChanged()
+        }
     }
 
     private fun actionOnTermAll(view: View) {
@@ -533,7 +550,7 @@ class DetailTopic : AppCompatActivity() {
                 val intent = Intent(this, CreateTermActivity::class.java)
                 intent.putExtra("topicData", currentTopic) // Gửi đối tượng Topic sang CreateTermActivity
                 intent.putExtra("isEditAction", true)
-                startActivity(intent)
+                resultLauncher.launch(intent)
                 dialog.dismiss()
             }
 

@@ -283,6 +283,7 @@ class CreateTermActivity : AppCompatActivity() {
                                 "Topic updated successfully!",
                                 Toast.LENGTH_LONG
                             ).show()
+                            setResult(1, Intent().putExtra("topic", updatedTopic))
                             finish()
                             actionTransition.rollBackTransition()
                         }
