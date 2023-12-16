@@ -259,9 +259,11 @@ class DetailFolderActivity : AppCompatActivity() {
         builder.setPositiveButton("Yes") { dialog, which ->
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
+                    dialogLoading.showDialog("Deleting...")
                     val deleteFolderResult = folderService.deleteFolder(folder.uid)
                     runOnUiThread {
                         if (deleteFolderResult.status) {
+                            // Handle Session
                             val foldersSession = session.foldersOfUser!!
                             foldersSession.removeAt(foldersSession.indexOfFirst { it.uid == folder.uid })
                             session.foldersOfUser = foldersSession
@@ -277,6 +279,7 @@ class DetailFolderActivity : AppCompatActivity() {
                             Toast.makeText(this@DetailFolderActivity, "Failed to delete folder", Toast.LENGTH_LONG).show()
                         }
                     }
+                    dialogLoading.hideDialog()
                 }
             }
             dialog.dismiss()

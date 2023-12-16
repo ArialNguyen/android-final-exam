@@ -53,9 +53,7 @@ class AddToFolderAdapter(private val items: List<Folder>, var itemsChosen: Mutab
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
         holder.bind(item, ctx, itemsChosen)
-        holder.itemView.setOnClickListener {
-            itemClickListener?.invoke(item)
-        }
+
     }
 
 

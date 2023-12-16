@@ -72,7 +72,6 @@ class ActionDialog(private val ctx: Context, private val lifecycleScope: Lifecyc
                                         val itemsChosen = ((adapterAndItems.items as List<Any>)[1] as MutableList<Int>)
                                         val positionStart = items.size
                                         items.add(Folder(fetch1.folder!!))
-                                        itemsChosen.add(items.size - 1)
                                         (ctx as Activity).runOnUiThread { adapter.notifyItemInserted(positionStart)}
                                     }
 
@@ -80,7 +79,7 @@ class ActionDialog(private val ctx: Context, private val lifecycleScope: Lifecyc
                                 }
                             }
                         } else {
-                            Toast.makeText(ctx, fetch1.data.toString(), Toast.LENGTH_LONG).show()
+                            (ctx as Activity).runOnUiThread { Toast.makeText(ctx, fetch1.data.toString(), Toast.LENGTH_LONG).show() }
                         }
                     }
                 }
