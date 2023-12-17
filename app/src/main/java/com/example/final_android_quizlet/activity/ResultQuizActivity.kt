@@ -3,6 +3,7 @@ import android.app.Notification.Action
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -20,6 +21,7 @@ class ResultQuizActivity : AppCompatActivity() {
     private lateinit var tvTotalTrue: TextView
     private lateinit var tvTotalFalse: TextView
     private lateinit var btnNewTest: Button
+    private lateinit var exit_writingTest: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +32,7 @@ class ResultQuizActivity : AppCompatActivity() {
         tvTotalTrue = findViewById(R.id.tvTotalTrue_ResultQuizActivity)
         tvTotalFalse = findViewById(R.id.tvTotalFalse_ResultQuizActivity)
         btnNewTest = findViewById(R.id.btn_exam_ResultQuizActivity)
+        exit_writingTest = findViewById(R.id.img_exit_writingTest)
 
         val overall = intent.getIntExtra("overall", 0)
         val totalItems = intent.getIntExtra("totalItems", 0)
@@ -41,6 +44,11 @@ class ResultQuizActivity : AppCompatActivity() {
         tvTotalFalse.text = totalIncorrect.toString()
 
         btnNewTest.setOnClickListener {
+            actionTransition.moveNextTransition()
+            finish()
+        }
+
+        exit_writingTest.setOnClickListener {
             actionTransition.moveNextTransition()
             finish()
         }
