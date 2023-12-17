@@ -348,7 +348,9 @@ class DetailTopic : AppCompatActivity() {
                     val fetchUser = userService.getUserByField("uid", currentTopic.userId)
                     if (fetchUser.status) {
                         runOnUiThread {
-                            Picasso.get().load(fetchUser.user!!.avatar).into(avatarUser)
+                            if(fetchUser.user!!.avatar.isNotEmpty()){
+                                Picasso.get().load(fetchUser.user!!.avatar).into(avatarUser)
+                            }
                             tvUserName!!.text = fetchUser.user!!.name
                         }
                     }

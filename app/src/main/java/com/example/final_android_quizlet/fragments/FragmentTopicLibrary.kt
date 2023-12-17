@@ -55,9 +55,9 @@ class FragmentTopicLibrary(private val getBackAdapterFromViewPager: GetBackAdapt
             val topicId = result.data!!.getStringExtra("topicId")
 
             val idx = items.indexOfFirst { it.topic.uid == topicId }
+            itemsTemp.removeAt(itemsTemp.indexOfFirst { it.topic.uid == items[idx].topic.uid  })
             items.removeAt(idx)
             adapter.notifyItemRemoved(idx)
-            Log.i("TAG", "session: ${session.topicsOfUser!!.size}")
         }
     }
 
@@ -107,7 +107,7 @@ class FragmentTopicLibrary(private val getBackAdapterFromViewPager: GetBackAdapt
 
                     // Fetch topic owner
                     val user = session.user!!
-                    if(session.topicsOfUser != null){
+                    if (session.topicsOfUser != null) {
                         val topics = session.topicsOfUser
                         if (topics!!.isNotEmpty()) {
                             val list = topics.map {
@@ -125,7 +125,6 @@ class FragmentTopicLibrary(private val getBackAdapterFromViewPager: GetBackAdapt
 
                     // Fetch Topic Saved
                     if (user.topicSaved.isNotEmpty()) {
-                        Log.i("TAG", "user.topicSaved: ${user.topicSaved}")
 
                         // Fetch Topics saved in User
                         val topicsSaved = topicService.getTopicsByQuerys(
@@ -138,11 +137,14 @@ class FragmentTopicLibrary(private val getBackAdapterFromViewPager: GetBackAdapt
 
                         val fetchUserInTopic =
                             userService.getUsersInListUserId(session.topicsOfUserSaved!!.map { it.userId }.distinct())
+                        Log.i("TAG", "fetchUserInTopic: ${fetchUserInTopic.users}")
                         if (fetchUserInTopic.status) {
-                            val list = session.topicsOfUserSaved!!.map {
+                            val list = session.topicsOfUserSaved!!.map {it2 ->
                                 LibraryTopicAdapterItem(
-                                    it,
-                                    fetchUserInTopic.users!!.first { us -> us.uid == it.userId })
+                                    it2,
+                                    fetchUserInTopic.users!!.find { us ->
+                                        us.uid == it2.userId
+                                    }!!)
                             }.toMutableList()
                             itemsSaved.clear()
                             itemsSavedTemp.clear()
@@ -180,23 +182,34 @@ class FragmentTopicLibrary(private val getBackAdapterFromViewPager: GetBackAdapt
         if (currentClickTopicIdx != -1 && session.topicsOfUser != null && currentClickTopicIdx < items.size) { // Handle ownTopic
             val topicSessionIdx =
                 session.topicsOfUser!!.indexOfFirst { it.uid == items[currentClickTopicIdx].topic.uid }
-            items[currentClickTopicIdx].topic = session.topicsOfUser!![topicSessionIdx]
-            adapter.notifyItemChanged(currentClickTopicIdx)
+            if(topicSessionIdx != -1){
+                itemsTemp.first { it.topic.uid == items[currentClickTopicIdx].topic.uid }.topic =
+                    session.topicsOfUser!![topicSessionIdx]
 
-            itemsTemp.first { it.topic.uid == items[currentClickTopicIdx].topic.uid }.topic =
-                session.topicsOfUser!![topicSessionIdx]
+                items[currentClickTopicIdx].topic = session.topicsOfUser!![topicSessionIdx]
+
+                adapter.notifyItemChanged(currentClickTopicIdx)
+            }
             currentClickTopicIdx = -1
         }
         if (currentClickTopicSavedIdx != -1 && session.topicsOfUserSaved != null) {// Handle savedTopic -- this action for upgrade because user not allow to modify topic saved now
-            Log.i("TAG", "onResume: ${session.topicsOfUserSaved!!.size}")
+            // Update Session
             val topicSavedSessionIdx =
                 session.topicsOfUserSaved!!.indexOfFirst { it.uid == itemsSaved[currentClickTopicSavedIdx].topic.uid }
 
-            itemsSavedTemp[currentClickTopicSavedIdx].topic = session.topicsOfUserSaved!![topicSavedSessionIdx]
-            topicSavedAdapter.notifyItemChanged(currentClickTopicSavedIdx)
+            if (topicSavedSessionIdx == -1) { // Has been removed
+                itemsSavedTemp.removeAt(itemsSavedTemp.indexOfFirst { it.topic.uid == itemsSaved[currentClickTopicSavedIdx].topic.uid })
+                itemsSaved.removeAt(currentClickTopicSavedIdx)
+                topicSavedAdapter.notifyItemRemoved(currentClickTopicSavedIdx)
+            }else{
+                itemsSavedTemp.first { it.topic.uid == itemsSaved[currentClickTopicSavedIdx].topic.uid }.topic =
+                    session.topicsOfUserSaved!![topicSavedSessionIdx]
 
-            itemsSavedTemp.first { it.topic.uid == itemsSaved[currentClickTopicSavedIdx].topic.uid }.topic =
-                session.topicsOfUserSaved!![topicSavedSessionIdx]
+                itemsSaved[currentClickTopicSavedIdx].topic = session.topicsOfUserSaved!![topicSavedSessionIdx]
+
+                topicSavedAdapter.notifyItemChanged(currentClickTopicSavedIdx)
+            }
+
             currentClickTopicSavedIdx = -1
         }
 
