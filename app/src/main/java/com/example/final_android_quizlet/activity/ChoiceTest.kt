@@ -68,6 +68,7 @@ class ChoiceTest : AppCompatActivity() {
     private val answers: MutableList<String> = mutableListOf()
     private var currentTermIndex = 0
     private lateinit var textToSpeech: TextToSpeech
+    private lateinit var termType: ETermList
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,7 +93,7 @@ class ChoiceTest : AppCompatActivity() {
         if (intent.getSerializableExtra("choice") != null) {
             choiceDB = intent.getSerializableExtra("choice") as MultipleChoice
         }
-        val termType = intent.getSerializableExtra("termType") as ETermList
+        termType = intent.getSerializableExtra("termType") as ETermList
         optionExam = intent.getSerializableExtra("optionExam") as OptionExamData
         showAnswerIntent = optionExam.showAns
 
@@ -100,9 +101,6 @@ class ChoiceTest : AppCompatActivity() {
         items.addAll(intent.getSerializableExtra("terms") as List<Term>)
         answers.addAll(intent.getSerializableExtra("answers") as List<String>)
         answerType = optionExam.answer
-        Log.i("TAG", "terms: $items")
-        Log.i("TAG", "answers: $answers")
-
 
 
 
@@ -210,16 +208,15 @@ class ChoiceTest : AppCompatActivity() {
             tvTotalTrue.text = choiceTest.overall.toString()
             tvTotalFalse.text = (items.size - choiceTest.overall as Int).toString()
             btnExam.setOnClickListener {
-                val intent = Intent(this, DetailTopic::class.java)
-                intent.putExtra("action", "openExam")
-                intent.putExtra("topicId", topicIntent.uid) // Need to convert to whole topic not id
-                startActivity(intent)
                 finish()
                 actionTransition.rollBackTransition()
             }
             btnLearning.setOnClickListener {
-                val intent = Intent(this, MainQuizActivity::class.java)
-                intent.putExtra("exercise_type", "flashcard")
+                val intent = Intent(this, OptionExam::class.java)
+                intent.putExtra("topic", topicIntent)
+                intent.putExtra("exam", FlashcardActivity::class.simpleName)
+                intent.putExtra("changeLayout", true)
+                intent.putExtra("typeTerm", if (termType == ETermList.NORMAL_TERMS) ETermList.NORMAL_TERMS else ETermList.STAR_TERMS)
                 startActivity(intent)
                 finish()
                 actionTransition.moveNextTransition()
